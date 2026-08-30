@@ -66,6 +66,7 @@ export default async function handler(req) {
   }
 
   let stripe = 'not tested (no key)';
+  let cache = 'not tested (no key)';
   let checkout = 'not tested';
   if (skey) {
     try {
@@ -98,6 +99,19 @@ export default async function handler(req) {
       const j = await r.json();
       if (r.ok && j.id) {
         checkout = 'OK, a session was created and then expired';
+        /* The paid reading is cached back into the session metadata, so the key
+           has to be allowed to write it. This proves that on a fresh session.
+           It cannot prove the same for a COMPLETED one, which only a real test
+           mode purchase reaches, so run one before taking real money. */
+        try {
+          const w = await fetch(`https://api.stripe.com/v1/checkout/sessions/${j.id}`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${skey}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'metadata[diag]=1',
+          });
+          cache = w.ok ? 'OK, metadata is writable on an open session'
+                       : `${w.status}: ${(await w.json())?.error?.message || 'refused'}`;
+        } catch (e) { cache = 'network error: ' + e.message; }
         await fetch(`https://api.stripe.com/v1/checkout/sessions/${j.id}/expire`, {
           method: 'POST', headers: { Authorization: `Bearer ${skey}` },
         }).catch(() => {});
@@ -115,7 +129,7 @@ export default async function handler(req) {
     verdict: !akey ? 'No Anthropic key — free readings fall back to composed text, paid readings fail.'
       : working === 0 ? 'The Anthropic key is set but no model answered. See models below — usually auth (wrong or rotated key) or credit (empty account).'
       : `${working} model(s) answering. The writer is working.`,
-    env, models, stripe, checkout,
+    env, models, stripe, checkout, reading_cache: cache,
     prices: {
       slow: (Number(process.env.PRICE_SLOW_CENTS || 900) / 100) + ' ' + (process.env.READING_CURRENCY || 'eur'),
       fast: (Number(process.env.PRICE_FAST_CENTS || 1900) / 100) + ' ' + (process.env.READING_CURRENCY || 'eur'),

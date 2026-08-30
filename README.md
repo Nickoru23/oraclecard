@@ -42,7 +42,7 @@ Two the functions read that the handover's table omits:
 | Name | Used by | Notes |
 |---|---|---|
 | `FREE_SECRET` | `free-reading.mjs` | signs the per visitor free reading cookie |
-| `STRIPE_API_BASE` | `checkout.mjs`, `reading.mjs`, `orders.mjs` | overrides the Stripe host, for tests |
+| `STRIPE_API_BASE` | `checkout.mjs`, `reading.mjs`, `orders.mjs` | overrides the Stripe host, for tests. `reading.mjs` and `orders.mjs` hard coded the host until this was fixed, so only checkout was ever testable |
 
 ## Working on it
 
@@ -58,6 +58,7 @@ npm run qa             # all four checks
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
 | `qa:dashes` | rule 4, no dashes reach the screen |
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
+| `qa:stripe` | the paid path end to end against a Stripe stand in: the request shape, the three tiers, what checkout refuses, the payment check, the held tiers and the owner token, the order book, and that a generated reading survives the metadata cache whole. No network, no account, no charges |
 
 The `/api/*` paths need `netlify dev` or a deployed site. The pages render without them.
 
@@ -77,6 +78,33 @@ Drawing rather than scanning is what keeps the deck at 42 KB with no requests.
 The handover's section 8 warns that scanned art is where the bandwidth budget
 goes wrong: 3 to 5 MB for the deck, and 40 GB if ten thousand people view it in
 full. None of that applies here.
+
+## Paying
+
+Stripe is called over its REST API with plain `fetch` and form encoding, so
+there is still no npm dependency anywhere. Three tiers, priced by how long the
+buyer waits: 48 hours for 9 €, 6 hours for 19 €, now for 29 €. There is no
+database: the Checkout Session carries the order in its metadata, the generated
+reading is written back into that same metadata, and `orders.mjs` reads the
+session list back as the order book.
+
+`npm run qa:stripe` exercises all of it against a stand in. To try it for real,
+set `STRIPE_SECRET_KEY` to an `sk_test_…` key, deploy, and open `/api/diag?token=…`,
+which creates a real Checkout Session, writes metadata to it, expires it, and
+reports what happened.
+
+**Before taking real money, make one test mode purchase all the way through.**
+Two things only that proves:
+
+1. **The account is activated.** A valid key still fails checkout if Stripe has
+   not activated the account, and only a real attempt finds that out.
+2. **Metadata is writable on a completed session.** The reading cache depends on
+   it. `/api/diag` can only prove the key may write metadata to an *open*
+   session; the completed case is reached only by paying. If it turns out not to
+   be allowed, the cache silently fails and every reload of the success page
+   generates and bills a fresh reading. `reading.mjs` now logs that loudly
+   (`READING CACHE FAILED`) instead of swallowing it, so it will be visible in
+   the Netlify function log.
 
 ## The ledger
 
@@ -123,12 +151,36 @@ output, so parts of it are still absent.
 * An unclosed `</a>` in `index.html` that nested the fourth menu card inside the
   third.
 
+**Fixed in the paid path**
+
+* **The reading cache truncated.** It held eight metadata keys of 490
+  characters, 3,920 in all, while the paid prompt asks for 700 to 900 words,
+  which runs past 4,200 in English and further in German. The visitor's first
+  view was whole because it is returned directly; every later view served the
+  cached copy, cut off mid sentence. The cache now holds twenty keys, 9,800
+  characters, still well inside Stripe's limit of 50 keys. See
+  `netlify/functions/lib/cache.mjs`.
+* **The order book lost old orders.** It read one page of 50 sessions, and
+  Stripe counts abandoned ones, so a run of people who opened checkout and left
+  pushed paid orders off the review desk. It now walks the pages.
+* **Only `checkout.mjs` honoured `STRIPE_API_BASE`.** `reading.mjs` and
+  `orders.mjs` hard coded `api.stripe.com`, so neither could be tested. Both
+  now read the same variable, which is what `qa:stripe` runs against.
+
 **Still open, and a decision rather than a fix**
 
 * **The legal pages carry placeholders.** `js/legal.js` still contains
   `[street address]` and an unfilled VAT line. Austrian ECG §5 requires a real
   postal address before the site takes real money. This is the one thing on this
   list that blocks going live.
+* **No VAT handling.** Selling a digital service to consumers in the EU puts VAT
+  where the buyer is, and prices are shown as flat euro amounts with nothing
+  said about tax. Stripe Tax would handle it and costs a percentage. This is an
+  accounting decision, not a code one, but it has to be made before invoicing.
+* **No webhook**, as the handover says. If the buyer closes the tab before the
+  success page loads, the instant tier reading is not generated then. Nothing is
+  lost, it generates whenever that URL is opened and the order shows on the
+  review desk, but nobody is told.
 * `galleta.html` keeps its own cookie streak, separate from the ledger's days
   kept. The labels now say which is which, but two streaks is still two streaks.
 

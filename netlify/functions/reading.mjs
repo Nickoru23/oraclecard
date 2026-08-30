@@ -4,6 +4,9 @@
 
 import { DECK } from './lib/deck-data.mjs';
 import { write, PAID_MODELS } from './lib/writer.mjs';
+import { joinCached, cacheBody } from './lib/cache.mjs';
+
+const API = (process.env.STRIPE_API_BASE || 'https://api.stripe.com/v1').replace(/\/$/, '');
 
 const POS = {
   es: ['La situación tal como es', 'Lo que la sostiene', 'Lo que estorba',
@@ -135,7 +138,7 @@ function parseDraws(s, lang) {
 }
 
 async function stripe(path, key, body) {
-  const r = await fetch(`https://api.stripe.com/v1/${path}`, {
+  const r = await fetch(`${API}/${path}`, {
     method: body ? 'POST' : 'GET',
     headers: {
       Authorization: `Bearer ${key}`,
@@ -172,7 +175,7 @@ export default async function handler(req) {
     const owner = process.env.OWNER_TOKEN
       && new URL(req.url).searchParams.get('token') === process.env.OWNER_TOKEN;
     if ((m.tier === 'slow' || m.tier === 'fast') && !owner) {
-      const cached = [m.r0, m.r1, m.r2, m.r3, m.r4, m.r5, m.r6, m.r7].filter(Boolean).join('');
+      const cached = joinCached(m);
       if (m.sent !== '1' || !cached) {
         return json({ held: true, tier: m.tier, due: m.due || null, name: m.name || '' });
       }
@@ -184,7 +187,7 @@ export default async function handler(req) {
     const shape = d => ({ id: d.id, rev: d.rev, pos: d.pos });
 
     /* already generated, serve the cached copy, bill nothing */
-    const cached = [m.r0, m.r1, m.r2, m.r3, m.r4, m.r5, m.r6, m.r7].filter(Boolean).join('');
+    const cached = joinCached(m);
     if (cached) return json({ reading: cached, draws: draws.map(shape) });
 
     if (!akey) return json({ error: 'not_configured' }, 500);
@@ -229,15 +232,16 @@ export default async function handler(req) {
     if (!w.text) return json({ error: 'writer_unavailable', reason: w.reason }, 502);
     const reading = w.text;
 
-    /* cache into session metadata (500 chars per key) so a refresh is free */
+    /* Cache into the session metadata so a refresh never bills a second
+       generation. A failure here is not fatal to this request, the visitor has
+       their reading, but it does mean the next visit pays to write it again, so
+       it is logged loudly rather than swallowed. */
     try {
-      const chunks = reading.match(/[\s\S]{1,490}/g).slice(0, 8);
-      const body = new URLSearchParams();
-      chunks.forEach((c, i) => body.append(`metadata[r${i}]`, c));
-      ['name', 'birth', 'sex', 'lang', 'draws', 'q1', 'q2', 'tier', 'due', 'sent', 'sign', 'degree']
-        .forEach(k => m[k] !== undefined && body.append(`metadata[${k}]`, m[k]));
-      await stripe(`checkout/sessions/${sid}`, skey, body.toString());
-    } catch (e) { console.error('cache failed', e.message); }
+      await stripe(`checkout/sessions/${sid}`, skey, cacheBody(reading, m).toString());
+    } catch (e) {
+      console.error('READING CACHE FAILED, the next visit to this session will '
+        + 'generate and bill again:', e.code || '', e.message);
+    }
 
     /* optional: email a copy, only if Resend is configured */
     if (process.env.RESEND_API_KEY && s.customer_details?.email) {

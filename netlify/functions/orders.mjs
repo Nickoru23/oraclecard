@@ -9,6 +9,10 @@
    exist at all, which is the right default for something that lists customer
    questions and email addresses. */
 
+import { isWritten } from './lib/cache.mjs';
+
+const API = (process.env.STRIPE_API_BASE || 'https://api.stripe.com/v1').replace(/\/$/, '');
+
 const json = (b, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { 'content-type': 'application/json' } });
 
@@ -22,7 +26,7 @@ function same(a, b) {
 }
 
 async function stripe(path, key, body) {
-  const r = await fetch(`https://api.stripe.com/v1/${path}`, {
+  const r = await fetch(`${API}/${path}`, {
     method: body ? 'POST' : 'GET',
     headers: {
       Authorization: `Bearer ${key}`,
@@ -57,12 +61,24 @@ export default async function handler(req) {
       return json({ ok: true });
     }
 
-    const j = await stripe('checkout/sessions?limit=50', skey);
-    const orders = (j.data || [])
+    /* Stripe lists sessions newest first and counts the abandoned ones, so a
+       single page of 50 quietly drops older paid orders behind a run of people
+       who opened checkout and left. Walk the pages instead. */
+    const sessions = [];
+    let after = '';
+    for (let page = 0; page < 10; page++) {
+      const j = await stripe(`checkout/sessions?limit=100${after ? `&starting_after=${after}` : ''}`, skey);
+      const batch = j.data || [];
+      sessions.push(...batch);
+      if (!j.has_more || !batch.length) break;
+      after = batch[batch.length - 1].id;
+    }
+
+    const orders = sessions
       .filter(s => s.payment_status === 'paid')
       .map(s => {
         const m = s.metadata || {};
-        const written = [m.r0, m.r1, m.r2, m.r3, m.r4, m.r5, m.r6, m.r7].filter(Boolean).length > 0;
+        const written = isWritten(m);
         return {
           id: s.id,
           created: s.created,
