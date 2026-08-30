@@ -111,9 +111,7 @@
 </div></footer>
 
 <script src="/js/deck.js"></script>
-<script src="/js/photos.js"></script>
-<script src="/js/art.js"></script>
-<script src="/js/art2.js"></script>
+<script src="/js/art-marseille.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/astro.js"></script>
 <script src="/js/zodiac.js"></script>
@@ -215,6 +213,7 @@ window.initHoroscope = function () {
       location.hash = '';
       show(null);
     });
+    if (window.Ritual) window.Ritual.mark('card');
   }
 
   function show(id) {
@@ -239,6 +238,8 @@ window.initHoroscope = function () {
 document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 <script src="/js/app.js"></script>
+<script src="/js/ritual.js"></script>
+<script src="/js/ledger.js"></script>
 <script src="/js/ornament.js"></script>
 <script src="/js/notice.js"></script>
 </body>

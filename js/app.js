@@ -17,6 +17,7 @@
   if (!window.T[LANG]) LANG = 'es';
   const t = k => window.T[LANG][k];
   window.getLang = () => LANG;
+  window.t = t;   /* the ledger and the page scripts letter their own copy */
 
   function applyLang() {
     document.documentElement.lang = LANG;
@@ -29,7 +30,10 @@
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
     document.dispatchEvent(new CustomEvent('langchange'));
   }
-  window.setLang = function (l) { LANG = l; store.set('umbral.lang', l); applyLang(); };
+  window.setLang = function (l) {
+    LANG = l; store.set('umbral.lang', l); applyLang();
+    if (window.Ritual) window.Ritual.langSeen(l);
+  };
 
   /* ---------- drawing ---------- */
   function rnd(n) {
@@ -222,6 +226,7 @@
       window.renderPicker(host, s.n, t(s.pos), { yesno: s.yesno });
       btn.textContent = t('again');
       host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (window.Ritual) window.Ritual.spreadLaid(cur);
     }
     tabs.addEventListener('click', e => {
       const b = e.target.closest('.tab'); if (!b) return;
@@ -232,16 +237,6 @@
     document.addEventListener('langchange', () => { paintTabs(); host.innerHTML = ''; btn.textContent = t('draw'); });
     paintTabs();
   };
-
-  /* photographer credit, as Unsplash's API guidelines ask for */
-  function photoCredit(id) {
-    const p = window.UMBRAL_ART === 'photo' && window.PHOTOS ? window.PHOTOS[id] : null;
-    if (!p) return '';
-    return `<p class="small muted" style="margin-top:1.4em">${t('photo_by')}
-      <a href="${p.u}" target="_blank" rel="noopener">${p.by}</a> ${t('photo_on')}
-      <a href="${p.h}" target="_blank" rel="noopener">Unsplash</a></p>`;
-  }
-  window.photoCredit = photoCredit;
 
   /* ---------- deck browser ---------- */
   window.initDeckBrowser = function () {
@@ -266,8 +261,7 @@
          <h4>${t('upright')}</h4><p>${c.up[LANG]}</p>
          <h4>${t('rev_h')}</h4><p>${c.rev[LANG]}</p>
          ${c.love ? `<h4>${t('in_love')}</h4><p>${c.love[LANG]}</p>
-                     <h4>${t('in_work')}</h4><p>${c.work[LANG]}</p>` : ''}
-         ${photoCredit(c.id)}`;
+                     <h4>${t('in_work')}</h4><p>${c.work[LANG]}</p>` : ''}`;
       dlg.showModal();
     });
     document.getElementById('deck-filters')?.addEventListener('click', e => {
@@ -282,32 +276,8 @@
     paint();
   };
 
-  /* ---------- photo probe ----------
-     The card faces are photographs served from Unsplash. Where they cannot be
-     reached — an offline viewer, a blocked host, a strict embedding context —
-     the deck falls back to its drawn line faces instead of showing empty cards. */
-  function probePhotos() {
-    return new Promise(resolve => {
-      const any = window.PHOTOS && Object.values(window.PHOTOS)[0];
-      if (!any) { window.UMBRAL_ART = 'line'; return resolve(); }
-      let settled = false;
-      const done = mode => {
-        if (settled) return;
-        settled = true;
-        window.UMBRAL_ART = mode;
-        resolve();
-      };
-      window.UMBRAL_ART = 'line'; return done('line'); /* illustrated deck is the default */
-      const img = new Image();
-      img.onload  = () => done('photo');
-      img.onerror = () => done('line');
-      img.src = any.s.replace(/w=\d+/, 'w=32').replace(/h=\d+/, 'h=54');
-      setTimeout(() => done('line'), 2500);
-    });
-  }
-
   /* ---------- boot ---------- */
-  document.addEventListener('DOMContentLoaded', async () => {
+  document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.lang')?.addEventListener('click', e => {
       const b = e.target.closest('button'); if (b) window.setLang(b.dataset.lang);
     });
@@ -332,8 +302,7 @@
          is not navigating, so the panel stays open and simply repaints */
     }
     applyLang();
-    await probePhotos();
-    document.documentElement.dataset.art = window.UMBRAL_ART;
+    if (window.Ritual) window.Ritual.langSeen(LANG);
     window.initSpreads();
     window.initDeckBrowser();
     window.initReadingForm?.();

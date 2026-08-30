@@ -167,9 +167,7 @@
 </div></footer>
 
 <script src="/js/deck.js"></script>
-<script src="/js/photos.js"></script>
-<script src="/js/art.js"></script>
-<script src="/js/art2.js"></script>
+<script src="/js/art-marseille.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/astro.js"></script>
 <script>
@@ -262,6 +260,7 @@ window.initFree = function () {
                   j.left === 1 ? S.free_left_1 : S.free_left.replace('{n}', j.left)}</p>`
               : '');
         upsell.hidden = false;
+        if (window.Ritual) window.Ritual.mark('ask');
       })
       .catch(e => {
         panel.innerHTML = `<p class="err" style="margin:0">${
@@ -316,6 +315,8 @@ window.initFree = function () {
 document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 <script src="/js/app.js"></script>
+<script src="/js/ritual.js"></script>
+<script src="/js/ledger.js"></script>
 <script src="/js/ornament.js"></script>
 <script src="/js/notice.js"></script>
 </body>

@@ -1,0 +1,17 @@
+{
+  "name": "the-witch-atelier",
+  "private": true,
+  "description": "A trilingual tarot atelier. No build step, no runtime dependencies, nothing loaded from third parties.",
+  "type": "module",
+  "scripts": {
+    "serve": "node scripts/serve.mjs",
+    "qa": "npm run qa:pages && npm run qa:i18n && npm run qa:dashes && npm run qa:ritual",
+    "qa:pages": "node scripts/qa-pages.mjs",
+    "qa:i18n": "node scripts/qa-i18n.mjs",
+    "qa:dashes": "node scripts/qa-dashes.mjs",
+    "qa:ritual": "node scripts/qa-ritual.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
