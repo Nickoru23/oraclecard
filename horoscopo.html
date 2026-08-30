@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Horóscopo diario · The Witch Atelier</title>
+<meta name="description" content="El horóscopo del día repartido con cartas: tres para cada signo, una de amor, una de trabajo y una del día. Gratis y sin registro.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  .signs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+  .sign{border:1px solid var(--line);border-radius:14px;padding:18px 12px;text-align:center;
+        background:transparent;color:inherit;font:inherit;cursor:pointer;transition:.18s}
+  .sign:hover,.sign:focus-visible{border-color:var(--gold);background:rgba(140,94,32,.10)}
+  .sign .glyph{display:block;width:52px;margin:0 auto}
+  .sign .glyph svg,.hd .glyph svg{width:100%;height:auto;display:block}
+  .sign .nm{display:block;margin-top:6px;color:var(--bone);font-size:.95rem}
+  .sign .rg{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
+  .hd{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .hd .glyph{width:64px;flex:0 0 64px}
+  .hd h2{margin:0;font-size:1.9rem}
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:30px 0 10px}
+  .slot{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--ink-2)}
+  .slot .art{max-width:170px;margin:0 auto 14px}
+  .slot .art svg{width:100%;height:auto;display:block;border-radius:8px}
+  .slot h3{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+  .slot .cn{color:var(--bone);margin:0 0 8px;font-size:1.05rem}
+  .slot p{margin:0;font-size:.93rem;line-height:1.6;color:var(--muted)}
+  .slot .lead{color:var(--bone);margin-bottom:8px}
+  .sky{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:20px 0 0;
+       max-width:520px;background:var(--ink-2)}
+  .sky-h{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}
+  .sky-l{margin:0;color:var(--bone);font-size:.95rem;line-height:1.6}
+  .sky-n{margin:9px 0 0;font-size:.78rem;color:var(--muted);line-height:1.5}
+  .hor-sky{font-size:.97rem;line-height:1.7;color:var(--muted);margin:14px 0 0;max-width:62ch}
+  .hor-open{font-size:1.05rem;line-height:1.7;color:var(--bone);margin:22px 0 0;max-width:62ch}
+  .hor-close{font-size:.95rem;line-height:1.7;color:var(--muted);margin:22px 0 0;max-width:62ch;
+             border-left:2px solid var(--gold);padding-left:16px}
+  .facts{display:flex;flex-wrap:wrap;gap:26px;margin:26px 0 0;padding-top:20px;border-top:1px solid var(--line)}
+  .fact{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .fact b{display:block;margin-top:5px;font-size:1.15rem;letter-spacing:0;text-transform:none;color:var(--bone);font-weight:400}
+  .swatch{display:inline-block;width:13px;height:13px;border-radius:3px;margin-right:7px;vertical-align:-1px;
+          border:1px solid rgba(38,32,24,.35)}
+  .kwrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .kwrow span{border:1px solid var(--line);border-radius:999px;padding:3px 11px;font-size:.8rem;color:var(--bone)}
+  @media(max-width:860px){.slots{grid-template-columns:1fr;gap:16px}
+    .slot{display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:start}
+    .slot .art{max-width:110px;margin:0}
+    .slot .txt{min-width:0}}
+  @media(max-width:600px){.signs{grid-template-columns:repeat(3,1fr);gap:10px}}
+  @media(max-width:380px){.signs{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.1 1.8c-.6 0-1.2.5-1.6 1.4C10.4 6 9.2 9.4 8.4 12.5h8.4c-.5-3.2-1.3-6.8-2-9.3-.3-.9-.9-1.4-1.7-1.4Z" fill="#241F18"/><path d="M2.6 14.6c0-1.2 2.4-2.1 5.6-2.3h8.2c3.3.2 5.6 1.1 5.6 2.3 0 1.4-3.2 2.2-7.4 2.4h-4.6c-4.2-.2-7.4-1-7.4-2.4Z" fill="#241F18"/><path d="M8.2 13.4h8.8v1.5H8.1z" fill="#8C5E20"/><path d="M19.9 2.2l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" fill="#8C5E20"/></svg>
+    The Witch Atelier</a>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false"
+            aria-controls="site-menu" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  <nav id="site-menu">
+    <a href="/galleta.html" data-t="nav_cookie"></a>
+    <a href="/horoscopo.html" data-t="nav_horoscopo"></a>
+    <a href="/consulta.html" data-t="nav_consulta"></a>
+    <a href="/lectura.html" data-t="nav_reading"></a>
+    <a href="/#baraja" class="hide-sm" data-t="nav_deck"></a>
+    <span class="lang">
+      <button data-lang="es" aria-pressed="true">ES</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="de" aria-pressed="false">DE</button>
+    </span>
+  </nav>
+</div></header>
+
+<section><div class="wrap">
+  <p class="eyebrow" data-t="hor_eyebrow"></p>
+  <h1 data-banner style="font-size:clamp(1.7rem,4.4vw,2.6rem)" data-t="hor_h1"></h1>
+  <p class="lede" data-t="hor_lede"></p>
+  <p class="small muted" id="hor-date"></p>
+  <div class="sky" id="sky"></div>
+
+  <div id="hor-list">
+    <p class="eyebrow" style="margin-top:34px" data-t="hor_pick"></p>
+    <div class="signs" id="signs"></div>
+  </div>
+
+  <div id="hor-one" hidden></div>
+
+  <p class="notice" style="margin-top:34px" data-t="hor_note"></p>
+
+  <div class="panel cta-panel" style="margin-top:34px">
+    <div>
+      <h3 style="margin:0 0 .3em" data-t="hor_cta"></h3>
+      <p class="lede" style="margin:0" data-t="free_welcome_p"></p>
+    </div>
+    <a class="btn btn-gold btn-lg" href="/consulta.html" data-t="cta_consulta"></a>
+  </div>
+</div></section>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; <span id="yr"></span> The Witch Atelier</span>
+  <nav>
+    <a href="/aviso-legal.html" data-t="footer_legal"></a>
+    <a href="/privacidad.html" data-t="footer_privacy"></a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/creditos.html" data-t="credits_nav"></a>
+  </nav>
+</div></footer>
+
+<script src="/js/deck.js"></script>
+<script src="/js/photos.js"></script>
+<script src="/js/art.js"></script>
+<script src="/js/art2.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/astro.js"></script>
+<script src="/js/zodiac.js"></script>
+<script src="/js/horoscope.js"></script>
+<script>
+window.initHoroscope = function () {
+  const H = window.HOROSCOPE, T = window.T;
+  const lang = () => window.getLang();
+  const list = document.getElementById('hor-list');
+  const one  = document.getElementById('hor-one');
+  const grid = document.getElementById('signs');
+  const dateEl = document.getElementById('hor-date');
+  if (!grid) return;
+
+  const s = () => T[lang()];
+  const A = window.ASTRO;
+  const YEAR = new Date().getFullYear();
+  const short = m => s().months[m].slice(0, 3);
+  const dm = d => `${d.getUTCDate()} ${short(d.getUTCMonth())}`;
+  /* the dates the Sun actually enters and leaves each sign this year, computed
+     rather than copied, which is why they shift by a day from year to year */
+  const RANGES = {};
+  H.SIGNS.forEach((sg, i) => {
+    const r = A.signDates(i, YEAR);
+    RANGES[sg.id] = r;
+  });
+  const range = sg => `${dm(RANGES[sg.id].start)} ${s().range_to} ${dm(RANGES[sg.id].end)}`;
+
+  function paintDate() {
+    const d = new Date();
+    const txt = `${d.getDate()} ${s().months[d.getMonth()]} ${d.getFullYear()}`;
+    dateEl.textContent = s().hor_today.replace('{d}', txt);
+  }
+
+  /* where the Sun and the Moon actually are, right now */
+  function paintSky() {
+    const L = s(), k = A.sky();
+    document.getElementById('sky').innerHTML = `
+      <p class="sky-h">${L.sky_h}</p>
+      <p class="sky-l">${L.sky_sun.replace('{s}', L[k.sun.id]).replace('{d}', Math.floor(k.sun.degree) + '°')}</p>
+      <p class="sky-l">${L.sky_moon
+          .replace('{s}', L[k.moon.id])
+          .replace('{p}', L['ph_' + k.phase.phase])
+          .replace('{pct}', Math.round(k.phase.illumination * 100))}</p>
+      <p class="sky-n">${L.sky_note}</p>`;
+    return k;
+  }
+
+  function paintGrid() {
+    grid.innerHTML = H.SIGNS.map(sg => `
+      <button type="button" class="sign" data-sign="${sg.id}">
+        <span class="glyph">${window.signSVG(sg.id, { label: s()[sg.id] })}</span>
+        <span class="nm">${s()[sg.id]}</span>
+        <span class="rg">${range(sg)}</span>
+      </button>`).join('');
+  }
+
+  function paintSign(id) {
+    const sg = H.SIGNS.find(x => x.id === id);
+    if (!sg) return show(null);
+    const r = H.forSign(sg.id);
+    const L = s();
+    const k = A.sky();
+    const label = { love: L.hor_love, work: L.hor_work, day: L.hor_day };
+    one.innerHTML = `
+      <p style="margin:30px 0 0"><button type="button" class="btn btn-ghost" id="hor-back">${L.hor_back}</button></p>
+      <div class="hd" style="margin-top:26px">
+        <span class="glyph">${window.signSVG(sg.id, { label: L[sg.id] })}</span>
+        <div><h2>${L[sg.id]}</h2><p class="small muted" style="margin:2px 0 0">${range(sg)}</p></div>
+      </div>
+      <p class="hor-open">${H.frame(lang(), 'open', r.open, {
+        sign: L[sg.id], trait: H.trait(lang(), sg.id), card: r.cards[2].card.name[lang()],
+      })}</p>
+      <p class="hor-sky">${
+        k.sun.id === sg.id ? L.season_yes : L.season_no.replace('{s}', L[k.sun.id])
+      } ${L['moon_' + k.phase.phase]}</p>
+      <div class="slots">
+        ${r.cards.map(({ slot, card, v }) => `
+          <div class="slot">
+            <div class="art">${window.cardSVG(card, lang())}</div>
+            <div class="txt">
+              <h3>${label[slot]}</h3>
+              <p class="cn">${card.name[lang()]}</p>
+              <p class="lead">${H.frame(lang(), slot, v, { card: card.name[lang()] })}</p>
+              <p>${H.slotText(slot, card, lang())}</p>
+            </div>
+          </div>`).join('')}
+      </div>
+      <p class="hor-close">${H.frame(lang(), 'close', r.close)}</p>
+      <div class="facts">
+        <div class="fact">${L.hor_kw}
+          <div class="kwrow">${r.cards[2].card.kw[lang()].slice(0, 3).map(k => `<span>${k}</span>`).join('')}</div>
+        </div>
+        <div class="fact">${L.hor_number}<b>${r.number}</b></div>
+        <div class="fact">${L.hor_colour}
+          <b><span class="swatch" style="background:${r.colour.hex}"></span>${L[r.colour.k]}</b></div>
+      </div>`;
+    one.querySelector('#hor-back').addEventListener('click', () => {
+      location.hash = '';
+      show(null);
+    });
+  }
+
+  function show(id) {
+    if (id) { paintSign(id); one.hidden = false; list.hidden = true; }
+    else { one.hidden = true; one.innerHTML = ''; list.hidden = false; }
+  }
+
+  function fromHash() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    show(H.SIGNS.some(x => x.id === id) ? id : null);
+  }
+
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('.sign'); if (!b) return;
+    location.hash = b.dataset.sign;
+  });
+  window.addEventListener('hashchange', fromHash);
+  document.addEventListener('langchange', () => { paintDate(); paintSky(); paintGrid(); fromHash(); });
+
+  paintDate(); paintSky(); paintGrid(); fromHash();
+};
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+<script src="/js/app.js"></script>
+<script src="/js/ornament.js"></script>
+<script src="/js/notice.js"></script>
+</body>
+</html>

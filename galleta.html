@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Galleta de la fortuna · The Witch Atelier</title>
+<meta name="description" content="Una galleta de la fortuna al día. Gratis, sin registro, y una carta dentro.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  .cookie-stage{display:grid;place-items:center;padding:26px 0 10px;min-height:270px}
+  .cookie-btn{background:none;border:0;padding:0;cursor:pointer;width:min(320px,80vw);
+              display:block;filter:drop-shadow(0 14px 18px rgba(40,32,20,.22))}
+  .cookie-btn svg{width:100%;height:auto;display:block;overflow:visible}
+  .cookie-btn:disabled{cursor:default}
+  .half{transition:transform .75s cubic-bezier(.22,1,.36,1)}
+  .is-open .half-l{transform:translate(-34px,10px) rotate(-16deg)}
+  .is-open .half-r{transform:translate(34px,10px) rotate(16deg)}
+  .slip{opacity:0;transform:translateY(6px) scaleY(.4);transform-origin:50% 100%;
+        transition:opacity .5s ease .35s,transform .6s cubic-bezier(.22,1,.36,1) .3s}
+  .is-open .slip{opacity:1;transform:none}
+  .cookie-btn:not(:disabled):hover svg{animation:wiggle .5s ease}
+  @keyframes wiggle{25%{transform:rotate(-2.5deg)}75%{transform:rotate(2.5deg)}}
+
+  .tap{text-align:center;color:var(--muted);font-size:.9rem;margin:2px 0 0}
+  .fortune{max-width:30ch;margin:26px auto 0;text-align:center;font-family:var(--serif,Georgia,serif);
+           font-size:clamp(1.25rem,4.2vw,1.7rem);line-height:1.45;color:var(--bone);
+           opacity:0;transform:translateY(10px);transition:opacity .6s ease .55s,transform .6s ease .55s}
+  .fortune.in{opacity:1;transform:none}
+  .cookie-card{max-width:340px;margin:30px auto 0;text-align:center;
+               opacity:0;transition:opacity .6s ease .9s}
+  .cookie-card.in{opacity:1}
+  .cookie-card .art{width:150px;margin:12px auto 0}
+  .cookie-card .art svg{width:100%;height:auto;display:block;border-radius:8px}
+  .cookie-card h3{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0}
+  .cookie-card .nm{color:var(--bone);margin:10px 0 0}
+  .cookie-card p.mean{color:var(--muted);font-size:.92rem;line-height:1.6;margin:8px 0 0}
+  .streak{display:flex;justify-content:center;gap:26px;margin:34px 0 0;padding-top:22px;
+          border-top:1px solid var(--line);flex-wrap:wrap}
+  .streak div{text-align:center;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .streak b{display:block;font-size:1.6rem;letter-spacing:0;text-transform:none;color:var(--gold);font-weight:400;margin-top:4px}
+  .after{text-align:center;margin:28px 0 0}
+  .after .btn{margin:6px 5px 0}
+  .tomorrow{text-align:center;color:var(--muted);font-size:.88rem;margin:22px 0 0}
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.1 1.8c-.6 0-1.2.5-1.6 1.4C10.4 6 9.2 9.4 8.4 12.5h8.4c-.5-3.2-1.3-6.8-2-9.3-.3-.9-.9-1.4-1.7-1.4Z" fill="#241F18"/><path d="M2.6 14.6c0-1.2 2.4-2.1 5.6-2.3h8.2c3.3.2 5.6 1.1 5.6 2.3 0 1.4-3.2 2.2-7.4 2.4h-4.6c-4.2-.2-7.4-1-7.4-2.4Z" fill="#241F18"/><path d="M8.2 13.4h8.8v1.5H8.1z" fill="#8C5E20"/><path d="M19.9 2.2l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" fill="#8C5E20"/></svg>
+    The Witch Atelier</a>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false"
+            aria-controls="site-menu" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  <nav id="site-menu">
+    <a href="/galleta.html" data-t="nav_cookie"></a>
+    <a href="/horoscopo.html" data-t="nav_horoscopo"></a>
+    <a href="/consulta.html" data-t="nav_consulta"></a>
+    <a href="/lectura.html" data-t="nav_reading"></a>
+    <a href="/#baraja" class="hide-sm" data-t="nav_deck"></a>
+    <span class="lang">
+      <button data-lang="es" aria-pressed="true">ES</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="de" aria-pressed="false">DE</button>
+    </span>
+  </nav>
+</div></header>
+
+<section><div class="wrap">
+  <p class="eyebrow center" data-t="ck_eyebrow"></p>
+  <h1 data-banner style="font-size:clamp(1.7rem,4.6vw,2.5rem);margin-bottom:.2em" data-t="ck_h1"></h1>
+  <p class="lede center" style="margin:0 auto" data-t="ck_lede"></p>
+
+  <div class="cookie-stage">
+    <button type="button" class="cookie-btn" id="cookie" aria-describedby="tap">
+      <svg viewBox="0 0 220 150" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="ck" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#EFD9A6"/><stop offset="1" stop-color="#CDA95F"/>
+          </linearGradient>
+          <linearGradient id="ck2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#E2C68B"/><stop offset="1" stop-color="#B8944C"/>
+          </linearGradient>
+        </defs>
+        <g class="slip">
+          <rect x="80" y="20" width="60" height="76" rx="3" fill="#FBF7EE" stroke="#241F18" stroke-width="1.6"/>
+          <rect x="86" y="36" width="48" height="2.6" rx="1.3" fill="#C9A227" opacity=".55"/>
+          <rect x="86" y="48" width="40" height="2.6" rx="1.3" fill="#16314F" opacity=".28"/>
+          <rect x="86" y="60" width="46" height="2.6" rx="1.3" fill="#16314F" opacity=".28"/>
+          <rect x="86" y="72" width="34" height="2.6" rx="1.3" fill="#16314F" opacity=".28"/>
+        </g>
+        <g class="half half-l">
+          <path d="M110 60C70 34 30 50 30 90c0 26 30 36 58 26 14-4 22-12 22-20Z" fill="url(#ck)" stroke="#241F18" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M110 62C92 74 78 92 46 96" fill="none" stroke="#241F18" stroke-width="1.6" stroke-opacity=".5"
+                stroke-linecap="round" opacity=".5"/>
+          <path d="M60 60c-12 6-18 16-18 28" fill="none" stroke="#FBF3DE" stroke-width="3"
+                stroke-linecap="round" opacity=".5"/>
+        </g>
+        <g class="half half-r">
+          <path d="M110 60c40-26 80-10 80 30 0 26-30 36-58 26-14-4-22-12-22-20Z" fill="url(#ck2)" stroke="#241F18" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M110 62c18 12 32 30 64 34" fill="none" stroke="#241F18" stroke-width="1.6" stroke-opacity=".45"
+                stroke-linecap="round" opacity=".5"/>
+          <path d="M160 60c12 6 18 16 18 28" fill="none" stroke="#FBF3DE" stroke-width="3"
+                stroke-linecap="round" opacity=".35"/>
+        </g>
+      </svg>
+    </button>
+  </div>
+  <p class="tap" id="tap" data-t="ck_tap"></p>
+
+  <p class="fortune" id="fortune"></p>
+
+  <div class="cookie-card" id="ck-card" hidden>
+    <h3 id="ck-card-h"></h3>
+    <div class="art" id="ck-art"></div>
+    <p class="nm" id="ck-name"></p>
+    <p class="mean" id="ck-mean"></p>
+  </div>
+
+  <div class="after" id="after" hidden>
+    <p class="tomorrow" id="tomorrow"></p>
+    <a class="btn btn-ghost" href="/consulta.html" data-t="ck_ask"></a>
+    <a class="btn btn-gold" href="/lectura.html" data-t="ck_full"></a>
+    <p><button type="button" class="btn btn-ghost" id="share" data-t="ck_share"></button></p>
+  </div>
+
+  <div class="streak" id="streak" hidden>
+    <div><span data-t="ck_streak"></span><b id="s-streak">0</b></div>
+    <div><span data-t="ck_total"></span><b id="s-total">0</b></div>
+  </div>
+</div></section>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; <span id="yr"></span> The Witch Atelier</span>
+  <nav>
+    <a href="/aviso-legal.html" data-t="footer_legal"></a>
+    <a href="/privacidad.html" data-t="footer_privacy"></a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/creditos.html" data-t="credits_nav"></a>
+  </nav>
+</div></footer>
+
+<script src="/js/deck.js"></script>
+<script src="/js/photos.js"></script>
+<script src="/js/art.js"></script>
+<script src="/js/art2.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/fortunes.js"></script>
+<script>
+window.initCookie = function () {
+  const C = window.COOKIE, T = window.T;
+  const lang = () => window.getLang();
+  const btn = document.getElementById('cookie');
+  const stage = btn.parentElement;
+  const fortuneEl = document.getElementById('fortune');
+  const cardBox = document.getElementById('ck-card');
+  const after = document.getElementById('after');
+  const streak = document.getElementById('streak');
+  const tap = document.getElementById('tap');
+  if (!btn) return;
+
+  let opened = false;
+
+  function paintCard(c) {
+    const L = T[lang()];
+    document.getElementById('ck-card-h').textContent = c.label;
+    document.getElementById('ck-art').innerHTML = window.cardSVG(c.card, lang());
+    document.getElementById('ck-name').textContent = c.card.name[lang()];
+    document.getElementById('ck-mean').textContent = c.card.up[lang()];
+    document.getElementById('tomorrow').textContent = L.ck_tomorrow;
+  }
+
+  function paintStreak() {
+    const s = C.state();
+    document.getElementById('s-streak').textContent = s.streak || 0;
+    document.getElementById('s-total').textContent = s.total || 0;
+    streak.hidden = !(s.total > 0);
+  }
+
+  /* the whole point is that it only opens once a day: reopening the page after
+     cracking it shows the same fortune already out of its shell */
+  function reveal(instant) {
+    const c = C.todaysCookie(lang());
+    opened = true;
+    btn.disabled = true;
+    stage.classList.add('is-open');
+    fortuneEl.textContent = c.fortune;
+    paintCard(c);
+    cardBox.hidden = false;
+    after.hidden = false;
+    tap.textContent = '';
+    if (instant) {
+      fortuneEl.style.transition = 'none';
+      cardBox.style.transition = 'none';
+    }
+    requestAnimationFrame(() => {
+      fortuneEl.classList.add('in');
+      cardBox.classList.add('in');
+    });
+    paintStreak();
+  }
+
+  btn.addEventListener('click', () => {
+    if (opened) return;
+    C.markOpened();
+    reveal(false);
+  });
+
+  document.getElementById('share').addEventListener('click', async () => {
+    const c = C.todaysCookie(lang());
+    const text = `${c.fortune}\n\n${c.label}: ${c.card.name[lang()]}\nthewitchatelier.com`;
+    const L = T[lang()];
+    try {
+      if (navigator.share) await navigator.share({ text });
+      else { await navigator.clipboard.writeText(text); alert(L.ck_copied); }
+    } catch (e) { /* the visitor cancelled, which is not an error */ }
+  });
+
+  document.addEventListener('langchange', () => {
+    if (opened) {
+      const c = C.todaysCookie(lang());
+      fortuneEl.textContent = c.fortune;
+      paintCard(c);
+    }
+  });
+
+  if (C.openedToday()) reveal(true);
+  paintStreak();
+};
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+<script src="/js/app.js"></script>
+<script src="/js/ornament.js"></script>
+<script src="/js/notice.js"></script>
+</body>
+</html>

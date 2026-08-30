@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consulta gratuita · The Witch Atelier</title>
+<meta name="description" content="Una consulta de tarot gratis: escribe tu pregunta, elige una o dos cartas y recibe una lectura escrita para ti. Sin registro.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  .formcard{border:1px solid var(--line);border-radius:18px;padding:30px;
+            background:var(--ink-2);margin-top:26px;max-width:720px}
+  .welcome{text-align:center;margin-bottom:28px}
+  .welcome h2{font-size:1.5rem;margin:0 0 .5em}
+  .welcome p{color:var(--muted);margin:0;line-height:1.65}
+  .badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);
+         border-radius:999px;padding:4px 14px;font-size:.75rem;letter-spacing:.1em;
+         text-transform:uppercase;margin-bottom:18px}
+  /* the card count is a choice, not a dropdown. it is the first decision */
+  .picks{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px}
+  .pick{border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;
+        background:transparent;color:inherit;cursor:pointer;font:inherit}
+  .pick strong{display:block;color:var(--bone);margin-bottom:4px}
+  .pick span{font-size:.84rem;color:var(--muted);line-height:1.45}
+  .pick[aria-pressed=true]{border-color:var(--gold);background:rgba(140,94,32,.11)}
+  .row3{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px}
+  .row3 label{font-size:.72rem;letter-spacing:.08em}
+  .note{font-size:.85rem;color:var(--bone);margin:0 0 12px;line-height:1.55}
+  .note b{color:var(--gold);font-weight:600}
+  .qwarn{border-left:2px solid var(--gold);padding:2px 0 2px 16px;margin:30px 0 14px;
+         font-size:.92rem;line-height:1.65;color:var(--bone)}
+  #f-q{min-height:180px;font-size:1.02rem}
+  .qmeta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
+         font-size:.78rem;color:var(--muted);margin:-8px 0 22px}
+  .qmeta.is-ok{color:var(--gold)}
+  .btn-block{width:100%;text-align:center}
+  .more{border:1px solid var(--line);border-radius:12px;padding:0 16px;margin:0 0 22px}
+  .more summary{cursor:pointer;padding:14px 0;color:var(--bone);font-size:.95rem;list-style:none}
+  .more summary::-webkit-details-marker{display:none}
+  .more summary::after{content:'+';float:right;color:var(--gold);font-size:1.2rem;line-height:1}
+  .more[open] summary::after{content:'\2212'}
+  .more .inner{padding-bottom:6px}
+  .why{border-left:2px solid var(--gold);padding:2px 0 2px 16px;margin:26px 0 0}
+  .why h3{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+  .why p{font-size:.88rem;line-height:1.6;color:var(--muted);margin:0 0 9px}
+  .why b{color:var(--bone);font-weight:400}
+  .opt{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:8px}
+  .explore{border:1px solid var(--line);border-radius:16px;padding:22px;margin:34px 0 0;
+           background:var(--ink-2);max-width:720px}
+  .explore h3{margin:0 0 .3em;font-size:1.15rem}
+  .explore p{margin:0 0 14px;color:var(--muted);font-size:.93rem;line-height:1.6}
+  .err{color:var(--rose);font-size:.9rem;margin:-8px 0 14px}
+  .upsell{margin-top:46px}
+  @media(max-width:480px){
+    .formcard{padding:20px 16px;border-radius:14px}
+    .row3.picks{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.1 1.8c-.6 0-1.2.5-1.6 1.4C10.4 6 9.2 9.4 8.4 12.5h8.4c-.5-3.2-1.3-6.8-2-9.3-.3-.9-.9-1.4-1.7-1.4Z" fill="#241F18"/><path d="M2.6 14.6c0-1.2 2.4-2.1 5.6-2.3h8.2c3.3.2 5.6 1.1 5.6 2.3 0 1.4-3.2 2.2-7.4 2.4h-4.6c-4.2-.2-7.4-1-7.4-2.4Z" fill="#241F18"/><path d="M8.2 13.4h8.8v1.5H8.1z" fill="#8C5E20"/><path d="M19.9 2.2l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" fill="#8C5E20"/></svg>
+    The Witch Atelier</a>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false"
+            aria-controls="site-menu" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  <nav id="site-menu">
+    <a href="/galleta.html" data-t="nav_cookie"></a>
+    <a href="/horoscopo.html" data-t="nav_horoscopo"></a>
+    <a href="/consulta.html" data-t="nav_consulta"></a>
+    <a href="/lectura.html" data-t="nav_reading"></a>
+    <a href="/#baraja" class="hide-sm" data-t="nav_deck"></a>
+    <span class="lang">
+      <button data-lang="es" aria-pressed="true">ES</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="de" aria-pressed="false">DE</button>
+    </span>
+  </nav>
+</div></header>
+
+<section><div class="wrap">
+  <p class="eyebrow" data-t="free_eyebrow"></p>
+  <h1 style="font-size:clamp(2rem,5vw,3rem)" data-t="free_h1"></h1>
+  <p><span class="badge" data-t="free_badge"></span></p>
+
+  <form id="free-form" class="formcard" novalidate>
+    <div class="welcome">
+      <h2 data-t="free_welcome_h"></h2>
+      <p data-t="free_welcome_p"></p>
+    </div>
+
+    <p class="det-h eyebrow" data-t="cards_h"></p>
+    <div class="picks" id="picks">
+      <button type="button" class="pick" data-n="1" aria-pressed="true">
+        <strong data-t="one_card"></strong><span data-t="one_card_d"></span></button>
+      <button type="button" class="pick" data-n="2" aria-pressed="false">
+        <strong data-t="two_cards"></strong><span data-t="two_cards_d"></span></button>
+    </div>
+
+    <label for="f-name" data-t="f_name"></label>
+    <input id="f-name" name="name" type="text" autocomplete="given-name" maxlength="60" required>
+
+    <details class="more">
+      <summary><span data-t="more_precise"></span></summary>
+      <div class="inner">
+        <p class="field-hint" style="margin:0 0 16px" data-t="more_precise_d"></p>
+
+        <label for="f-sex"><span data-t="f_sex"></span><span class="opt" data-t="optional"></span></label>
+        <select id="f-sex" name="sex"></select>
+
+        <p class="note"><b data-t="f_birth"></b>, <span data-t="f_birth_note"></span></p>
+        <div class="row3">
+          <div><label for="b-d" data-t="f_day"></label><select id="b-d"></select></div>
+          <div><label for="b-m" data-t="f_month"></label><select id="b-m"></select></div>
+          <div><label for="b-y" data-t="f_year"></label><select id="b-y"></select></div>
+        </div>
+      </div>
+    </details>
+
+    <p class="qwarn" data-t="q_warn"></p>
+    <textarea id="f-q" name="question" maxlength="900" required data-tph="f_q_ph"></textarea>
+    <p class="qmeta" id="qmeta">
+      <span><span class="counter" id="wc">0</span> <span data-t="words"></span> · <span data-t="min_words"></span></span>
+      <span><span class="counter" id="cc">0</span>/900 <span data-t="chars"></span></span>
+    </p>
+
+    <div class="why">
+      <h3 data-t="why_h"></h3>
+      <p data-t="why_name" data-thtml="1"></p>
+      <p data-t="why_birth" data-thtml="1"></p>
+      <p data-t="why_sex" data-thtml="1"></p>
+      <p><a href="/privacidad.html" data-t="why_more"></a></p>
+    </div>
+
+    <p class="err" id="form-err" hidden></p>
+    <button class="btn btn-gold btn-lg btn-block" id="go-btn" type="submit" data-t="free_draw"></button>
+  </form>
+
+  <div class="explore">
+    <h3 data-t="explore_h"></h3>
+    <p data-t="explore_d"></p>
+    <a class="btn btn-ghost" href="/#baraja" data-t="explore_cta"></a>
+    <a class="btn btn-ghost" href="/galleta.html" data-t="nav_cookie"></a>
+  </div>
+
+  <div id="free-out"></div>
+
+  <div class="panel upsell" id="upsell" hidden>
+    <h3 data-t="upsell_h"></h3>
+    <p data-t="upsell_p"></p>
+    <p><a class="btn btn-gold" href="/lectura.html" data-t="upsell_cta"></a>
+       <button type="button" class="btn btn-ghost" id="again-btn" data-t="free_again"></button></p>
+  </div>
+</div></section>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; <span id="yr"></span> The Witch Atelier</span>
+  <nav>
+    <a href="/aviso-legal.html" data-t="footer_legal"></a>
+    <a href="/privacidad.html" data-t="footer_privacy"></a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/creditos.html" data-t="credits_nav"></a>
+  </nav>
+</div></footer>
+
+<script src="/js/deck.js"></script>
+<script src="/js/photos.js"></script>
+<script src="/js/art.js"></script>
+<script src="/js/art2.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/astro.js"></script>
+<script>
+window.initFree = function () {
+  const T = window.T, lang = () => window.getLang();
+  const form = document.getElementById('free-form');
+  const err  = document.getElementById('form-err');
+  const btn  = document.getElementById('go-btn');
+  const q    = document.getElementById('f-q');
+  const cc   = document.getElementById('cc');
+  const wc   = document.getElementById('wc');
+  const qmeta = document.getElementById('qmeta');
+  const host = document.getElementById('free-out');
+  const upsell = document.getElementById('upsell');
+  const bd = document.getElementById('b-d'), bm = document.getElementById('b-m');
+  const by = document.getElementById('b-y'), sex = document.getElementById('f-sex');
+  let count = 1;
+
+  const opts = (el, list, values) => {
+    const keep = el.value;
+    el.innerHTML = `<option value="" disabled selected>${T[lang()].choose}</option>` +
+      list.map((o, i) => `<option value="${values ? values[i] : i + 1}">${o}</option>`).join('');
+    if (keep) el.value = keep;
+  };
+  const thisYear = new Date().getFullYear();
+  const years = []; for (let y = thisYear - 16; y >= 1925; y--) years.push(y);
+  opts(bd, Array.from({ length: 31 }, (_, i) => i + 1));
+  opts(by, years, years);
+
+  function paint() {
+    const s = T[lang()];
+    opts(bm, s.months);
+    opts(sex, s.f_sex_opts, ['f', 'm', 'x', '-']);
+  }
+  document.addEventListener('langchange', paint);
+  paint();
+
+  function trimDays() {
+    if (!bm.value) return;
+    const y = Number(by.value) || 2000, m = Number(bm.value);
+    const max = new Date(y, m, 0).getDate();
+    const want = Number(bd.value);
+    if (bd.options.length !== max + 1) opts(bd, Array.from({ length: max }, (_, i) => i + 1));
+    bd.value = want ? String(Math.min(want, max)) : '';
+  }
+  bm.addEventListener('change', trimDays);
+  by.addEventListener('change', trimDays);
+  const pad = n => String(n).padStart(2, '0');
+  const birthISO = () => bd.value && bm.value && by.value
+    ? `${by.value}-${pad(bm.value)}-${pad(bd.value)}` : '';
+
+  document.getElementById('picks').addEventListener('click', e => {
+    const b = e.target.closest('.pick'); if (!b) return;
+    count = Number(b.dataset.n);
+    document.querySelectorAll('.pick').forEach(x =>
+      x.setAttribute('aria-pressed', String(Number(x.dataset.n) === count)));
+  });
+
+  const words = t => (t.trim().match(/\S+/g) || []).length;
+  function meter() {
+    const n = words(q.value);
+    wc.textContent = n; cc.textContent = q.value.length;
+    qmeta.classList.toggle('is-ok', n >= 20 && q.value.trim().length >= 80);
+  }
+  q.addEventListener('input', meter); meter();
+
+  /* the reading arrives after the cards are turned: the panel renderSpread
+     would have filled with dictionary meanings is handed over instead */
+  function reader(panel, draws, payload) {
+    const S = T[lang()];
+    panel.innerHTML = `<p class="center muted"><span class="spin"></span>${S.writing}</p>`;
+    fetch('/api/free', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        ...payload, lang: lang(),
+        draws: draws.map(d => `${d.card.id}${d.rev ? 'R' : ''}`).join(','),
+      }),
+    })
+      .then(async r => {
+        let j = {}; try { j = await r.json(); } catch (_) {}
+        if (r.status === 404 || j.error === 'writer_not_configured')
+          throw Object.assign(new Error('off'), { msg: S.err_off });
+        if (r.status === 429 || j.error === 'free_limit')
+          throw Object.assign(new Error('limit'), { msg: S.err_limit });
+        if (!r.ok || !j.reading) throw Object.assign(new Error('writer'), { msg: S.err_writer });
+        panel.innerHTML = j.reading.split('\n').filter(Boolean)
+          .map(l => l.startsWith('## ') ? `<h2>${l.slice(3)}</h2>` : `<p>${l}</p>`).join('')
+          + (j.left > 0
+              ? `<p class="small muted" style="margin-top:1.8em">${
+                  j.left === 1 ? S.free_left_1 : S.free_left.replace('{n}', j.left)}</p>`
+              : '');
+        upsell.hidden = false;
+      })
+      .catch(e => {
+        panel.innerHTML = `<p class="err" style="margin:0">${
+          e.msg || (e.name === 'TypeError' ? S.err_net : S.err_writer)}</p>`;
+        upsell.hidden = false;
+      });
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    err.hidden = true;
+    const S = T[lang()];
+    const fd = Object.fromEntries(new FormData(form));
+    fd.birth = birthISO();
+    const partial = [bd.value, bm.value, by.value].filter(Boolean).length;
+    if (partial && partial < 3) {
+      err.textContent = S.err_birth; err.hidden = false;
+      document.querySelector('.more').open = true; bd.focus(); return;
+    }
+    if (!fd.name?.trim()) { err.textContent = S.err; err.hidden = false; return; }
+    const qt = (fd.question || '').trim();
+    if (words(qt) < 20 || qt.length < 80) {
+      err.textContent = S.err_words; err.hidden = false;
+      q.focus(); q.scrollIntoView({ block: 'center', behavior: 'smooth' }); return;
+    }
+
+    const sun = fd.birth
+      ? window.ASTRO.signOfDate(Number(by.value), Number(bm.value), Number(bd.value))
+      : null;
+    const payload = {
+      name: fd.name.trim(), sex: fd.sex || '-', birth: fd.birth, question: qt,
+      sign: sun ? sun.id : '', degree: sun ? Math.floor(sun.degree) : '',
+    };
+    const positions = S[count === 1 ? 'pos_free1' : 'pos_free2'];
+    form.hidden = true;
+    upsell.hidden = true;
+    window.renderPicker(host, count, positions, {
+      onDone: (chosen, result) =>
+        window.renderSpread(result, chosen, positions, {
+          reader: (panel, draws) => reader(panel, draws, payload),
+        }),
+    });
+    host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  document.getElementById('again-btn').addEventListener('click', () => {
+    host.innerHTML = ''; upsell.hidden = true; form.hidden = false;
+    q.value = ''; meter();
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+};
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+<script src="/js/app.js"></script>
+<script src="/js/ornament.js"></script>
+<script src="/js/notice.js"></script>
+</body>
+</html>

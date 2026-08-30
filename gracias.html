@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tu lectura · The Witch Atelier</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  #spread{--cw:118px}
+  #spread .card-slot{--cw:118px}
+  .out h2{font-family:var(--serif);color:var(--gold);font-size:1.5rem;margin:1.8em 0 .35em}
+  .out h2:first-child{margin-top:0}
+  .out p{color:var(--bone-dim);max-width:66ch}
+  .stage{text-align:center;padding:64px 0}
+  .pulse{width:44px;height:44px;margin:0 auto 20px;border-radius:50%;
+    border:1px solid var(--gold);animation:pl 1.7s ease-in-out infinite}
+  @keyframes pl{0%,100%{transform:scale(.8);opacity:.35}50%{transform:scale(1.12);opacity:1}}
+  @media print{
+    body{background:#fff;color:#111}
+    header.site,footer.site,.noprint{display:none!important}
+    .out h2{color:#7a5c14}.out p{color:#222}
+    .card .back{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.1 1.8c-.6 0-1.2.5-1.6 1.4C10.4 6 9.2 9.4 8.4 12.5h8.4c-.5-3.2-1.3-6.8-2-9.3-.3-.9-.9-1.4-1.7-1.4Z" fill="#241F18"/><path d="M2.6 14.6c0-1.2 2.4-2.1 5.6-2.3h8.2c3.3.2 5.6 1.1 5.6 2.3 0 1.4-3.2 2.2-7.4 2.4h-4.6c-4.2-.2-7.4-1-7.4-2.4Z" fill="#241F18"/><path d="M8.2 13.4h8.8v1.5H8.1z" fill="#8C5E20"/><path d="M19.9 2.2l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" fill="#8C5E20"/></svg>
+    The Witch Atelier</a>
+</div></header>
+
+<section><div class="wrap narrow">
+  <div id="stage" class="stage">
+    <div class="pulse"></div>
+    <p class="eyebrow" id="stage-t"></p>
+    <p class="muted small" id="stage-n"></p>
+  </div>
+
+  <div id="result" hidden>
+    <p class="eyebrow" data-t="ready_h"></p>
+    <div class="deck" id="spread" style="margin:8px 0 40px"></div>
+    <div class="out" id="out"></div>
+    <div class="noprint" style="margin-top:40px;display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="print()" data-t="print"></button>
+      <a class="btn btn-ghost" href="/" data-t="nav_free"></a>
+    </div>
+  </div>
+</div></section>
+
+<footer class="site"><div class="wrap">
+  <span class="small" data-t="disclaimer"></span>
+  <nav>
+    <a href="/aviso-legal.html" data-t="footer_legal"></a>
+    <a href="/privacidad.html" data-t="footer_privacy"></a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/creditos.html" data-t="credits_nav"></a>
+  </nav>
+</div></footer>
+
+<script src="/js/deck.js"></script>
+<script src="/js/photos.js"></script>
+<script src="/js/art.js"></script>
+<script src="/js/art2.js"></script>
+<script src="/js/i18n.js"></script>
+<script>
+(async function () {
+  const p = new URLSearchParams(location.search);
+  const sid = p.get('session_id');
+  const q = p.get('lang');
+  let stored = null;
+  try { stored = localStorage.getItem('umbral.lang'); } catch (e) {}
+  const lang = ['es', 'en', 'de'].includes(q) ? q
+    : ['es', 'en', 'de'].includes(stored) ? stored
+    : (navigator.language || 'es').slice(0, 2).toLowerCase() === 'de' ? 'de'
+    : (navigator.language || 'es').slice(0, 2).toLowerCase() === 'en' ? 'en' : 'es';
+  const S = window.T[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = S[el.dataset.t]; });
+
+  const stage = document.getElementById('stage');
+  document.getElementById('stage-t').textContent = S.drawing;
+  document.getElementById('stage-n').textContent = S.writing_note;
+
+  if (!sid) { location.replace('/lectura.html'); return; }
+  setTimeout(() => { document.getElementById('stage-t').textContent = S.writing; }, 2600);
+
+  try {
+    const r = await fetch('/api/reading?session_id=' + encodeURIComponent(sid)
+      + '&lang=' + lang + (p.get('d') ? '&d=' + encodeURIComponent(p.get('d')) : ''));
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'failed');
+
+    /* the two slower tiers are held for a person to read: this page becomes a
+       receipt with a deadline rather than a reading */
+    if (j.held) {
+      const due = j.due ? new Date(j.due) : null;
+      stage.innerHTML =
+        `<h1 style="font-size:clamp(1.7rem,4.4vw,2.4rem);margin-bottom:.35em">${S.held_h}</h1>` +
+        `<p class="lede">${S.held_p.replace('{when}', due ? due.toLocaleString() : '')}</p>` +
+        `<p class="small muted">${S.held_note}</p>` +
+        `<p><a class="btn btn-ghost" href="/galleta.html">${S.ck_h1}</a> ` +
+        `<a class="btn btn-ghost" href="/horoscopo.html">${S.nav_horoscopo}</a></p>`;
+      return;
+    }
+
+    document.getElementById('spread').innerHTML = j.draws.map(d => {
+      const c = window.DECK.find(x => x.id === d.id);
+      return `<div class="card-slot"><div class="card flipped">
+        <div class="face front${d.rev ? ' rev' : ''}">${window.cardSVG(c, lang)}</div></div>
+        <div class="card-name">${c.name[lang]}${d.rev ? `<span class="rv">${S.reversed}</span>` : ''}</div></div>`;
+    }).join('');
+
+    document.getElementById('out').innerHTML = j.reading
+      .split('\n').filter(Boolean)
+      .map(l => l.startsWith('## ') ? `<h2>${l.slice(3)}</h2>` : `<p>${l}</p>`).join('');
+
+    stage.hidden = true;
+    document.getElementById('result').hidden = false;
+  } catch (e) {
+    stage.innerHTML = `<p class="lede">${S.err}</p>
+      <p class="small muted">ref: ${sid.slice(-12)}</p>`;
+  }
+})();
+</script>
+<script src="/js/notice.js"></script>
+</body>
+</html>

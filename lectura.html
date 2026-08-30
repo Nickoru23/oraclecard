@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lectura personalizada · The Witch Atelier</title>
+<meta name="description" content="Una lectura de tarot escrita entera sobre tu pregunta concreta. Cinco cartas, 700-900 palabras, al instante.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  .two{display:grid;grid-template-columns:1.15fr .85fr;gap:38px;align-items:start}
+  @media(max-width:900px){.two{grid-template-columns:1fr;gap:26px}.sticky{position:static}}
+  .sticky{position:sticky;top:88px}
+  .err{color:var(--rose);font-size:.9rem;margin:-8px 0 14px}
+
+  /* the question is the product, it gets the room, and everything the
+     visitor needs to answer it well sits inside the same frame */
+  /* one card, the way losarcanos does it: the visitor never wonders what
+     belongs to what, and the question is plainly the centre of it */
+  .formcard{border:1px solid var(--line);border-radius:18px;padding:30px;
+            background:var(--ink-2);margin-top:26px}
+  .welcome{text-align:center;margin-bottom:30px}
+  .welcome h2{font-size:1.5rem;margin:0 0 .5em}
+  .welcome p{color:var(--muted);margin:0;line-height:1.65}
+  .row3{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px}
+  .row3 label{font-size:.72rem;letter-spacing:.08em}
+  .note{font-size:.85rem;color:var(--bone);margin:0 0 12px;line-height:1.55}
+  .note b{color:var(--gold);font-weight:600}
+  /* the guidance that actually earns the money, loud on purpose */
+  .qwarn{border-left:2px solid var(--gold);padding:2px 0 2px 16px;margin:30px 0 14px;
+         font-size:.92rem;line-height:1.65;color:var(--bone)}
+  #f-q{min-height:200px;font-size:1.02rem}
+  .qmeta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
+         font-size:.78rem;color:var(--muted);margin:-8px 0 22px}
+  .qmeta.is-ok{color:var(--gold)}
+  .btn-block{width:100%;text-align:center}
+  /* the price is a choice about time, so it is laid out as three offers */
+  .tiers{display:grid;gap:12px;margin:6px 0 26px}
+  .tier{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;
+        border:1px solid var(--line);border-radius:14px;padding:16px;background:transparent;
+        color:inherit;font:inherit;text-align:left;cursor:pointer;transition:.18s;width:100%}
+  .tier:hover{border-color:var(--gold)}
+  .tier[aria-pressed=true]{border-color:var(--gold);background:rgba(140,94,32,.11)}
+  .tier .dot{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--muted);margin-top:3px}
+  .tier[aria-pressed=true] .dot{border-color:var(--gold);box-shadow:inset 0 0 0 4px var(--gold)}
+  .tier b{display:block;color:var(--bone);font-weight:400;font-size:1.02rem}
+  .tier span{display:block;color:var(--muted);font-size:.86rem;line-height:1.5;margin-top:3px}
+  .tier .price{color:var(--gold);font-size:1.5rem;white-space:nowrap}
+  .tier-note{font-size:.84rem;color:var(--muted);margin:-14px 0 26px;line-height:1.55}
+  /* the optional half of the form, folded away until wanted */
+  .more{border:1px solid var(--line);border-radius:12px;padding:0 16px;margin:0 0 22px}
+  .more summary{cursor:pointer;padding:14px 0;color:var(--bone);font-size:.95rem;list-style:none}
+  .more summary::-webkit-details-marker{display:none}
+  .more summary::after{content:'+';float:right;color:var(--gold);font-size:1.2rem;line-height:1}
+  .more[open] summary::after{content:'\2212'}
+  .more .inner{padding-bottom:6px}
+  .why{border-left:2px solid var(--gold);padding:2px 0 2px 16px;margin:26px 0 0}
+  .why h3{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+  .why p{font-size:.88rem;line-height:1.6;color:var(--muted);margin:0 0 9px}
+  .why b{color:var(--bone);font-weight:400}
+  .opt{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:8px}
+  @media(max-width:480px){
+    .tier{grid-template-columns:auto 1fr;gap:10px}
+    .tier .price{grid-column:2;margin-top:6px}
+  }
+  @media(max-width:480px){
+    .formcard{padding:20px 16px;border-radius:14px}
+    .row3{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.1 1.8c-.6 0-1.2.5-1.6 1.4C10.4 6 9.2 9.4 8.4 12.5h8.4c-.5-3.2-1.3-6.8-2-9.3-.3-.9-.9-1.4-1.7-1.4Z" fill="#241F18"/><path d="M2.6 14.6c0-1.2 2.4-2.1 5.6-2.3h8.2c3.3.2 5.6 1.1 5.6 2.3 0 1.4-3.2 2.2-7.4 2.4h-4.6c-4.2-.2-7.4-1-7.4-2.4Z" fill="#241F18"/><path d="M8.2 13.4h8.8v1.5H8.1z" fill="#8C5E20"/><path d="M19.9 2.2l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" fill="#8C5E20"/></svg>
+    The Witch Atelier</a>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false"
+            aria-controls="site-menu" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  <nav id="site-menu">
+    <a href="/galleta.html" data-t="nav_cookie"></a>
+    <a href="/horoscopo.html" data-t="nav_horoscopo"></a>
+    <a href="/consulta.html" data-t="nav_consulta"></a>
+    <a href="/lectura.html" data-t="nav_reading"></a>
+    <a href="/#baraja" class="hide-sm" data-t="nav_deck"></a>
+    <span class="lang">
+      <button data-lang="es" aria-pressed="true">ES</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="de" aria-pressed="false">DE</button>
+    </span>
+  </nav>
+</div></header>
+
+<section><div class="wrap">
+  <div class="two">
+    <div>
+      <p class="eyebrow" data-t="paid_eyebrow"></p>
+      <h1 style="font-size:clamp(2rem,5vw,3rem)" data-t="paid_h1"></h1>
+      <form id="reading-form" class="formcard" novalidate>
+        <div class="welcome">
+          <h2 data-t="welcome_h"></h2>
+          <p data-t="welcome_p"></p>
+        </div>
+
+        <p class="det-h" data-t="tier_h"></p>
+        <div class="tiers" id="tiers">
+          <button type="button" class="tier" data-tier="slow" aria-pressed="false">
+            <span class="dot"></span>
+            <span><b data-t="tier_slow_t"></b><span data-t="tier_slow_d"></span></span>
+            <span class="price">9 €</span>
+          </button>
+          <button type="button" class="tier" data-tier="fast" aria-pressed="false">
+            <span class="dot"></span>
+            <span><b data-t="tier_fast_t"></b><span data-t="tier_fast_d"></span></span>
+            <span class="price">19 €</span>
+          </button>
+          <button type="button" class="tier" data-tier="now" aria-pressed="true">
+            <span class="dot"></span>
+            <span><b data-t="tier_now_t"></b><span data-t="tier_now_d"></span></span>
+            <span class="price">29 €</span>
+          </button>
+        </div>
+        <p class="tier-note" data-t="tier_note"></p>
+
+        <label for="f-name" data-t="f_name"></label>
+        <input id="f-name" name="name" type="text" autocomplete="given-name" maxlength="60" required>
+
+        <details class="more">
+          <summary><span data-t="more_precise"></span></summary>
+          <div class="inner">
+            <p class="field-hint" style="margin:0 0 16px" data-t="more_precise_d"></p>
+
+            <label for="f-sex"><span data-t="f_sex"></span><span class="opt" data-t="optional"></span></label>
+            <select id="f-sex" name="sex"></select>
+
+            <p class="note"><b data-t="f_birth"></b>, <span data-t="f_birth_note"></span></p>
+            <div class="row3">
+              <div><label for="b-d" data-t="f_day"></label><select id="b-d"></select></div>
+              <div><label for="b-m" data-t="f_month"></label><select id="b-m"></select></div>
+              <div><label for="b-y" data-t="f_year"></label><select id="b-y"></select></div>
+            </div>
+          </div>
+        </details>
+
+        <p class="qwarn" data-t="q_warn"></p>
+        <textarea id="f-q" name="question" maxlength="900" required data-tph="f_q_ph"></textarea>
+        <p class="qmeta" id="qmeta">
+          <span><span class="counter" id="wc">0</span> <span data-t="words"></span> · <span data-t="min_words"></span></span>
+          <span><span class="counter" id="cc">0</span>/900 <span data-t="chars"></span></span>
+        </p>
+
+        <label for="f-email" data-t="f_email"></label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+        <p class="field-hint" data-t="f_email_hint"></p>
+
+        <div class="why">
+          <h3 data-t="why_h"></h3>
+          <p data-t="why_name" data-thtml="1"></p>
+          <p data-t="why_birth" data-thtml="1"></p>
+          <p data-t="why_sex" data-thtml="1"></p>
+          <p data-t="why_email" data-thtml="1"></p>
+          <p><a href="/privacidad.html" data-t="why_more"></a></p>
+        </div>
+
+        <p class="err" id="form-err" hidden></p>
+        <button class="btn btn-gold btn-lg btn-block" id="pay-btn" type="submit" data-t="pay"></button>
+      </form>
+    </div>
+
+    <aside class="sticky">
+      <div class="panel">
+        <div class="price-row">
+          <span class="price" id="price">€14</span>
+          <span class="price-note" data-t="price_note"></span>
+        </div>
+        <h3 data-t="incl_h"></h3>
+        <ul class="check" id="incl"></ul>
+        <p class="notice" data-t="disclaimer"></p>
+      </div>
+    </aside>
+  </div>
+</div></section>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; <span id="yr"></span> The Witch Atelier</span>
+  <nav>
+    <a href="/aviso-legal.html" data-t="footer_legal"></a>
+    <a href="/privacidad.html" data-t="footer_privacy"></a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/creditos.html" data-t="credits_nav"></a>
+  </nav>
+</div></footer>
+
+<script src="/js/deck.js"></script>
+<script src="/js/photos.js"></script>
+<script src="/js/art.js"></script>
+<script src="/js/art2.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/astro.js"></script>
+<script>
+window.initReadingForm = function () {
+  const T = window.T, lang = () => window.getLang();
+  const form = document.getElementById('reading-form');
+  const err  = document.getElementById('form-err');
+  const btn  = document.getElementById('pay-btn');
+  const q    = document.getElementById('f-q');
+  const cc   = document.getElementById('cc');
+
+  const bd = document.getElementById('b-d');
+  const bm = document.getElementById('b-m');
+  const by = document.getElementById('b-y');
+  const sex = document.getElementById('f-sex');
+
+  /* three selects rather than <input type=date>: no locale guessing about
+     whether 08/06 is June or August, and no native picker to fight on mobile */
+  const opts = (el, list, values) => {
+    const keep = el.value;
+    el.innerHTML =
+      `<option value="" disabled selected>${T[lang()].choose}</option>` +
+      list.map((o, i) => `<option value="${values ? values[i] : i + 1}">${o}</option>`).join('');
+    if (keep) el.value = keep;
+  };
+  const thisYear = new Date().getFullYear();
+  const years = [];
+  for (let y = thisYear - 16; y >= 1925; y--) years.push(y);
+  opts(bd, Array.from({ length: 31 }, (_, i) => i + 1));
+  opts(by, years, years);
+
+  function paint() {
+    const s = T[lang()];
+    document.getElementById('incl').innerHTML = s.incl.map(i => `<li>${i}</li>`).join('');
+    opts(bm, s.months);
+    opts(sex, s.f_sex_opts, ['f', 'm', 'x', '-']);
+  }
+
+  /* 31 February is a slip, not an answer. trim the day list to the month */
+  function trimDays() {
+    if (!bm.value) return;
+    const y = Number(by.value) || 2000, m = Number(bm.value);
+    const max = new Date(y, m, 0).getDate();
+    const want = Number(bd.value);
+    if (bd.options.length !== max + 1)
+      opts(bd, Array.from({ length: max }, (_, i) => i + 1));
+    bd.value = want ? String(Math.min(want, max)) : '';
+  }
+  bm.addEventListener('change', trimDays);
+  by.addEventListener('change', trimDays);
+
+  const pad = n => String(n).padStart(2, '0');
+  const birthISO = () =>
+    bd.value && bm.value && by.value ? `${by.value}-${pad(bm.value)}-${pad(bd.value)}` : '';
+
+  /* which of the three offers is selected, and what the button then says */
+  let tier = 'now';
+  const PRICE = { slow: 9, fast: 19, now: 29 };
+  const tiersEl = document.getElementById('tiers');
+  function paintTier() {
+    tiersEl.querySelectorAll('.tier').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.tier === tier)));
+    btn.textContent = `${T[lang()].pay} · ${PRICE[tier]} €`;
+    /* the sidebar price is the price of what is actually selected */
+    const pe = document.getElementById('price');
+    if (pe) pe.textContent = `${PRICE[tier]} €`;
+  }
+  tiersEl.addEventListener('click', e => {
+    const b = e.target.closest('.tier'); if (!b) return;
+    tier = b.dataset.tier; paintTier();
+  });
+  document.addEventListener('langchange', paintTier);
+  document.addEventListener('langchange', paint);
+  paint();
+  paintTier();
+
+  const wc = document.getElementById('wc');
+  const qmeta = document.getElementById('qmeta');
+  const words = t => (t.trim().match(/\S+/g) || []).length;
+
+  function meter() {
+    const n = words(q.value);
+    wc.textContent = n;
+    cc.textContent = q.value.length;
+    /* goes gold the moment the answer is long enough to be worth reading */
+    qmeta.classList.toggle('is-ok', n >= 20 && q.value.trim().length >= 80);
+  }
+  q.addEventListener('input', meter);
+  meter();
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    err.hidden = true;
+    const fd = Object.fromEntries(new FormData(form));
+    fd.birth = birthISO();
+    const S0 = T[lang()];
+    /* the birth date is optional, but half a birth date is a mistake, not a
+       choice: only complain when some of it is filled in and some is not */
+    const partial = [bd.value, bm.value, by.value].filter(Boolean).length;
+    if (partial && partial < 3) {
+      err.textContent = S0.err_birth; err.hidden = false;
+      document.querySelector('.more').open = true; bd.focus(); return;
+    }
+    if (!fd.name?.trim() || !fd.email?.includes('@')) {
+      err.textContent = ', '; err.hidden = false; err.textContent = T[lang()].err; return;
+    }
+    const qt = (fd.question || '').trim();
+    if (words(qt) < 20 || qt.length < 80) {
+      err.textContent = T[lang()].err_words; err.hidden = false;
+      q.focus(); q.scrollIntoView({ block: 'center', behavior: 'smooth' }); return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spin"></span>${T[lang()].paying}`;
+    try {
+      const draws = window.drawCards(5).map(d => `${d.card.id}${d.rev ? 'R' : ''}`).join(',');
+      const sun = fd.birth
+        ? window.ASTRO.signOfDate(Number(by.value), Number(bm.value), Number(bd.value))
+        : null;
+      const r = await fetch('/api/checkout', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          ...fd, draws, lang: lang(), tier,
+          sign: sun ? sun.id : '', degree: sun ? Math.floor(sun.degree) : '',
+        }),
+      });
+
+      /* a 404 means the serverless functions were never deployed; a
+         stripe_not_configured means they are there but the key is missing.
+         Both are setup problems, not the visitor's fault. say so. */
+      if (r.status === 404) throw Object.assign(new Error('no_function'), { kind: 'off' });
+      let j = {};
+      try { j = await r.json(); } catch (_) { throw Object.assign(new Error('bad_json'), { kind: 'off' }); }
+      if (j.error === 'stripe_not_configured') throw Object.assign(new Error(j.error), { kind: 'off' });
+      if (j.error === 'stripe_error') throw Object.assign(new Error(j.error), { kind: 'pay' });
+      if (j.error === 'question_too_short') throw Object.assign(new Error(j.error), { kind: 'short' });
+      if (!r.ok || !j.url) throw new Error(j.error || 'checkout_failed');
+      location.href = j.url;
+    } catch (e2) {
+      const S = T[lang()];
+      err.textContent = e2.kind === 'off' ? S.err_off
+                      : e2.kind === 'pay' ? S.err_pay
+                      : e2.kind === 'short' ? S.err_words
+                      : e2.name === 'TypeError' ? S.err_net
+                      : S.err;
+      err.hidden = false;
+      btn.disabled = false; btn.textContent = S.pay;
+    }
+  });
+};
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+<script src="/js/app.js"></script>
+<script src="/js/ornament.js"></script>
+<script src="/js/notice.js"></script>
+</body>
+</html>

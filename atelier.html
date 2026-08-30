@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Review desk</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  .desk{max-width:900px}
+  .gate{max-width:420px}
+  .order{border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 14px;
+         background:var(--ink-2)}
+  .order.late{border-color:var(--rose)}
+  .order .top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;margin-bottom:10px}
+  .order .who{color:var(--bone);font-size:1.05rem}
+  .order .meta{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .order .due{color:var(--gold)}
+  .order .due.late{color:var(--rose)}
+  .order .q{color:var(--muted);font-size:.92rem;line-height:1.6;margin:0 0 14px;
+            border-left:2px solid var(--line);padding-left:14px}
+  .order .acts{display:flex;flex-wrap:wrap;gap:8px}
+  .order .acts .btn{margin:0}
+  .out{white-space:pre-wrap;background:var(--ink-2);border:1px solid var(--line);
+       border-radius:10px;padding:16px;margin-top:14px;font-size:.92rem;line-height:1.65;
+       color:var(--bone);max-height:420px;overflow:auto}
+  .empty{color:var(--muted)}
+  h2.sec{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+         margin:34px 0 14px}
+</style>
+</head>
+<body>
+
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.1 1.8c-.6 0-1.2.5-1.6 1.4C10.4 6 9.2 9.4 8.4 12.5h8.4c-.5-3.2-1.3-6.8-2-9.3-.3-.9-.9-1.4-1.7-1.4Z" fill="#241F18"/><path d="M2.6 14.6c0-1.2 2.4-2.1 5.6-2.3h8.2c3.3.2 5.6 1.1 5.6 2.3 0 1.4-3.2 2.2-7.4 2.4h-4.6c-4.2-.2-7.4-1-7.4-2.4Z" fill="#241F18"/><path d="M8.2 13.4h8.8v1.5H8.1z" fill="#8C5E20"/><path d="M19.9 2.2l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" fill="#8C5E20"/></svg>
+    The Witch Atelier</a>
+</div></header>
+
+<section><div class="wrap desk">
+  <p class="eyebrow">Review desk</p>
+  <h1 style="font-size:clamp(1.8rem,4vw,2.4rem)">Readings waiting for you</h1>
+
+  <div class="gate" id="gate">
+    <p class="lede">The two slower tiers are held here until you read them and send them.</p>
+    <label for="tok">Owner token</label>
+    <input id="tok" type="password" autocomplete="off">
+    <p class="field-hint">Set OWNER_TOKEN in Netlify, then paste the same value here. It is kept in this browser only.</p>
+    <p class="err" id="err" hidden style="color:var(--rose)"></p>
+    <button class="btn btn-gold" id="go">Open the desk</button>
+  </div>
+
+  <div id="desk" hidden>
+    <p><button class="btn btn-ghost" id="refresh">Refresh</button>
+       <button class="btn btn-ghost" id="forget">Forget token</button></p>
+    <h2 class="sec">Waiting <span id="n-pending"></span></h2>
+    <div id="pending"></div>
+    <h2 class="sec">Recent</h2>
+    <div id="done"></div>
+  </div>
+</div></section>
+
+<script>
+(function () {
+  const KEY = 'umbral.owner';
+  const gate = document.getElementById('gate');
+  const desk = document.getElementById('desk');
+  const err = document.getElementById('err');
+  let token = '';
+  try { token = localStorage.getItem(KEY) || ''; } catch (e) {}
+
+  const esc = s => String(s == null ? '' : s)
+    .replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+
+  const TIER = { slow: '48 hours', fast: '6 hours', now: 'instant' };
+  const money = o => (o.amount / 100).toFixed(2) + ' ' + String(o.currency || 'eur').toUpperCase();
+  const when = t => t ? new Date(t).toLocaleString() : 'unknown';
+
+  function card(o, isPending) {
+    const late = o.due && new Date(o.due) < new Date();
+    return `<div class="order${isPending && late ? ' late' : ''}" data-id="${esc(o.id)}">
+      <div class="top">
+        <span class="who">${esc(o.name) || 'no name'} · ${esc(o.email) || 'no email'}</span>
+        <span class="meta">${TIER[o.tier] || o.tier} · ${money(o)} · ${esc(o.lang)}</span>
+        ${o.due ? `<span class="meta due${late ? ' late' : ''}">due ${when(o.due)}</span>` : ''}
+        ${o.sent ? '<span class="meta">sent</span>' : ''}
+      </div>
+      <p class="q">${esc(o.question).slice(0, 420) || 'no question stored'}</p>
+      <div class="acts">
+        <button class="btn btn-ghost" data-act="read">${o.written ? 'Show the reading' : 'Write the reading'}</button>
+        <button class="btn btn-ghost" data-act="copy" hidden>Copy</button>
+        <a class="btn btn-ghost" data-act="mail" hidden target="_blank" rel="noopener">Open email</a>
+        ${o.sent ? '' : '<button class="btn btn-gold" data-act="sent">Mark as sent</button>'}
+      </div>
+      <div class="out" hidden></div>
+    </div>`;
+  }
+
+  async function load() {
+    const r = await fetch(`/api/orders?token=${encodeURIComponent(token)}`);
+    if (!r.ok) throw new Error(r.status === 404 ? 'Token rejected, or OWNER_TOKEN is not set on the site.' : 'Could not load orders.');
+    const j = await r.json();
+    document.getElementById('n-pending').textContent = j.pending.length ? `(${j.pending.length})` : '';
+    document.getElementById('pending').innerHTML =
+      j.pending.length ? j.pending.map(o => card(o, true)).join('') : '<p class="empty">Nothing waiting. Good.</p>';
+    document.getElementById('done').innerHTML =
+      j.done.length ? j.done.slice(0, 12).map(o => card(o, false)).join('') : '<p class="empty">No orders yet.</p>';
+  }
+
+  document.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const box = btn.closest('.order');
+    const id = box.dataset.id;
+    const out = box.querySelector('.out');
+
+    if (btn.dataset.act === 'read') {
+      btn.disabled = true; btn.textContent = 'Working…';
+      try {
+        const r = await fetch(`/api/reading?session_id=${encodeURIComponent(id)}&token=${encodeURIComponent(token)}`);
+        const j = await r.json();
+        if (!j.reading) throw new Error(j.error || 'no reading came back');
+        out.textContent = j.reading;
+        out.hidden = false;
+        box.querySelector('[data-act="copy"]').hidden = false;
+        const mail = box.querySelector('[data-act="mail"]');
+        const to = box.querySelector('.who').textContent.split('·').pop().trim();
+        mail.href = 'mailto:' + encodeURIComponent(to)
+          + '?subject=' + encodeURIComponent('Your reading from The Witch Atelier')
+          + '&body=' + encodeURIComponent(j.reading.slice(0, 1800));
+        mail.hidden = false;
+        btn.textContent = 'Show the reading';
+      } catch (e2) {
+        out.textContent = 'Could not write it: ' + e2.message;
+        out.hidden = false;
+        btn.textContent = 'Try again';
+      }
+      btn.disabled = false;
+    }
+
+    if (btn.dataset.act === 'copy') {
+      try { await navigator.clipboard.writeText(out.textContent); btn.textContent = 'Copied'; }
+      catch (e2) { btn.textContent = 'Copy failed'; }
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+    }
+
+    if (btn.dataset.act === 'sent') {
+      btn.disabled = true;
+      await fetch(`/api/orders?token=${encodeURIComponent(token)}`, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ session_id: id }),
+      });
+      await load();
+    }
+  });
+
+  async function open_() {
+    err.hidden = true;
+    try {
+      await load();
+      try { localStorage.setItem(KEY, token); } catch (e) {}
+      gate.hidden = true; desk.hidden = false;
+    } catch (e) {
+      err.textContent = e.message; err.hidden = false;
+    }
+  }
+
+  document.getElementById('go').addEventListener('click', () => {
+    token = document.getElementById('tok').value.trim();
+    if (token) open_();
+  });
+  document.getElementById('tok').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('go').click();
+  });
+  document.getElementById('refresh').addEventListener('click', load);
+  document.getElementById('forget').addEventListener('click', () => {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    location.reload();
+  });
+
+  if (token) open_();
+})();
+</script>
+</body>
+</html>
