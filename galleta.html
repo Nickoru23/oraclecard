@@ -151,13 +151,13 @@ window.initCookie = function () {
   const C = window.COOKIE, T = window.T;
   const lang = () => window.getLang();
   const btn = document.getElementById('cookie');
+  if (!btn) return;
   const stage = btn.parentElement;
   const fortuneEl = document.getElementById('fortune');
   const cardBox = document.getElementById('ck-card');
   const after = document.getElementById('after');
   const streak = document.getElementById('streak');
   const tap = document.getElementById('tap');
-  if (!btn) return;
 
   let opened = false;
 
