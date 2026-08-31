@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "serve": "node scripts/serve.mjs",
-    "qa": "npm run qa:pages && npm run qa:i18n && npm run qa:dashes && npm run qa:ritual && npm run qa:stripe",
+    "qa": "npm run qa:pages && npm run qa:i18n && npm run qa:dashes && npm run qa:ritual && npm run qa:stripe && npm run qa:cards",
     "qa:pages": "node scripts/qa-pages.mjs",
     "qa:i18n": "node scripts/qa-i18n.mjs",
     "qa:dashes": "node scripts/qa-dashes.mjs",
     "qa:ritual": "node scripts/qa-ritual.mjs",
-    "qa:stripe": "node scripts/qa-stripe.mjs"
+    "qa:stripe": "node scripts/qa-stripe.mjs",
+    "qa:cards": "node scripts/qa-cards.mjs",
+    "cards": "node scripts/build-cards.mjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"

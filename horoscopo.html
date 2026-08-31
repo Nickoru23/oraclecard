@@ -112,6 +112,7 @@
 
 <script src="/js/deck.js"></script>
 <script src="/js/art2.js"></script>
+<script src="/js/card-images.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/astro.js"></script>
 <script src="/js/zodiac.js"></script>
@@ -191,7 +192,7 @@ window.initHoroscope = function () {
       <div class="slots">
         ${r.cards.map(({ slot, card, v }) => `
           <div class="slot">
-            <div class="art">${window.cardSVG(card, lang())}</div>
+            <div class="art">${window.cardFace(card, lang(), 'sm')}</div>
             <div class="txt">
               <h3>${label[slot]}</h3>
               <p class="cn">${card.name[lang()]}</p>
@@ -238,6 +239,7 @@ window.initHoroscope = function () {
 document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 <script src="/js/app.js"></script>
+<script src="/js/card3d.js"></script>
 <script src="/js/ritual.js"></script>
 <script src="/js/ledger.js"></script>
 <script src="/js/ornament.js"></script>

@@ -58,9 +58,65 @@ npm run qa             # all four checks
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
 | `qa:dashes` | rule 4, no dashes reach the screen |
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
+| `qa:cards` | the cards as objects: they tilt toward the pointer and the rendered matrix really is 3D, a drag spins them and selects no text, a throw settles, arrow keys turn them, a drawn card still turns over. Then it makes its own pictures to check a card prefers one and falls back to its drawing when one is missing, and puts everything back |
 | `qa:stripe` | the paid path end to end against a Stripe stand in: the request shape, the three tiers, what checkout refuses, the payment check, the held tiers and the owner token, the order book, and that a generated reading survives the metadata cache whole. No network, no account, no charges |
 
 The `/api/*` paths need `netlify dev` or a deployed site. The pages render without them.
+
+## The cards
+
+Every card is an object, not a picture of one. `js/card3d.js` gives it:
+
+* **a tilt** toward the pointer, with a sheen that tracks across the face
+* **a turn**, front to back, on click or Enter
+* **a spin**, by dragging it on both axes, with momentum when you let go
+* **arrow keys**, so none of it needs a pointer, and Escape to bring it back
+
+The transform is composed out of custom properties rather than written whole,
+so a tilt and a flip and a thrown spin can all be true at once:
+
+```
+perspective(1100px) rotateX(--rx) rotateY(--ry + --flip) scale(--sc)
+```
+
+The perspective rides on the card itself rather than on whatever contains it,
+so it works the same in the grid, in a spread, in the picker fan and in the
+modal. **Any page level rule that sets `transform` on a card throws the
+rotation away**, which is a real trap: the custom property keeps changing and
+looks perfectly healthy while nothing moves. `qa:cards` reads the rendered
+matrix for exactly that reason. Under `prefers-reduced-motion` a card still
+turns over, because that is the point of it, but it stops tilting and drifting.
+
+## Illustrations
+
+The deck draws itself in SVG and always will: that is the fallback everything
+rests on, and it costs no requests. Pictures are an optional layer on top.
+
+```bash
+mkdir cards-src              # one file per card, named by card id
+#   m00.jpg  m01.png  w01.jpg  c14.webp  ...
+npm run cards                # -> cards/t (200px) and cards/f (600px), both WebP
+```
+
+`scripts/build-cards.mjs` converts them in the Chromium that Playwright already
+installs, so it adds no dependency, and writes the list of ids that have a
+picture into `js/card-images.js`. Everything on the site draws a card through
+`window.cardFace()`, so that one list is the only thing that has to know.
+
+Two sizes, and lazy loading, because of the sum in the handover's section 7: a
+4 MB deck viewed in full by ten thousand people is 40 GB against a 100 GB
+allowance. A card whose picture is missing or fails to load falls back to its
+drawing on its own, without taking the page down with it.
+
+The files are served from this site, never from someone else's, because rule 3
+is why there is no consent banner.
+
+**No illustrations are committed.** I could not fetch any: every image source
+worth using, Wikimedia Commons and Openverse and archive.org among them, is
+refused by this environment's egress proxy, the same way Gallica and Stripe
+are. The pipeline above is tested end to end against pictures the check makes
+for itself, so real ones should drop straight in. Rider Waite Smith 1909 is
+public domain in the EU and the handover's section 8 has the reasoning.
 
 ## The deck
 

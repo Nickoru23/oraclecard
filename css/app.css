@@ -280,14 +280,40 @@ header.site{
   border-color:transparent;color:#fff;box-shadow:var(--glow-violet)
 }
 
-/* ---------- the cards ---------- */
+/* ---------- the cards, as objects ----------
+   The transform is composed from custom properties, never written whole, so a
+   tilt, a flip and a thrown spin can all be true at once. js/card3d.js writes
+   --rx, --ry and --sc; the flip is the only one CSS owns. */
 .deck{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;align-items:flex-start}
+.is-3d{
+  /* the perspective rides on the element itself rather than on whatever
+     happens to contain it, so a card turns properly in the grid, in a spread,
+     in the picker fan and in the modal without each of those having to know */
+  transform:perspective(1100px)
+            rotateX(var(--rx,0deg)) rotateY(calc(var(--ry,0deg) + var(--flip,0deg))) scale(var(--sc,1));
+  transform-style:preserve-3d;
+  will-change:transform;
+  touch-action:pan-y;
+  user-select:none;-webkit-user-select:none
+}
+.is-3d.is-held{cursor:grabbing}
+/* the sheen: one highlight that tracks the pointer across the face */
+.has-sheen{position:relative}
+.has-sheen::after{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(60% 60% at var(--mx,50%) var(--my,50%),
+              rgba(214,200,255,.30), rgba(139,92,246,.10) 42%, transparent 72%);
+  opacity:0;transition:opacity .3s ease;mix-blend-mode:screen
+}
+.has-sheen:hover::after,.has-sheen:focus-visible::after,.has-sheen.is-held::after{opacity:1}
+
 .card{
-  width:var(--cw,168px);flex:none;cursor:pointer;
-  transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.1,.2,1);
+  width:var(--cw,168px);flex:none;cursor:grab;
+  transition:transform .55s cubic-bezier(.2,.9,.25,1);
   position:relative;aspect-ratio:2/3.4
 }
-.card.flipped{transform:rotateY(180deg)}
+.card.is-held{transition:none}
+.card.flipped{--flip:180deg}
 .card .face{
   position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r-sm);overflow:hidden;
   border:1px solid var(--line-2);
@@ -402,12 +428,19 @@ footer.site nav a:hover{color:var(--cyan-hi)}
   width:92px;flex:none;margin:0 -14px 16px;padding:0;border:0;background:none;cursor:pointer;
   border-radius:var(--r-sm);overflow:hidden;line-height:0;
   box-shadow:0 12px 26px -12px rgba(0,0,0,.9),0 0 22px -6px rgba(139,92,246,.4);
-  transform:rotate(calc((var(--i) - 10.5) * 0.9deg)) translateY(calc(abs(var(--i) - 10.5) * 0.7px));
-  transition:transform .22s ease,box-shadow .22s ease,opacity .4s ease
+  transform:perspective(900px)
+    rotate(calc((var(--i) - 10.5) * 0.9deg))
+    translateY(calc(abs(var(--i) - 10.5) * 0.7px))
+    rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));
+  transition:transform .3s cubic-bezier(.2,.9,.25,1),box-shadow .22s ease,opacity .4s ease
 }
+.picker-card.is-held{transition:box-shadow .22s ease,opacity .4s ease}
 .picker-card svg{width:100%;height:auto;display:block}
 .picker-card:hover,.picker-card:focus-visible{
-  transform:translateY(-16px) rotate(0deg) scale(1.05);z-index:5;
+  transform:perspective(900px)
+    translateY(-16px) rotate(0deg)
+    rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(1.06);
+  z-index:5;
   box-shadow:0 24px 40px -14px rgba(0,0,0,.9),0 0 44px -4px rgba(139,92,246,.75);outline:none
 }
 .picker-card:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
@@ -442,6 +475,10 @@ footer.site nav a:hover{color:var(--cyan-hi)}
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
                        transition-duration:.001ms !important;scroll-behavior:auto !important}
   .picker-card:hover,.picker-card:focus-visible{transform:none}
+  /* a card still turns over, because that is the whole point of it. It just
+     stops tilting and drifting while it is at rest. */
+  .is-3d{--rx:0deg !important;--ry:0deg !important;--sc:1 !important}
+  .has-sheen::after{display:none}
 }
 
 /* ================================================================

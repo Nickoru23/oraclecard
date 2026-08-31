@@ -63,6 +63,7 @@
 
 <script src="/js/deck.js"></script>
 <script src="/js/art2.js"></script>
+<script src="/js/card-images.js"></script>
 <script src="/js/i18n.js"></script>
 <script>
 (async function () {
@@ -108,7 +109,7 @@
     document.getElementById('spread').innerHTML = j.draws.map(d => {
       const c = window.DECK.find(x => x.id === d.id);
       return `<div class="card-slot"><div class="card flipped">
-        <div class="face front${d.rev ? ' rev' : ''}">${window.cardSVG(c, lang)}</div></div>
+        <div class="face front${d.rev ? ' rev' : ''}">${window.cardFace(c, lang, 'sm')}</div></div>
         <div class="card-name">${c.name[lang]}${d.rev ? `<span class="rv">${S.reversed}</span>` : ''}</div></div>`;
     }).join('');
 

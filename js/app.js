@@ -73,7 +73,7 @@
       `<div class="card-pos">${pos || ''}</div>
        <div class="card" role="button" tabindex="0" aria-label="${pos || ''}">
          <div class="face back">${window.cardBackSVG()}</div>
-         <div class="face front${d.rev ? ' rev' : ''}">${window.cardSVG(d.card, LANG)}</div>
+         <div class="face front${d.rev ? ' rev' : ''}">${window.cardFace(d.card, LANG, 'sm')}</div>
        </div>
        <div class="card-name"></div>`;
     const card = el.querySelector('.card'), name = el.querySelector('.card-name');
@@ -249,12 +249,12 @@
       grid.innerHTML = window.DECK
         .filter(c => filter === 'all' || c.a === 'major')
         .map(c => `<button class="deck-cell" data-id="${c.id}" aria-label="${c.name[LANG]}">
-                     ${window.cardSVG(c, LANG)}</button>`).join('');
+                     ${window.cardFace(c, LANG, 'sm')}</button>`).join('');
     }
     grid.addEventListener('click', e => {
       const b = e.target.closest('.deck-cell'); if (!b) return;
       const c = window.DECK.find(x => x.id === b.dataset.id);
-      dlg.querySelector('[data-modal-art]').innerHTML = window.cardSVG(c, LANG);
+      dlg.querySelector('[data-modal-art]').innerHTML = window.cardFace(c, LANG, 'full');
       dlg.querySelector('[data-modal-body]').innerHTML =
         `<h3>${c.name[LANG]}</h3>
          <div class="kw">${c.kw[LANG].map(k => `<span>${k}</span>`).join('')}</div>

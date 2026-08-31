@@ -12,8 +12,9 @@
   .deck-cell{background:none;border:0;padding:0;cursor:pointer;border-radius:10px;overflow:hidden;
     line-height:0;transition:transform .2s ease,box-shadow .2s ease;
     box-shadow:0 10px 26px -12px rgba(0,0,0,.9),0 0 20px -8px rgba(139,92,246,.5)}
-  .deck-cell:hover{transform:translateY(-6px);
-    box-shadow:0 18px 36px -12px rgba(0,0,0,.9),0 0 34px -6px rgba(139,92,246,.85)}
+  /* no transform here: card3d.js owns the transform on a card, and a rule that
+     sets it whole would throw the rotation away. The lift is its scale. */
+  .deck-cell:hover{box-shadow:0 18px 36px -12px rgba(0,0,0,.9),0 0 34px -6px rgba(139,92,246,.85)}
   .deck-cell svg{width:100%;height:auto;display:block}
   dialog{background:rgba(18,15,46,.94);backdrop-filter:blur(20px);color:var(--bone);
     border:1px solid var(--line-2);border-radius:var(--r);
@@ -32,12 +33,16 @@
     box-shadow:0 22px 48px -18px rgba(0,0,0,.92),0 0 40px -10px rgba(139,92,246,.6);
     border:1px solid var(--line-2)}
   .hero-fan .f svg{width:100%;height:auto;display:block}
-  .hero-fan .f:nth-child(1){transform:rotate(-11deg) translateY(12px);z-index:1}
-  .hero-fan .f:nth-child(2){z-index:2}.hero-fan .f:nth-child(3){z-index:3}
-  .hero-fan .f:nth-child(4){z-index:2}.hero-fan .f:nth-child(5){z-index:1}
-  .hero-fan .f:nth-child(2){transform:rotate(-5deg) translateY(2px)}
-  .hero-fan .f:nth-child(4){transform:rotate(5deg) translateY(2px)}
-  .hero-fan .f:nth-child(5){transform:rotate(11deg) translateY(12px)}
+  .hero-fan .f:nth-child(1){--fan:-11deg;--lift:12px;z-index:1}
+  .hero-fan .f:nth-child(2){--fan:-5deg;--lift:2px;z-index:2}
+  .hero-fan .f:nth-child(3){--fan:0deg;--lift:0px;z-index:3}
+  .hero-fan .f:nth-child(4){--fan:5deg;--lift:2px;z-index:2}
+  .hero-fan .f:nth-child(5){--fan:11deg;--lift:12px;z-index:1}
+  .hero-fan .f{
+    transform:perspective(1000px) rotate(var(--fan,0deg)) translateY(var(--lift,0px))
+              rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));
+    transition:transform .35s cubic-bezier(.2,.9,.25,1)}
+  .hero-fan .f.is-held{transition:none}
   @media(max-width:520px){.hero-fan .f{width:88px;margin:0 -16px}}
 </style>
 <style>
@@ -224,8 +229,10 @@
 
 <script src="/js/deck.js"></script>
 <script src="/js/art2.js"></script>
+<script src="/js/card-images.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/app.js"></script>
+<script src="/js/card3d.js"></script>
 <script src="/js/ritual.js"></script>
 <script src="/js/ledger.js"></script>
 <script src="/js/ornament.js"></script>
@@ -234,10 +241,10 @@
   (function fan(){
     const ids=['m17','m01','m19','m10','m21'];
     document.getElementById('fan').innerHTML = ids
-      .map(id=>`<div class="f">${window.cardSVG(window.DECK.find(c=>c.id===id), window.getLang())}</div>`).join('');
+      .map(id=>`<div class="f">${window.cardFace(window.DECK.find(c=>c.id===id), window.getLang(), 'sm')}</div>`).join('');
     document.addEventListener('langchange', ()=>{
       document.getElementById('fan').innerHTML = ids
-        .map(id=>`<div class="f">${window.cardSVG(window.DECK.find(c=>c.id===id), window.getLang())}</div>`).join('');
+        .map(id=>`<div class="f">${window.cardFace(window.DECK.find(c=>c.id===id), window.getLang(), 'sm')}</div>`).join('');
     });
   })();
 </script>
