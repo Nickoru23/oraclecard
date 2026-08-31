@@ -20,9 +20,11 @@
 
 :root{
   /* the desk */
-  --desk:#241A12;
-  --desk-hi:#3A2A1C;
-  --desk-lo:#150E09;
+  --desk:#241608;          /* walnut, warm and deep */
+  --desk-hi:#3A2614;       /* where the candle reaches it */
+  --desk-lo:#0D0602;       /* the far edge */
+  --blotter:#161A2F;       /* the leather the papers lie on */
+  --blotter-lo:#0D0F1E;
   --brass:#C9A24B;         /* the gilt that reads on wood */
   --brass-dim:#8E7238;
   --candle:#F6D9A0;
@@ -47,12 +49,16 @@
 
   --shadow:0 18px 34px -22px rgba(0,0,0,.55);
   --shadow-lift:0 26px 48px -26px rgba(0,0,0,.7);
+  /* a sheet lying on a surface has two shadows, a tight dark one where it
+     touches and a wide soft one it casts. One without the other floats. */
   --sheet-shadow:
-    0 1px 0 rgba(255,255,255,.55) inset,
-    0 2px 5px rgba(0,0,0,.34),
-    0 34px 64px -32px rgba(0,0,0,.8);
+    0 1px 0 rgba(255,255,255,.5) inset,
+    0 1px 2px rgba(0,0,0,.55),
+    0 4px 9px rgba(0,0,0,.36),
+    0 26px 44px -18px rgba(0,0,0,.7),
+    0 64px 96px -56px rgba(0,0,0,.95);
   --r:4px;                 /* printed corners are nearly square */
-  --maxw:1120px;
+  --maxw:1060px;
 
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -60,7 +66,17 @@
   /* the grain of a sheet of paper */
   --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
   /* the grain of the desk, drawn out long the way a plank runs */
-  --wood:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='420'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.007 .48' numOctaves='4' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='700' height='420' filter='url(%23w)' opacity='.62'/%3E%3C/svg%3E");
+  /* the grain of the desk. Two of them: a fine one that runs the length of the
+     plank, and a coarse figure under it, which is what stops a wood texture
+     reading as flat brown noise. */
+  --wood:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='300'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .92' numOctaves='5' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='900' height='300' filter='url(%23w)' opacity='.85'/%3E%3C/svg%3E");
+  --wood-figure:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='800'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0016 .052' numOctaves='3' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='1200' height='800' filter='url(%23f)' opacity='.9'/%3E%3C/svg%3E");
+  /* the tooled leather of the blotter */
+  --hide:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.62' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23h)' opacity='.85'/%3E%3C/svg%3E");
+  /* the things lying on the desk, drawn in the deck's own idiom */
+  --obj-candle:url("data:image/svg+xml,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22104%22%20height=%22196%22%20viewBox=%220%200%20104%20196%22><ellipse%20cx=%2252%22%20cy=%2234%22%20rx=%2230%22%20ry=%2240%22%20fill=%22%23FFCB78%22%20opacity=%22.16%22/><ellipse%20cx=%2252%22%20cy=%2236%22%20rx=%2217%22%20ry=%2224%22%20fill=%22%23FFD98A%22%20opacity=%22.3%22/><path%20d=%22M52%208c8%2014%2014%2019%2014%2029a14%2014%200%200%201-28%200c0-10%206-15%2014-29Z%22%20fill=%22%23FFDD95%22/><path%20d=%22M52%2026c4%207%207%209%207%2015a7%207%200%200%201-14%200c0-6%203-8%207-15Z%22%20fill=%22%23FFF6DD%22/><path%20d=%22M52%2070v-9%22%20stroke=%22%231D140A%22%20stroke-width=%223%22%20stroke-linecap=%22round%22/><path%20d=%22M36%2072h32v74H36z%22%20fill=%22%23EFE6D2%22%20stroke=%22%231D140A%22%20stroke-width=%222.4%22/><path%20d=%22M58%2072h10v74H58z%22%20fill=%22%231D140A%22%20opacity=%22.17%22/><path%20d=%22M40%2074c0%2011-4%2013-4%2022%200%205%206%205%206%200%200-9%202-11%202-22Z%22%20fill=%22%23F8F2E2%22%20stroke=%22%231D140A%22%20stroke-width=%221.6%22/><path%20d=%22M20%20148c0%2011%2015%2016%2032%2016s32-5%2032-16%22%20fill=%22%23A9862F%22%20stroke=%22%231D140A%22%20stroke-width=%222.4%22/><ellipse%20cx=%2252%22%20cy=%22148%22%20rx=%2232%22%20ry=%228%22%20fill=%22%23D3AC58%22%20stroke=%22%231D140A%22%20stroke-width=%222.4%22/><ellipse%20cx=%2252%22%20cy=%22147%22%20rx=%2218%22%20ry=%224%22%20fill=%22%238E7238%22/></svg>");
+  --obj-sprig:url("data:image/svg+xml,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2296%22%20height=%22188%22%20viewBox=%220%200%2096%20188%22><g%20stroke=%22%235C6B45%22%20stroke-width=%223%22%20fill=%22none%22%20stroke-linecap=%22round%22><path%20d=%22M48%20182V54%22/><path%20d=%22M48%20118c-14-8-20-20-21-34%22/><path%20d=%22M48%2096c13-8%2018-19%2019-32%22/><path%20d=%22M48%20142c-12-7-17-16-18-28%22/></g><g%20fill=%22%237C6B9E%22%20stroke=%22%233A3050%22%20stroke-width=%221.4%22><ellipse%20cx=%2248%22%20cy=%2244%22%20rx=%227%22%20ry=%2210%22/><ellipse%20cx=%2242%22%20cy=%2226%22%20rx=%226%22%20ry=%229%22/><ellipse%20cx=%2255%22%20cy=%2228%22%20rx=%226%22%20ry=%229%22/><ellipse%20cx=%2248%22%20cy=%2214%22%20rx=%225.5%22%20ry=%228%22/><ellipse%20cx=%2227%22%20cy=%2284%22%20rx=%226%22%20ry=%229%22/><ellipse%20cx=%2221%22%20cy=%2268%22%20rx=%225%22%20ry=%228%22/><ellipse%20cx=%2267%22%20cy=%2264%22%20rx=%226%22%20ry=%229%22/><ellipse%20cx=%2272%22%20cy=%2248%22%20rx=%225%22%20ry=%228%22/><ellipse%20cx=%2230%22%20cy=%22114%22%20rx=%225.5%22%20ry=%228%22/></g><path%20d=%22M38%20156h20v9H38z%22%20fill=%22%23B4453C%22%20stroke=%22%231D140A%22%20stroke-width=%222%22/><path%20d=%22M38%20160h20%22%20stroke=%22%231D140A%22%20stroke-width=%221.2%22%20opacity=%22.5%22/></svg>");
+  --obj-seal:url("data:image/svg+xml,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22150%22%20height=%22112%22%20viewBox=%220%200%20150%20112%22><path%20d=%22M10%2026%2075%208l65%2018v70H10z%22%20fill=%22%23EFE6D2%22%20stroke=%22%231D140A%22%20stroke-width=%222.4%22/><path%20d=%22M10%2026%2075%2062l65-36%22%20fill=%22none%22%20stroke=%22%231D140A%22%20stroke-width=%221.8%22%20opacity=%22.55%22/><path%20d=%22M30%2078h44M30%2088h30%22%20stroke=%22%231D140A%22%20stroke-width=%221.4%22%20opacity=%22.35%22/><path%20d=%22M104%2072c3%202.6%207%201.1%209.2%204s.4%206.6%202.8%209-.4%205.7-2.8%208.1-.6%206.1-2.8%208.6-6.2%201.1-9.2%203.7c-3-2.6-7-1.1-9.2-3.7s-.6-6.2-2.8-8.6.4-5.7-2.8-8.1%20.6-6.6%202.8-9%206.2-1.1%209.2-3.7Z%22%20fill=%22%239E4038%22%20stroke=%22%231D140A%22%20stroke-width=%222%22/><path%20d=%22M97%2091.5%20102%2096l9-9.5%22%20fill=%22none%22%20stroke=%22%23F2ECDE%22%20stroke-width=%222.6%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/></svg>");
   --halftone:radial-gradient(circle at 50% 50%, rgba(38,32,24,.16) .9px, transparent 1.1px);
 }
 
@@ -68,36 +84,95 @@
 html{-webkit-text-size-adjust:100%}
 html,body{max-width:100%;overflow-x:hidden}
 
-/* ---------- the desk ---------- */
+/* ---------- the desk ----------
+   Four fixed layers, painted in this order, none of which scrolls: the desk is
+   the thing you are looking at, and the papers move across it.
+
+     1  the plank        walnut, its grain and its joins
+     2  the blotter      a band of tooled leather down the middle
+     3  the light        one candle at the near corner, and the falloff
+     4  the papers       everything else, at z-index 1
+
+   What makes a surface read as a surface is not the texture, it is that one
+   light hits all of it from the same place. Every shadow below points the same
+   way as the candle in layer three.                                          */
+
+html{
+  background:var(--desk);
+}
+/* 1 · the plank. The wood carries no light of its own: it is dark all the way
+   across, and layer three is what makes the near corner glow. Doing it the
+   other way round is what makes a CSS wood texture read as varnished pine. */
+html::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    /* the joins between the boards, running the length of the desk, each with
+       the bevel that catches the light */
+    repeating-linear-gradient(0deg,
+      transparent 0 232px,
+      rgba(0,0,0,.62) 232px 235px,
+      rgba(255,224,176,.05) 235px 237px,
+      transparent 237px 248px),
+    var(--wood),
+    var(--wood-figure),
+    linear-gradient(152deg, #33200E 0%, #241608 38%, #150C04 72%, #0A0402 100%);
+  background-size:auto, 900px 300px, 1200px 800px, auto;
+  background-blend-mode:normal, overlay, overlay, normal;
+}
+/* 2 · the blotter the papers lie on */
+html::after{
+  content:"";position:fixed;z-index:0;pointer-events:none;
+  top:0;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(1132px, calc(100vw - 24px));
+  background-image:
+    var(--hide),
+    radial-gradient(900px 640px at 12% -4%, rgba(126,146,214,.20), transparent 62%),
+    linear-gradient(172deg, #20264A 0%, var(--blotter) 46%, var(--blotter-lo) 100%);
+  background-size:220px 220px, auto, auto;
+  background-blend-mode:overlay, screen, normal;
+  box-shadow:
+    /* the leather is recessed into the desk, and throws its own shadow out */
+    0 0 0 1px rgba(0,0,0,.6),
+    0 0 44px 6px rgba(0,0,0,.55),
+    inset 0 0 90px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(190,205,255,.10),
+    /* and it is tooled with a gold line a hair in from each edge */
+    inset 15px 0 0 -14px rgba(201,162,75,.34),
+    inset -15px 0 0 -14px rgba(201,162,75,.34);
+}
+/* what is lying on the desk, out in the margins beside the blotter. A candle
+   at the near corner, which is where layer three's light comes from, a sprig
+   of something dried, and a letter with its seal already broken. They need
+   room, so below a wide viewport there is no desk to put them on and they go. */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:var(--obj-candle), var(--obj-sprig), var(--obj-seal);
+  background-repeat:no-repeat;
+  background-position:
+    left 46px top 74px,
+    right 52px top 132px,
+    right 34px bottom 96px;
+  background-size:104px 196px, 96px 188px, 150px 112px;
+  opacity:.92;
+  filter:drop-shadow(6px 12px 14px rgba(0,0,0,.75));
+}
+@media(max-width:1420px){ body::before{display:none} }
+/* 3 · the candle at the near corner, and the dark it falls off into */
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(420px 340px at 8% -3%, rgba(255,222,164,.26), transparent 66%),
+    radial-gradient(1000px 780px at 11% -6%, rgba(250,201,126,.17), transparent 62%),
+    radial-gradient(760px 620px at 97% 12%, rgba(150,186,255,.055), transparent 60%),
+    radial-gradient(138% 108% at 46% 24%, transparent 32%, rgba(0,0,0,.74) 100%);
+}
 body{
   margin:0;
-  background:var(--desk);
+  background:transparent;
   color:var(--on-desk);
   font-family:var(--sans);font-size:16px;line-height:1.68;
   -webkit-font-smoothing:antialiased;
   position:relative;
-}
-/* the plank: grain, then the long joins, then the colour of the wood itself */
-body::before{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:
-    repeating-linear-gradient(90deg,
-      transparent 0 428px,
-      rgba(0,0,0,.26) 428px 430px,
-      rgba(255,232,196,.04) 430px 433px,
-      transparent 433px 442px),
-    var(--wood);
-  background-size:auto,700px 420px;
-  opacity:.72;mix-blend-mode:overlay;
-}
-/* the candle: one warm pool at the top left, a weaker one at the right, and the
-   falloff into the corners that makes the surface read as lit, not coloured */
-body::after{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(1100px 760px at 12% -8%, rgba(246,217,160,.20), transparent 60%),
-    radial-gradient(820px 620px at 92% 6%, rgba(201,162,75,.09), transparent 58%),
-    radial-gradient(150% 110% at 50% 34%, transparent 38%, rgba(0,0,0,.62) 100%);
 }
 header.site,section,footer.site,.privacy-notice,main{position:relative;z-index:1}
 
@@ -123,13 +198,17 @@ p{margin:0 0 1em}
 /* ---------- a sheet on the desk ----------
    Every section carries one. The header, the footer and the hero are the three
    places the wood is left bare.                                              */
-section{padding:20px 20px}
-section.tight{padding:12px 20px}
+section{padding:22px clamp(14px,4.4vw,64px)}
+section.tight{padding:12px clamp(14px,4.4vw,64px)}
 section > .wrap{
   max-width:var(--maxw);margin:0 auto;padding:52px 46px;
   background-color:var(--ink);
-  background-image:var(--grain);
-  background-blend-mode:multiply;
+  /* lit from the same corner the candle is in, so the paper agrees with the desk */
+  background-image:
+    radial-gradient(128% 92% at 6% -4%, rgba(255,246,222,.85), transparent 58%),
+    radial-gradient(90% 80% at 104% 108%, rgba(58,42,24,.13), transparent 60%),
+    var(--grain);
+  background-blend-mode:normal, multiply, multiply;
   border:1px solid rgba(38,32,24,.22);
   border-radius:var(--r);
   box-shadow:var(--sheet-shadow);
@@ -242,7 +321,14 @@ header.site{
 /* ---------- the hero, straight on the wood ---------- */
 .hero{padding:76px 20px 58px;text-align:center;position:relative}
 .hero > .wrap{background:none;border:0;box-shadow:none;padding:0 22px;color:var(--on-desk)}
-.hero h1{color:var(--on-desk);text-shadow:0 2px 24px rgba(0,0,0,.5);margin-bottom:.34em}
+.hero h1{
+  color:var(--candle);                   /* the fallback, if the clip is unsupported */
+  background:linear-gradient(178deg,#FDF0D2 4%,#EBD199 34%,#C69A4A 62%,#F3E2B4 88%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.7)) drop-shadow(0 10px 30px rgba(0,0,0,.5));
+  margin-bottom:.34em;
+}
 .hero .eyebrow{color:var(--brass)}
 .hero .lede{color:var(--on-desk-dim);margin:0 auto 2.2rem}
 .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
