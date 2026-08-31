@@ -1,28 +1,37 @@
-/* ===== The Witch Atelier, legal texts, ES + EN =====
-   Drafted for an Austrian sole trader selling a digital service to EU consumers.
-   The bracketed fields must be filled in before the site takes real money, and
-   a lawyer should read it once. See README. */
+/* ===== The Witch Atelier, legal texts, ES + EN + DE =====
+   Written for an Austrian sole trader selling a digital service to EU consumers.
+
+   The details below are real and the ECG paragraph 5 fields are filled. Two
+   things a lawyer and an accountant still have to settle, and both are written
+   up in README:
+
+     whether a Gewerbe is registered, which adds the trade authority and the
+       chamber to the Impressum, and decides whether the small business rule
+       applies at all
+     the cross border question. The Austrian Kleinunternehmerregelung covers
+       sales treated as Austrian. Once business to consumer digital sales into
+       other EU countries pass 10,000 euro in a year, VAT is owed where the
+       buyer is, through OSS, and the exemption below stops covering them. */
 window.LEGAL = {
-  // ---- fill these in; they appear everywhere the details are needed ----
+  // ---- the operator's own details, used everywhere they are needed ----
   OPERATOR: 'Nicolás Saavedra Rueda',
-  ADDRESS: '[street address], [postcode] [city], Austria',
+  ADDRESS: 'Vochera am Weinberg 57, 8524 Deutschlandsberg, Austria',
   EMAIL: 'hola@thewitchatelier.com',
-  VAT: '[VAT / UID number, or delete this line if not registered]',
   SITE: 'thewitchatelier.com',
-  UPDATED: '25 August 2026',
+  UPDATED: '31 August 2026',
 
   es: {
     nav: 'Legal',
     legal_h: 'Aviso legal',
     legal: [
       ['Titular del sitio',
-       'Responsable: {OPERATOR}<br>Dirección: {ADDRESS}<br>Correo: <a href="mailto:{EMAIL}">{EMAIL}</a><br>{VAT}'],
+       'Responsable: {OPERATOR}<br>Dirección: {ADDRESS}<br>Correo: <a href="mailto:{EMAIL}">{EMAIL}</a><br>Sin número de IVA: se aplica la exención austriaca para pequeñas empresas del § 6 Abs. 1 Z 27 UStG (Kleinunternehmerregelung).'],
       ['Objeto',
        '{SITE} ofrece tiradas de tarot gratuitas y una lectura personalizada de pago. El servicio es de entretenimiento y reflexión personal. No sustituye asesoramiento médico, psicológico, jurídico ni financiero, y no debe usarse para tomar decisiones que requieran un profesional cualificado.'],
       ['Servicio de pago y derecho de desistimiento',
        'La lectura personalizada es un contenido digital que se entrega de forma inmediata tras el pago. Al confirmar la compra, aceptas que la ejecución comience de inmediato y reconoces que pierdes el derecho de desistimiento de 14 días una vez entregada la lectura (art. 16 m de la Directiva 2011/83/UE y su transposición austriaca, FAGG §18). Si la lectura no llega por un fallo técnico, se reenvía o se devuelve el importe íntegro.'],
       ['Precios y pago',
-       'Los precios se muestran en euros e incluyen los impuestos aplicables. El pago se procesa íntegramente por Stripe; este sitio no ve ni almacena datos de tu tarjeta.'],
+       'Los precios se muestran en euros y son los importes finales. No se repercute IVA, por la exención para pequeñas empresas indicada arriba, y por lo tanto tampoco puede deducirse. El pago se procesa íntegramente por Stripe; este sitio no ve ni almacena datos de tu tarjeta.'],
       ['Propiedad intelectual',
        'Los textos, la baraja de 78 cartas y el diseño de este sitio son obra propia y están protegidos por derechos de autor. Las ilustraciones de las cartas son originales: no reproducen ninguna baraja existente.'],
       ['Responsabilidad',
@@ -56,7 +65,7 @@ window.LEGAL = {
       ['Una sola cookie técnica, y solo si usas la consulta gratuita',
        'No usamos analítica, ni publicidad, ni cookies de seguimiento de ningún tipo. Solo una: si haces una consulta gratuita, guardamos una cookie llamada <strong>wa_free</strong> que únicamente lleva la cuenta de cuántas consultas has hecho hoy, para que el servicio gratuito no pueda usarse de forma abusiva. Caduca en 24 horas, no contiene datos personales, no se comparte con nadie y no sirve para reconocerte en otros sitios. Es estrictamente necesaria para prestar el servicio que has pedido, así que la ley no exige consentimiento para ella y no verás un banner.'],
       ['Lo único que se guarda en tu navegador',
-       'Guardamos una sola cosa en el almacenamiento local de tu navegador: el idioma que eliges (ES o EN), para no volver a preguntártelo. No es una cookie, no se envía a ningún servidor y nadie más puede leerlo. Puedes borrarlo vaciando los datos del sitio en tu navegador.'],
+       'Guardamos dos cosas en el almacenamiento local de tu navegador. Una es el idioma que eliges (ES, EN o DE), para no volver a preguntártelo. La otra es tu registro del taller: qué has hecho hoy de las tres cosas gratuitas, los días que llevas seguidos y los sellos que has ganado. Nada de eso es una cookie, nada se envía a ningún servidor, nadie más puede leerlo y no sirve para identificarte. Si vacías los datos del sitio en tu navegador, ambas cosas desaparecen y el registro empieza de cero.'],
       ['Sin recursos de terceros',
        'Las páginas no cargan tipografías, imágenes, vídeos ni scripts de otros dominios. Nada de lo que ves aquí hace que tu dirección IP llegue a un tercero mientras navegas.'],
       ['La excepción: el pago',
@@ -69,13 +78,13 @@ window.LEGAL = {
     legal_h: 'Legal notice',
     legal: [
       ['Site owner',
-       'Operator: {OPERATOR}<br>Address: {ADDRESS}<br>Email: <a href="mailto:{EMAIL}">{EMAIL}</a><br>{VAT}'],
+       'Operator: {OPERATOR}<br>Address: {ADDRESS}<br>Email: <a href="mailto:{EMAIL}">{EMAIL}</a><br>No VAT number: the Austrian small business exemption under § 6 Abs. 1 Z 27 UStG applies (Kleinunternehmerregelung).'],
       ['What this site is',
        '{SITE} offers free tarot spreads and one paid personal reading. The service is for entertainment and personal reflection. It does not replace medical, psychological, legal or financial advice, and should not be used to make decisions that call for a qualified professional.'],
       ['The paid service and your right to cancel',
        'The personal reading is digital content delivered immediately after payment. By confirming the purchase you agree that performance begins at once and acknowledge that you lose the 14-day right of withdrawal once the reading has been delivered (Article 16(m) of Directive 2011/83/EU, as implemented in Austria by FAGG §18). If a reading fails to arrive for technical reasons, it is resent or refunded in full.'],
       ['Prices and payment',
-       'Prices are shown in euros and include applicable tax. Payment is handled entirely by Stripe; this site never sees or stores your card details.'],
+       'Prices are shown in euros and are the final amounts. No VAT is added, under the small business exemption noted above, and none can be reclaimed. Payment is handled entirely by Stripe; this site never sees or stores your card details.'],
       ['Intellectual property',
        'The texts, the 78-card deck and the design of this site are original work and protected by copyright. The card illustrations are our own: they do not reproduce any existing deck.'],
       ['Liability',
@@ -109,7 +118,7 @@ window.LEGAL = {
       ['One technical cookie, and only if you use the free consultation',
        'We run no analytics, no advertising and no tracking cookies of any kind. There is exactly one: if you take a free consultation, we store a cookie called <strong>wa_free</strong> that does nothing but count how many consultations you have had today, so the free service cannot be abused. It expires in 24 hours, holds no personal data, is shared with nobody, and cannot be used to recognise you on other sites. It is strictly necessary to provide the service you asked for, so the law does not require consent for it and you will not see a banner.'],
       ['The one thing stored in your browser',
-       'We keep exactly one thing in your browser\'s local storage: the language you chose (ES or EN), so we do not ask again. It is not a cookie, it is never sent to any server, and nobody else can read it. Clearing this site\'s data in your browser removes it.'],
+       'We keep two things in your browser\'s local storage. One is the language you chose (ES, EN or DE), so we do not ask again. The other is your atelier ledger: which of the three free things you have done today, how many days you have kept in a row, and which sigils you have earned. Neither is a cookie, neither is ever sent to any server, nobody else can read them, and they identify nobody. Clearing this site\'s data in your browser removes both, and the ledger starts again from nothing.'],
       ['No third-party resources',
        'These pages load no fonts, images, video or scripts from other domains. Nothing here causes your IP address to reach a third party while you browse.'],
       ['The exception: payment',
@@ -122,13 +131,13 @@ window.LEGAL = {
     legal_h: 'Impressum',
     legal: [
       ['Anbieter',
-       'Verantwortlich: {OPERATOR}<br>Anschrift: {ADDRESS}<br>E-Mail: <a href="mailto:{EMAIL}">{EMAIL}</a><br>{VAT}'],
+       'Verantwortlich: {OPERATOR}<br>Anschrift: {ADDRESS}<br>E-Mail: <a href="mailto:{EMAIL}">{EMAIL}</a><br>Keine UID: es gilt die Kleinunternehmerregelung nach § 6 Abs. 1 Z 27 UStG.'],
       ['Gegenstand',
        '{SITE} bietet kostenlose Tarot-Legungen und eine kostenpflichtige persönliche Deutung. Der Dienst dient der Unterhaltung und der persönlichen Reflexion. Er ersetzt keine medizinische, psychologische, rechtliche oder finanzielle Beratung und darf nicht für Entscheidungen herangezogen werden, die in fachkundige Hände gehören.'],
       ['Kostenpflichtiger Dienst und Rücktrittsrecht',
        'Die persönliche Deutung ist ein digitaler Inhalt, der unmittelbar nach der Zahlung geliefert wird. Mit der Bestellung stimmst du ausdrücklich zu, dass mit der Ausführung sofort begonnen wird, und nimmst zur Kenntnis, dass dein 14-tägiges Rücktrittsrecht mit der Lieferung erlischt (Art. 16 lit. m der Richtlinie 2011/83/EU; in Österreich § 18 FAGG). Bleibt die Deutung aus technischen Gründen aus, wird sie erneut zugestellt oder der Betrag vollständig erstattet.'],
       ['Preise und Zahlung',
-       'Die Preise verstehen sich in Euro inklusive anfallender Steuern. Die Zahlung wickelt ausschließlich Stripe ab; diese Seite sieht und speichert keine Kartendaten.'],
+       'Die Preise verstehen sich in Euro und sind Endbeträge. Umsatzsteuer wird nach der oben genannten Kleinunternehmerregelung nicht erhoben und kann daher auch nicht geltend gemacht werden. Die Zahlung wickelt ausschließlich Stripe ab; diese Seite sieht und speichert keine Kartendaten.'],
       ['Urheberrecht',
        'Die Texte, das Deck aus 78 Karten und die Gestaltung dieser Seite sind eigene Werke und urheberrechtlich geschützt. Die Kartenbilder sind Originale und geben kein bestehendes Deck wieder.'],
       ['Haftung',
@@ -162,7 +171,7 @@ window.LEGAL = {
       ['Ein einziges technisches Cookie, und nur bei der Gratis-Beratung',
        'Wir nutzen keine Analyse, keine Werbung und keine Tracking-Cookies. Es gibt genau eines: Wenn du eine kostenlose Beratung machst, speichern wir ein Cookie namens <strong>wa_free</strong>, das nichts weiter tut, als zu zählen, wie viele Beratungen du heute hattest, damit der Gratis-Dienst nicht missbraucht werden kann. Es läuft nach 24 Stunden ab, enthält keine personenbezogenen Daten, wird an niemanden weitergegeben und kann dich auf anderen Seiten nicht wiedererkennen. Es ist zur Erbringung des von dir gewünschten Dienstes unbedingt erforderlich, daher verlangt das Gesetz dafür keine Einwilligung und du siehst kein Banner.'],
       ['Das Einzige, was im Browser gespeichert wird',
-       'Wir legen genau eine Sache im lokalen Speicher deines Browsers ab: die von dir gewählte Sprache (ES, EN oder DE), damit wir nicht erneut fragen. Das ist kein Cookie, es wird an keinen Server gesendet, und niemand sonst kann es lesen. Löschst du die Daten dieser Seite im Browser, ist es weg.'],
+       'Wir legen zwei Dinge im lokalen Speicher deines Browsers ab. Das eine ist die von dir gewählte Sprache (ES, EN oder DE), damit wir nicht erneut fragen. Das andere ist dein Atelier-Verzeichnis: was du von den drei kostenlosen Dingen heute erledigt hast, wie viele Tage du in Folge gehalten hast und welche Siegel du geprägt hast. Beides ist kein Cookie, beides wird an keinen Server gesendet, niemand sonst kann es lesen, und es identifiziert niemanden. Löschst du die Daten dieser Seite im Browser, sind beide weg und das Verzeichnis beginnt von vorn.'],
       ['Keine Ressourcen von Dritten',
        'Diese Seiten laden keine Schriften, Bilder, Videos oder Skripte von anderen Domains. Nichts hier führt dazu, dass deine IP-Adresse beim Surfen an Dritte gelangt.'],
       ['Die Ausnahme: die Zahlung',

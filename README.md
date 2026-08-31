@@ -151,6 +151,15 @@ output, so parts of it are still absent.
 * An unclosed `</a>` in `index.html` that nested the fourth menu card inside the
   third.
 
+**Settled**
+
+* The operator's real postal address is in `js/legal.js` and renders on all
+  three legal pages in all three languages. The VAT line is replaced by the
+  small business exemption, and the price sections no longer claim to include a
+  tax that is not charged.
+* The cookies page now discloses the ledger. It said only the language was kept
+  in local storage, which stopped being true the moment the ledger was added.
+
 **Fixed in the paid path**
 
 * **The reading cache truncated.** It held eight metadata keys of 490
@@ -169,14 +178,25 @@ output, so parts of it are still absent.
 
 **Still open, and a decision rather than a fix**
 
-* **The legal pages carry placeholders.** `js/legal.js` still contains
-  `[street address]` and an unfilled VAT line. Austrian ECG §5 requires a real
-  postal address before the site takes real money. This is the one thing on this
-  list that blocks going live.
-* **No VAT handling.** Selling a digital service to consumers in the EU puts VAT
-  where the buyer is, and prices are shown as flat euro amounts with nothing
-  said about tax. Stripe Tax would handle it and costs a percentage. This is an
-  accounting decision, not a code one, but it has to be made before invoicing.
+* **Two ECG §5 fields are still unanswered, and both turn on one question:
+  is a Gewerbe registered?** If it is, the Impressum also has to name the trade
+  authority (Bezirkshauptmannschaft Deutschlandsberg), the chamber
+  (Wirtschaftskammer Steiermark) and the trade rules it operates under, and the
+  Gewerbe number belongs there too. If it is not, selling readings commercially
+  from Austria most likely needs one first. Nothing in this repository can
+  answer that, and it is the remaining thing between here and taking money.
+* **The tax position needs an accountant to confirm, not a developer.** The
+  legal pages now state the Austrian small business exemption, § 6 Abs. 1 Z 27
+  UStG, because there is no VAT number. That holds for sales treated as
+  Austrian. It does **not** automatically cover business to consumer digital
+  sales into other EU countries: past 10,000 euro of those in a year, VAT is
+  owed where the buyer is and has to go through OSS, and the instant tier in
+  particular is an electronically supplied service. Stripe is deliberately not
+  configured to add tax, which matches what the pages say today and will need
+  changing the day that stops being true.
+* **`hola@thewitchatelier.com` has to actually receive mail.** ECG §5 wants a
+  contact address that works, and the privacy pages point every data request at
+  it.
 * **No webhook**, as the handover says. If the buyer closes the tab before the
   success page loads, the instant tier reading is not generated then. Nothing is
   lost, it generates whenever that URL is opened and the order shows on the

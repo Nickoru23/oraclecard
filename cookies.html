@@ -65,7 +65,7 @@
   var L = window.LEGAL;
   function fill(t) {
     return t.replace(/\{OPERATOR\}/g, L.OPERATOR).replace(/\{ADDRESS\}/g, L.ADDRESS)
-            .replace(/\{EMAIL\}/g, L.EMAIL).replace(/\{VAT\}/g, L.VAT)
+            .replace(/\{EMAIL\}/g, L.EMAIL)
             .replace(/\{SITE\}/g, L.SITE);
   }
   function paint() {
