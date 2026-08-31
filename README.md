@@ -187,7 +187,13 @@ output, so parts of it are still absent.
   answer that, and it is the remaining thing between here and taking money.
 * **The tax position needs an accountant to confirm, not a developer.** The
   legal pages now state the Austrian small business exemption, § 6 Abs. 1 Z 27
-  UStG, because there is no VAT number. That holds for sales treated as
+  UStG, because there is no UID. Two Austrian numbers get confused here and
+  only one belongs in an Impressum: a **UID** (`ATU` plus eight characters) is
+  the VAT identification number a registered business gets, and ECG §5 asks for
+  it only if one exists. A **Steuernummer** is the personal tax number every
+  taxpayer already has, it is not a VAT number, it is not required on a website,
+  and it should not be published there. There is no UID, so the Impressum
+  correctly names none. That holds for sales treated as
   Austrian. It does **not** automatically cover business to consumer digital
   sales into other EU countries: past 10,000 euro of those in a year, VAT is
   owed where the buyer is and has to go through OSS, and the instant tier in

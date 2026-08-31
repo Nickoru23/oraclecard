@@ -7,7 +7,9 @@
 
      whether a Gewerbe is registered, which adds the trade authority and the
        chamber to the Impressum, and decides whether the small business rule
-       applies at all
+       applies at all. Note that ECG paragraph 5 asks for a UID, the ATU VAT
+       identification number a business gets. A personal Steuernummer is not
+       that, is not required here, and must not be published
      the cross border question. The Austrian Kleinunternehmerregelung covers
        sales treated as Austrian. Once business to consumer digital sales into
        other EU countries pass 10,000 euro in a year, VAT is owed where the
@@ -25,7 +27,7 @@ window.LEGAL = {
     legal_h: 'Aviso legal',
     legal: [
       ['Titular del sitio',
-       'Responsable: {OPERATOR}<br>Dirección: {ADDRESS}<br>Correo: <a href="mailto:{EMAIL}">{EMAIL}</a><br>Sin número de IVA: se aplica la exención austriaca para pequeñas empresas del § 6 Abs. 1 Z 27 UStG (Kleinunternehmerregelung).'],
+       'Responsable: {OPERATOR}<br>Dirección: {ADDRESS}<br>Correo: <a href="mailto:{EMAIL}">{EMAIL}</a><br>Sin número de identificación a efectos de IVA (UID): se aplica la exención austriaca para pequeñas empresas del § 6 Abs. 1 Z 27 UStG (Kleinunternehmerregelung).'],
       ['Objeto',
        '{SITE} ofrece tiradas de tarot gratuitas y una lectura personalizada de pago. El servicio es de entretenimiento y reflexión personal. No sustituye asesoramiento médico, psicológico, jurídico ni financiero, y no debe usarse para tomar decisiones que requieran un profesional cualificado.'],
       ['Servicio de pago y derecho de desistimiento',
@@ -78,7 +80,7 @@ window.LEGAL = {
     legal_h: 'Legal notice',
     legal: [
       ['Site owner',
-       'Operator: {OPERATOR}<br>Address: {ADDRESS}<br>Email: <a href="mailto:{EMAIL}">{EMAIL}</a><br>No VAT number: the Austrian small business exemption under § 6 Abs. 1 Z 27 UStG applies (Kleinunternehmerregelung).'],
+       'Operator: {OPERATOR}<br>Address: {ADDRESS}<br>Email: <a href="mailto:{EMAIL}">{EMAIL}</a><br>No VAT identification number (UID): the Austrian small business exemption under § 6 Abs. 1 Z 27 UStG applies (Kleinunternehmerregelung).'],
       ['What this site is',
        '{SITE} offers free tarot spreads and one paid personal reading. The service is for entertainment and personal reflection. It does not replace medical, psychological, legal or financial advice, and should not be used to make decisions that call for a qualified professional.'],
       ['The paid service and your right to cancel',
@@ -131,7 +133,7 @@ window.LEGAL = {
     legal_h: 'Impressum',
     legal: [
       ['Anbieter',
-       'Verantwortlich: {OPERATOR}<br>Anschrift: {ADDRESS}<br>E-Mail: <a href="mailto:{EMAIL}">{EMAIL}</a><br>Keine UID: es gilt die Kleinunternehmerregelung nach § 6 Abs. 1 Z 27 UStG.'],
+       'Verantwortlich: {OPERATOR}<br>Anschrift: {ADDRESS}<br>E-Mail: <a href="mailto:{EMAIL}">{EMAIL}</a><br>Keine UID-Nummer: es gilt die Kleinunternehmerregelung nach § 6 Abs. 1 Z 27 UStG.'],
       ['Gegenstand',
        '{SITE} bietet kostenlose Tarot-Legungen und eine kostenpflichtige persönliche Deutung. Der Dienst dient der Unterhaltung und der persönlichen Reflexion. Er ersetzt keine medizinische, psychologische, rechtliche oder finanzielle Beratung und darf nicht für Entscheidungen herangezogen werden, die in fachkundige Hände gehören.'],
       ['Kostenpflichtiger Dienst und Rücktrittsrecht',
