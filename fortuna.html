@@ -3,45 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Galleta de la fortuna · The Witch Atelier</title>
-<meta name="description" content="Una galleta de la fortuna al día. Gratis, sin registro, y una carta dentro.">
+<title>Tu fortuna de hoy · The Witch Atelier</title>
+<meta name="description" content="Unas palabras para hoy y la carta que las trae. Gratis, sin registro, una cada día.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/css/app.css">
 <style>
-  .cookie-stage{display:grid;place-items:center;padding:26px 0 10px;min-height:270px}
-  .cookie-btn{background:none;border:0;padding:0;cursor:pointer;width:min(320px,80vw);
-              display:block;filter:drop-shadow(0 14px 18px rgba(40,32,20,.22))}
-  .cookie-btn svg{width:100%;height:auto;display:block;overflow:visible}
-  .cookie-btn:disabled{cursor:default}
-  .half{transition:transform .75s cubic-bezier(.22,1,.36,1)}
-  .is-open .half-l{transform:translate(-34px,10px) rotate(-16deg)}
-  .is-open .half-r{transform:translate(34px,10px) rotate(16deg)}
-  .slip{opacity:0;transform:translateY(6px) scaleY(.4);transform-origin:50% 100%;
-        transition:opacity .5s ease .35s,transform .6s cubic-bezier(.22,1,.36,1) .3s}
-  .is-open .slip{opacity:1;transform:none}
-  .cookie-btn:not(:disabled):hover svg{animation:wiggle .5s ease}
-  @keyframes wiggle{25%{transform:rotate(-2.5deg)}75%{transform:rotate(2.5deg)}}
+  /* The page is the same reveal the overlay does, held still so it can be read
+     again, kept and shared. The words themselves use .df-words and .df-w from
+     the stylesheet, so there is only one animation on the site and it is
+     described in one place. */
+  .fx-stage{display:grid;place-items:center;padding:26px 0 8px;min-height:210px}
+  .fx-btn{background:none;border:0;padding:0;cursor:pointer;width:min(190px,52vw);
+          display:block;border-radius:50%}
+  .fx-btn:disabled{cursor:default}
+  .fx-btn svg{width:100%;height:auto;display:block;overflow:visible}
+  .fx-halo{transform-origin:50% 50%;animation:fx-breathe 5.5s ease-in-out infinite}
+  .fx-ring{transform-origin:50% 50%;animation:fx-turn 46s linear infinite}
+  .fx-ring-2{transform-origin:50% 50%;animation:fx-turn 64s linear infinite reverse}
+  .fx-btn:not(:disabled):hover .fx-halo{animation-duration:2.6s}
+  @keyframes fx-breathe{0%,100%{opacity:.5;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+  @keyframes fx-turn{to{transform:rotate(360deg)}}
+  /* once the words are out, the orb has said what it had to say */
+  .fx-stage.is-open{min-height:0;padding:0}
+  .fx-stage.is-open .fx-btn{display:none}
 
   .tap{text-align:center;color:var(--muted);font-size:.9rem;margin:2px 0 0}
-  .fortune{max-width:30ch;margin:26px auto 0;text-align:center;font-family:var(--serif,Georgia,serif);
-           font-size:clamp(1.25rem,4.2vw,1.7rem);line-height:1.45;color:var(--bone);
-           opacity:0;transform:translateY(10px);transition:opacity .6s ease .55s,transform .6s ease .55s}
-  .fortune.in{opacity:1;transform:none}
-  .cookie-card{max-width:340px;margin:30px auto 0;text-align:center;
-               opacity:0;transition:opacity .6s ease .9s}
-  .cookie-card.in{opacity:1}
-  .cookie-card .art{width:150px;margin:12px auto 0}
-  .cookie-card .art svg{width:100%;height:auto;display:block;border-radius:8px}
-  .cookie-card h3{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0}
-  .cookie-card .nm{color:var(--bone);margin:10px 0 0}
-  .cookie-card p.mean{color:var(--muted);font-size:.92rem;line-height:1.6;margin:8px 0 0}
+  .fx-words{max-width:26ch;margin:10px auto 0;text-align:center}
+  .fx-card{max-width:340px;margin:34px auto 0;text-align:center}
+  .fx-card .art{width:min(170px,46vw);margin:12px auto 0;border-radius:var(--r-sm);
+                box-shadow:var(--shadow-lift),0 0 56px -16px rgba(139,92,246,.85)}
+  .fx-card h3{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cyan);
+              font-weight:700;font-family:var(--sans);margin:0}
+  .fx-card .nm{font-family:var(--serif);font-size:1.12rem;color:var(--bone);margin:16px 0 0}
+  .fx-card p.mean{color:var(--muted);font-size:.92rem;line-height:1.6;margin:8px 0 0}
   .streak{display:flex;justify-content:center;gap:26px;margin:34px 0 0;padding-top:22px;
           border-top:1px solid var(--line);flex-wrap:wrap}
-  .streak div{text-align:center;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .streak b{display:block;font-size:1.6rem;letter-spacing:0;text-transform:none;color:var(--gold);font-weight:400;margin-top:4px}
-  .after{text-align:center;margin:28px 0 0}
+  /* a display of its own beats the browser's [hidden], so it has to be said */
+  .streak[hidden]{display:none}
+  .streak div{text-align:center;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .streak b{display:block;font-family:var(--serif);font-size:1.7rem;letter-spacing:0;text-transform:none;
+            color:var(--gold);font-weight:400;margin-top:4px}
+  .after{text-align:center;margin:30px 0 0}
   .after .btn{margin:6px 5px 0}
-  .tomorrow{text-align:center;color:var(--muted);font-size:.88rem;margin:22px 0 0}
+  .tomorrow{text-align:center;color:var(--muted);font-size:.88rem;margin:24px 0 0}
 </style>
 </head>
 <body>
@@ -55,7 +59,7 @@
       <span></span><span></span><span></span>
     </button>
   <nav id="site-menu">
-    <a href="/galleta.html" data-t="nav_cookie"></a>
+    <a href="/fortuna.html" data-t="nav_cookie"></a>
     <a href="/horoscopo.html" data-t="nav_horoscopo"></a>
     <a href="/consulta.html" data-t="nav_consulta"></a>
     <a href="/lectura.html" data-t="nav_reading"></a>
@@ -73,46 +77,30 @@
   <h1 data-banner style="font-size:clamp(1.7rem,4.6vw,2.5rem);margin-bottom:.2em" data-t="ck_h1"></h1>
   <p class="lede center" style="margin:0 auto" data-t="ck_lede"></p>
 
-  <div class="cookie-stage">
-    <button type="button" class="cookie-btn" id="cookie" aria-describedby="tap">
-      <svg viewBox="0 0 220 150" role="img" aria-hidden="true">
-        <defs>
-          <linearGradient id="ck" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#EFD9A6"/><stop offset="1" stop-color="#CDA95F"/>
-          </linearGradient>
-          <linearGradient id="ck2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#E2C68B"/><stop offset="1" stop-color="#B8944C"/>
-          </linearGradient>
-        </defs>
-        <g class="slip">
-          <rect x="80" y="20" width="60" height="76" rx="3" fill="#FBF7EE" stroke="#241F18" stroke-width="1.6"/>
-          <rect x="86" y="36" width="48" height="2.6" rx="1.3" fill="#C9A227" opacity=".55"/>
-          <rect x="86" y="48" width="40" height="2.6" rx="1.3" fill="#16314F" opacity=".28"/>
-          <rect x="86" y="60" width="46" height="2.6" rx="1.3" fill="#16314F" opacity=".28"/>
-          <rect x="86" y="72" width="34" height="2.6" rx="1.3" fill="#16314F" opacity=".28"/>
+  <div class="fx-stage" id="stage">
+    <button type="button" class="fx-btn" id="reveal" aria-describedby="tap">
+      <svg viewBox="0 0 200 200" role="img" aria-hidden="true">
+        <circle class="fx-halo" cx="100" cy="100" r="52" fill="rgba(139,92,246,.30)"/>
+        <circle cx="100" cy="100" r="34" fill="rgba(168,148,255,.16)"
+                stroke="rgba(240,236,255,.5)" stroke-width="1.1"/>
+        <g class="fx-ring" fill="none" stroke="#D9B872" stroke-width="1.1" opacity=".85">
+          <circle cx="100" cy="100" r="66" stroke-dasharray="2 9"/>
+          <circle cx="100" cy="34" r="2.6" fill="#D9B872" stroke="none"/>
         </g>
-        <g class="half half-l">
-          <path d="M110 60C70 34 30 50 30 90c0 26 30 36 58 26 14-4 22-12 22-20Z" fill="url(#ck)" stroke="#241F18" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M110 62C92 74 78 92 46 96" fill="none" stroke="#241F18" stroke-width="1.6" stroke-opacity=".5"
-                stroke-linecap="round" opacity=".5"/>
-          <path d="M60 60c-12 6-18 16-18 28" fill="none" stroke="#FBF3DE" stroke-width="3"
-                stroke-linecap="round" opacity=".5"/>
+        <g class="fx-ring-2" fill="none" stroke="#4FD8D3" stroke-width="1" opacity=".7">
+          <circle cx="100" cy="100" r="82" stroke-dasharray="1 14"/>
+          <circle cx="182" cy="100" r="2.2" fill="#4FD8D3" stroke="none"/>
         </g>
-        <g class="half half-r">
-          <path d="M110 60c40-26 80-10 80 30 0 26-30 36-58 26-14-4-22-12-22-20Z" fill="url(#ck2)" stroke="#241F18" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M110 62c18 12 32 30 64 34" fill="none" stroke="#241F18" stroke-width="1.6" stroke-opacity=".45"
-                stroke-linecap="round" opacity=".5"/>
-          <path d="M160 60c12 6 18 16 18 28" fill="none" stroke="#FBF3DE" stroke-width="3"
-                stroke-linecap="round" opacity=".35"/>
-        </g>
+        <path d="M100 74 L104.4 95.6 L126 100 L104.4 104.4 L100 126 L95.6 104.4 L74 100 L95.6 95.6 Z"
+              fill="#F0ECFF" opacity=".92"/>
       </svg>
     </button>
   </div>
   <p class="tap" id="tap" data-t="ck_tap"></p>
 
-  <p class="fortune" id="fortune"></p>
+  <p class="df-words fx-words" id="fortune"></p>
 
-  <div class="cookie-card" id="ck-card" hidden>
+  <div class="fx-card" id="ck-card" hidden>
     <h3 id="ck-card-h"></h3>
     <div class="art" id="ck-art"></div>
     <p class="nm" id="ck-name"></p>
@@ -147,13 +135,14 @@
 <script src="/js/card-images.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/fortunes.js"></script>
+<script src="/js/dailyfortune.js"></script>
 <script>
 window.initCookie = function () {
   const C = window.COOKIE, T = window.T;
   const lang = () => window.getLang();
-  const btn = document.getElementById('cookie');
+  const btn = document.getElementById('reveal');
   if (!btn) return;
-  const stage = btn.parentElement;
+  const stage = document.getElementById('stage');
   const fortuneEl = document.getElementById('fortune');
   const cardBox = document.getElementById('ck-card');
   const after = document.getElementById('after');
@@ -165,7 +154,7 @@ window.initCookie = function () {
   function paintCard(c) {
     const L = T[lang()];
     document.getElementById('ck-card-h').textContent = c.label;
-    document.getElementById('ck-art').innerHTML = window.cardFace(c.card, lang(), 'full');
+    document.getElementById('ck-art').innerHTML = window.cardObject(c.card, lang(), 'full');
     document.getElementById('ck-name').textContent = c.card.name[lang()];
     document.getElementById('ck-mean').textContent = c.card.up[lang()];
     document.getElementById('tomorrow').textContent = L.ck_tomorrow;
@@ -178,27 +167,24 @@ window.initCookie = function () {
     streak.hidden = !(s.total > 0);
   }
 
-  /* the whole point is that it only opens once a day: reopening the page after
-     cracking it shows the same fortune already out of its shell */
+  /* the whole point is that there is one a day: coming back the same day shows
+     the same words, already written, with none of the ceremony */
   function reveal(instant) {
     const c = C.todaysCookie(lang());
     opened = true;
     btn.disabled = true;
     stage.classList.add('is-open');
-    fortuneEl.textContent = c.fortune;
+    if (instant) fortuneEl.textContent = c.fortune;
+    else fortuneEl.innerHTML = window.DailyFortune.words(c.fortune);
     paintCard(c);
     cardBox.hidden = false;
     after.hidden = false;
+    /* the invitation has been taken up, so it stops being translated back in */
+    tap.removeAttribute('data-t');
     tap.textContent = '';
-    if (instant) {
-      fortuneEl.style.transition = 'none';
-      cardBox.style.transition = 'none';
-    }
-    requestAnimationFrame(() => {
-      fortuneEl.classList.add('in');
-      cardBox.classList.add('in');
-    });
     paintStreak();
+    /* whichever way it is read, the day is greeted and counted once */
+    window.DailyFortune.seen();
     if (window.Ritual) window.Ritual.mark('cookie');
   }
 

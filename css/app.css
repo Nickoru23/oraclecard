@@ -664,3 +664,159 @@ footer.site nav a:hover{color:var(--cyan-hi)}
   .sigils{grid-template-columns:1fr}
   .tallies dd{font-size:1.7rem}
 }
+
+/* ================= the daily fortune ==================================
+
+   The first thing anyone sees, once a day. The sky closes over the page and a
+   few words write themselves onto it, one at a time, out of a blur, as though
+   they were being spoken rather than laid out. Then the card that brought them
+   rises underneath and the way in appears.
+
+   The timing is set in the module, not here: each word carries its own
+   animation-delay, so a long fortune spaces itself out and a short one arrives
+   quickly. Everything below is the shape of one word's arrival, and the frame
+   around it.
+
+   Nothing here loads anything. The sky is the same star field the page already
+   uses, moved slowly.                                                        */
+
+html.df-open{overflow:hidden}
+
+.df{
+  position:fixed;inset:0;z-index:100;
+  display:grid;place-items:center;
+  padding:28px 20px;
+  overflow-y:auto;
+  background:
+    radial-gradient(900px 700px at 50% 12%, rgba(112,58,190,.42), transparent 66%),
+    radial-gradient(800px 640px at 50% 96%, rgba(46,72,180,.34), transparent 64%),
+    linear-gradient(178deg, #0B0A20 0%, var(--void) 58%, #04030C 100%);
+  opacity:0;
+  transition:opacity .5s ease;
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)
+}
+.df.is-in{opacity:1}
+
+/* the sky behind the words, drifting just enough to be alive */
+.df-sky{
+  position:absolute;inset:-40px;pointer-events:none;
+  background-image:var(--stars),var(--stars);
+  background-size:620px 620px,380px 380px;
+  opacity:.55;
+  animation:df-drift 140s linear infinite
+}
+@keyframes df-drift{
+  from{background-position:0 0,0 0}
+  to{background-position:620px 310px,-380px 190px}
+}
+
+.df-in{
+  position:relative;
+  width:100%;max-width:660px;
+  text-align:center;
+  margin:auto;
+  padding:8px 0 4px
+}
+
+.df-eyebrow{
+  font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--gold);font-weight:700;margin:0 0 22px;
+  opacity:0;animation:df-rise .8s ease .1s forwards
+}
+
+/* ---------- the words arriving ---------- */
+
+.df-words{
+  font-family:var(--serif);
+  font-size:clamp(1.45rem,4.6vw,2.5rem);
+  line-height:1.42;
+  color:var(--bone);
+  margin:0 0 34px;
+  text-wrap:balance
+}
+.df-w{
+  display:inline-block;
+  opacity:0;
+  animation:df-word 1.25s cubic-bezier(.16,.9,.3,1) both
+}
+/* out of a blur, from slightly below and slightly wide, with a glow that burns
+   off as the word settles: the letters look as though they condense */
+@keyframes df-word{
+  0%{
+    opacity:0;
+    filter:blur(14px);
+    letter-spacing:.36em;
+    transform:translateY(14px) scale(1.04);
+    text-shadow:0 0 26px rgba(168,148,255,.95),0 0 60px rgba(139,92,246,.7)
+  }
+  45%{
+    opacity:1;
+    filter:blur(2.5px);
+    text-shadow:0 0 20px rgba(168,148,255,.8),0 0 46px rgba(139,92,246,.5)
+  }
+  100%{
+    opacity:1;
+    filter:blur(0);
+    letter-spacing:normal;
+    transform:none;
+    text-shadow:0 0 34px rgba(139,92,246,.34)
+  }
+}
+
+/* ---------- the card underneath ---------- */
+
+/* The entrance fades this wrapper in and the animation finishes at full
+   opacity, so nothing is left holding a grouping property over the card. A
+   permanent opacity, filter or overflow here would flatten the card and take
+   its back away, which is why the entrance is an animation and not a state. */
+.df-card{
+  opacity:0;
+  animation:df-rise 1s ease both;
+  animation-delay:var(--df-card-delay,1.6s)
+}
+.df-cardlabel{
+  font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--cyan);font-weight:700;margin:0 0 12px
+}
+.df-cardart{
+  width:min(178px,44vw);margin:0 auto;
+  border-radius:var(--r-sm);
+  box-shadow:var(--shadow-lift),0 0 60px -14px rgba(139,92,246,.9)
+}
+.df-cardname{
+  font-family:var(--serif);font-size:1.12rem;color:var(--bone);
+  margin:16px 0 0
+}
+
+.df-go{
+  margin-top:34px;
+  opacity:0;
+  animation:df-rise .9s ease both;
+  animation-delay:calc(var(--df-card-delay,1.6s) + .5s)
+}
+.df-note{
+  margin:18px 0 0;color:var(--muted);
+  opacity:0;
+  animation:df-rise .9s ease both;
+  animation-delay:calc(var(--df-card-delay,1.6s) + .7s)
+}
+
+@keyframes df-rise{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
+}
+
+/* Someone who has asked for less movement gets the same fortune with none of
+   the theatre: everything is simply there. */
+.df.is-instant .df-sky{animation:none}
+.df.is-instant .df-w,
+.df.is-instant .df-eyebrow,
+.df.is-instant .df-card,
+.df.is-instant .df-go,
+.df.is-instant .df-note{animation:none;opacity:1;transform:none;filter:none;letter-spacing:normal}
+
+@media(max-width:520px){
+  .df{padding:22px 16px;place-items:start center}
+  .df-words{margin-bottom:28px}
+  .df-cardart{width:min(150px,42vw)}
+}

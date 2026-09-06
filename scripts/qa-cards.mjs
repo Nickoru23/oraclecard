@@ -6,13 +6,16 @@
    illustrations have been added. */
 import { chromium } from 'playwright';
 import { serve } from './serve.mjs';
+import { PREP } from './pages.mjs';
 import { writeFile, mkdir, rm, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const server = await serve();
 const b=await chromium.launch();
-const p=await (await b.newContext({viewport:{width:1280,height:900}})).newPage();
+const ctx=await b.newContext({viewport:{width:1280,height:900}});
+await ctx.addInitScript(PREP, 'es');
+const p=await ctx.newPage();
 const errs=[];
 /* A resource that fails to load is expected here: one picture is broken on
    purpose to prove the fallback. Script faults are not, and neither is a

@@ -3,11 +3,12 @@
    day, and the sigils strike when they are earned. */
 import { chromium } from 'playwright';
 import { serve } from './serve.mjs';
-import { BASE as base } from './pages.mjs';
+import { BASE as base, PREP } from './pages.mjs';
 
 const server = await serve();
 const b = await chromium.launch();
 const ctx = await b.newContext();
+await ctx.addInitScript(PREP, 'es');   /* the fortune is greeted; qa-fortune.mjs covers it */
 await ctx.route('**/*', r => r.request().url().startsWith(base) ? r.continue() : r.abort());
 const p = await ctx.newPage();
 const errs = [];
@@ -29,9 +30,9 @@ check('spread marked', s.done.spread === 1, s.done);
 check('not complete on one task', s.complete === false, s.complete);
 check('ledger shows one done', await p.locator('.ritual-row.is-done').count() === 1);
 
-// the fortune cookie
-await p.goto(base + 'galleta.html', { waitUntil: 'networkidle' });
-await p.click('#cookie');
+// the daily fortune
+await p.goto(base + 'fortuna.html', { waitUntil: 'networkidle' });
+await p.click('#reveal');
 await p.waitForTimeout(500);
 s = await S();
 check('cookie marked', s.done.cookie === 1, s.done);

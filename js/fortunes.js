@@ -1,12 +1,12 @@
-/* ===== The Witch Atelier — the fortune cookie =====
+/* ===== The Witch Atelier — the daily fortune =====
 
-   One cookie a day. Not a reading and not pretending to be one: a short line to
-   carry around, and the card that came with it.
+   One fortune a day. Not a reading and not pretending to be one: a few words to
+   carry around, and the card that brings them.
 
    The draw is seeded from the date and a small random id kept in the visitor's
-   own browser, so two people cracking a cookie on the same morning get different
-   ones, and the same person gets the same one all day however many times they
-   reload. Nothing is sent anywhere. */
+   own browser, so two people reading their fortune on the same morning get
+   different ones, and the same person gets the same one all day however many
+   times they reload. Nothing is sent anywhere. */
 (function () {
   const F = {
     es: [
@@ -91,9 +91,9 @@
 
   /* one line about the card that came with it, so the cookie is still tarot */
   const WITH_CARD = {
-    es: 'La carta que venía dentro',
-    en: 'The card that came with it',
-    de: 'Die Karte, die dabei lag',
+    es: 'La carta que la trae',
+    en: 'The card that brings it',
+    de: 'Die Karte, die es bringt',
   };
 
   const KEY = 'umbral.cookie';

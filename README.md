@@ -20,9 +20,10 @@ js/
   ritual.js               the ledger's state: the day's tasks, the days kept
   ledger.js               the ledger as it is drawn, and the tally in the header
   deck.js i18n.js app.js  the deck texts, the three languages, the page engine
+  dailyfortune.js         the greeting: the day's words, written onto the dark
   astro.js horoscope.js zodiac.js fortunes.js legal.js notice.js ornament.js
 netlify/functions/        checkout, reading, free-reading, orders, diag
-scripts/                  a static server and four checks, see below
+scripts/                  a static server and seven checks, see below
 legacy/                   an earlier unrelated prototype, kept for reference
 ```
 
@@ -49,7 +50,7 @@ Two the functions read that the handover's table omits:
 ```bash
 npm install            # playwright, for the checks only. Nothing ships.
 npm run serve          # http://localhost:4321
-npm run qa             # all four checks
+npm run qa             # all seven checks
 ```
 
 | Check | What it holds to |
@@ -60,6 +61,7 @@ npm run qa             # all four checks
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
 | `qa:cards` | the cards as objects: they tilt toward the pointer and the rendered matrix really is 3D, a drag spins them and selects no text, a throw settles, arrow keys turn them, a drawn card still turns over. Then it makes its own pictures to check a card prefers one and falls back to its drawing when one is missing, and puts everything back |
 | `qa:stripe` | the paid path end to end against a Stripe stand in: the request shape, the three tiers, what checkout refuses, the payment check, the held tiers and the owner token, the order book, and that a generated reading survives the metadata cache whole. No network, no account, no charges |
+| `qa:fortune` | the daily fortune: it opens by itself on a first visit in all three languages, the words carry climbing delays and a late one starts invisible, the card behind it is a real two sided card, it keeps the day and the streak, it closes and stays closed, it never opens over the reading form or the page after payment, and its own page writes the same words the same way |
 
 The `/api/*` paths need `netlify dev` or a deployed site. The pages render without them.
 
@@ -162,12 +164,34 @@ Two things only that proves:
    (`READING CACHE FAILED`) instead of swallowing it, so it will be visible in
    the Netlify function log.
 
+## The daily fortune
+
+The first thing anyone sees. Once a day, before the site itself, the sky closes
+over the page and the day's few words write themselves onto it a word at a time,
+out of a blur, with the card that brought them rising underneath.
+
+* **The animation lives in the stylesheet**, under "the words arriving".
+  `js/dailyfortune.js` only gives each word its own `animation-delay`, so a long
+  fortune spaces itself out and a short one arrives quickly, and the card waits
+  for the last word.
+* **It is skippable and it does not repeat.** Escape, the button or a click
+  outside closes it; the day it was last shown is the only thing kept.
+* **It never stands between a buyer and a purchase.** `/lectura` and `/gracias`
+  are excluded outright, and so is `/fortuna`, which is the same reveal held
+  still so it can be read again, kept and shared.
+* **Nothing is loaded for it.** The fortune, the card and the drawing are all
+  already in the page.
+* **Reduced motion gets the same fortune with none of the theatre.**
+
+`fortuna.html` was `galleta.html`, and the fortune cookie it was named after is
+gone. Both old paths redirect.
+
 ## The ledger
 
 The gamification, all of it in `localStorage` under one key, sent nowhere, costing
 nothing to serve and nothing in function runtime.
 
-* **The day's ritual.** Three free things: the fortune cookie, the card of the
+* **The day's ritual.** Three free things: the daily fortune, the card of the
   day, one spread. Doing all three keeps the day.
 * **The days kept.** A run of kept days, with the last four weeks shown. A
   streak survives a missed page load, and breaks only on a missed day.
@@ -189,11 +213,8 @@ output, so parts of it are still absent.
   is here, so nothing is lost at runtime, but the source of truth for the card
   copy is not in version control.
 * `scripts/build-deck.mjs`, `build-legal.mjs`, `build-deploy-zip.mjs`, and the
-  eleven original `qa-*.mjs`. The four checks here cover the rules the handover
+  eleven original `qa-*.mjs`. The seven checks here cover the rules the handover
   calls deliberate; they are not the originals.
-* `js/dailyfortune.js`, and with it the once a day greeting modal. `galleta.html`
-  works, but no page greets a visitor on arrival.
-
 **Resolved since the handover**
 
 * The card artwork is no longer procedural abstraction. `js/art.js` and
@@ -263,13 +284,14 @@ output, so parts of it are still absent.
   success page loads, the instant tier reading is not generated then. Nothing is
   lost, it generates whenever that URL is opened and the order shows on the
   review desk, but nobody is told.
-* `galleta.html` keeps its own cookie streak, separate from the ledger's days
+* `fortuna.html` keeps its own fortune streak, separate from the ledger's days
   kept. The labels now say which is which, but two streaks is still two streaks.
 
 ## Verified
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
-of any third party, 291 keys at parity across the three languages, no dashes on
-screen, and 22 ledger assertions green. The whole site is about 390 KB before
+of any third party, 295 keys at parity across the three languages, no dashes on
+screen, 22 ledger assertions, 48 Stripe assertions, 21 card assertions and 30
+daily fortune assertions green. The whole site is about 390 KB before
 compression, which is less than it was before this pass despite the new deck,
 because 272 KB of unused image placeholders went with it.

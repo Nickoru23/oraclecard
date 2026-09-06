@@ -37,9 +37,21 @@
   force = true
 
 [[redirects]]
-  from = "/galleta"
-  to = "/galleta.html"
+  from = "/fortuna"
+  to = "/fortuna.html"
   status = 200
+
+# the fortune cookie became the daily fortune. Anything already linked or
+# bookmarked under the old name keeps working.
+[[redirects]]
+  from = "/galleta"
+  to = "/fortuna.html"
+  status = 301
+
+[[redirects]]
+  from = "/galleta.html"
+  to = "/fortuna.html"
+  status = 301
 
 [[redirects]]
   from = "/horoscopo"

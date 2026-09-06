@@ -3,7 +3,7 @@
    That last one is rule 3, and it is why the site carries no consent banner. */
 import { chromium } from 'playwright';
 import { serve } from './serve.mjs';
-import { PAGES, LANGS, BASE } from './pages.mjs';
+import { PAGES, LANGS, BASE, PREP } from './pages.mjs';
 
 const server = await serve();
 const browser = await chromium.launch();
@@ -12,7 +12,7 @@ let fails = 0;
 
 for (const lang of LANGS) {
   const ctx = await browser.newContext();
-  await ctx.addInitScript(l => { try { localStorage.setItem('umbral.lang', l); } catch (e) {} }, lang);
+  await ctx.addInitScript(PREP, lang);
   await ctx.route('**/*', r => {
     const u = r.request().url();
     if (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) return r.continue();
