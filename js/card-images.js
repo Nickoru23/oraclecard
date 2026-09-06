@@ -38,6 +38,19 @@
                  data-card-id="${card.id}">`;
   };
 
+  /* A card that can be turned needs two sides. The front sits in normal flow
+     and gives the card its size; the back is laid over it, already turned, so
+     whichever side is toward you is the one you see. Without this a card spun
+     past ninety degrees shows nothing at all, which is what it did. */
+  window.cardObject = function (card, lang, size, opts) {
+    const o = opts || {};
+    const front = o.faceDown ? window.cardBackSVG() : window.cardFace(card, lang, size);
+    return `<span class="c3d-faces">` +
+             `<span class="face front">${front}</span>` +
+             `<span class="face back" aria-hidden="true">${window.cardBackSVG()}</span>` +
+           `</span>`;
+  };
+
   /* One picture failing must never leave a hole. The error event does not
      bubble, so this listens in the capture phase and swaps that single card
      back to its drawing. */

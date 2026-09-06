@@ -87,7 +87,7 @@
 </div></footer>
 
 <script src="/js/deck.js"></script>
-<script src="/js/art2.js"></script>
+<script src="/js/deck-art.js"></script>
 <script src="/js/card-images.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/app.js"></script>
@@ -100,7 +100,7 @@
     const ids = ['m01','s02','m17','p05','w03'];
     const paint = () => {
       document.getElementById('fan').innerHTML = ids
-        .map(id => `<div>${window.cardFace(window.DECK.find(c => c.id === id), window.getLang(), 'sm')}</div>`).join('');
+        .map(id => `<div>${window.cardObject(window.DECK.find(c => c.id === id), window.getLang(), 'sm')}</div>`).join('');
     };
     paint();
     document.addEventListener('langchange', paint);

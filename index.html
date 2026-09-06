@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/app.css">
 <style>
   #deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
-  .deck-cell{background:none;border:0;padding:0;cursor:pointer;border-radius:10px;overflow:hidden;
+  .deck-cell{background:none;border:0;padding:0;cursor:grab;border-radius:10px;
     line-height:0;transition:transform .2s ease,box-shadow .2s ease;
     box-shadow:0 10px 26px -12px rgba(0,0,0,.9),0 0 20px -8px rgba(139,92,246,.5)}
   /* no transform here: card3d.js owns the transform on a card, and a rule that
@@ -29,7 +29,7 @@
   @media(max-width:620px){.modal-in{grid-template-columns:1fr;padding:20px}
     .modal-in>div:first-child{max-width:180px;margin:0 auto}}
   .hero-fan{display:flex;justify-content:center;margin-top:46px}
-  .hero-fan .f{width:126px;margin:0 -22px;border-radius:10px;overflow:hidden;line-height:0;
+  .hero-fan .f{width:126px;margin:0 -22px;border-radius:10px;line-height:0;
     box-shadow:0 22px 48px -18px rgba(0,0,0,.92),0 0 40px -10px rgba(139,92,246,.6);
     border:1px solid var(--line-2)}
   .hero-fan .f svg{width:100%;height:auto;display:block}
@@ -228,7 +228,7 @@
 </div></footer>
 
 <script src="/js/deck.js"></script>
-<script src="/js/art2.js"></script>
+<script src="/js/deck-art.js"></script>
 <script src="/js/card-images.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/app.js"></script>
@@ -241,10 +241,10 @@
   (function fan(){
     const ids=['m17','m01','m19','m10','m21'];
     document.getElementById('fan').innerHTML = ids
-      .map(id=>`<div class="f">${window.cardFace(window.DECK.find(c=>c.id===id), window.getLang(), 'sm')}</div>`).join('');
+      .map(id=>`<div class="f">${window.cardObject(window.DECK.find(c=>c.id===id), window.getLang(), 'sm')}</div>`).join('');
     document.addEventListener('langchange', ()=>{
       document.getElementById('fan').innerHTML = ids
-        .map(id=>`<div class="f">${window.cardFace(window.DECK.find(c=>c.id===id), window.getLang(), 'sm')}</div>`).join('');
+        .map(id=>`<div class="f">${window.cardObject(window.DECK.find(c=>c.id===id), window.getLang(), 'sm')}</div>`).join('');
     });
   })();
 </script>

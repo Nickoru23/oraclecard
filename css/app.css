@@ -280,6 +280,21 @@ header.site{
   border-color:transparent;color:#fff;box-shadow:var(--glow-violet)
 }
 
+/* Two sides on every card that can be turned.
+
+   Do not put overflow, filter, opacity or clip-path on a card: any of them
+   forces transform-style back to flat, backface-visibility stops working, and
+   a card turned past ninety degrees shows its own front mirrored instead of
+   its back. The cards are already rounded by their own artwork, so nothing
+   needs clipping.
+ The front is in normal flow and
+   gives the card its size; the back lies over it, already turned. */
+.c3d-faces{display:block;position:relative;transform-style:preserve-3d;border-radius:inherit}
+.c3d-faces .face{border-radius:inherit;backface-visibility:hidden;display:block}
+.c3d-faces .face.front{position:relative}
+.c3d-faces .face.back{position:absolute;inset:0;transform:rotateY(180deg)}
+.c3d-faces .face svg,.c3d-faces .face img{width:100%;height:100%;display:block;border-radius:inherit}
+
 /* ---------- the cards, as objects ----------
    The transform is composed from custom properties, never written whole, so a
    tilt, a flip and a thrown spin can all be true at once. js/card3d.js writes
@@ -425,8 +440,8 @@ footer.site nav a:hover{color:var(--cyan-hi)}
 .picker-count{font-family:var(--serif);font-size:1.4rem;color:var(--cyan-hi);margin:.2em 0 1.4em}
 .picker-table{display:flex;flex-wrap:wrap;justify-content:center;gap:0;padding:0 22px}
 .picker-card{
-  width:92px;flex:none;margin:0 -14px 16px;padding:0;border:0;background:none;cursor:pointer;
-  border-radius:var(--r-sm);overflow:hidden;line-height:0;
+  width:92px;flex:none;margin:0 -14px 16px;padding:0;border:0;background:none;cursor:grab;
+  border-radius:var(--r-sm);line-height:0;
   box-shadow:0 12px 26px -12px rgba(0,0,0,.9),0 0 22px -6px rgba(139,92,246,.4);
   transform:perspective(900px)
     rotate(calc((var(--i) - 10.5) * 0.9deg))

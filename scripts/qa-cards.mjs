@@ -29,6 +29,15 @@ await p.locator('.privacy-notice .btn').click().catch(()=>{}); await p.waitForTi
 const T=(n,c,g)=>{ if(!c) errs.push('FAIL '+n); console.log((c?'ok  ':'FAIL')+'  '+n+(c?'':'  '+JSON.stringify(g))); };
 T('deck cells are 3d', await p.locator('.deck-cell.is-3d').count()===78, await p.locator('.deck-cell.is-3d').count());
 T('hero fan is 3d', await p.locator('.hero-fan .f.is-3d').count()===5);
+T('every card has two sides', await p.locator('.deck-cell .c3d-faces .face.back').count()===78,
+  await p.locator('.deck-cell .c3d-faces .face.back').count());
+/* overflow, filter, opacity or clip-path on a card forces transform-style back
+   to flat, backface-visibility stops working, and a card turned past ninety
+   degrees shows its own front mirrored instead of its back. Nothing about that
+   is visible in the custom properties, so it is asserted here. */
+const flat = await p.evaluate(() => [...document.querySelectorAll('.deck-cell, .hero-fan .f, .picker-card, .card')]
+  .filter(el => getComputedStyle(el).transformStyle !== 'preserve-3d').length);
+T('nothing flattens a card back to two dimensions', flat === 0, flat);
 
 // hover tilt on a deck cell
 const cell = p.locator('.deck-cell').nth(10);
@@ -112,8 +121,9 @@ try {
 
   T('three cards take a picture', await p.locator('.deck-cell img.card-img').count() === 3,
     await p.locator('.deck-cell img.card-img').count());
-  T('the rest keep their drawing', await p.locator('.deck-cell svg').count() === 75,
-    await p.locator('.deck-cell svg').count());
+  /* scoped to the front: every cell also carries a back, which is always drawn */
+  T('the rest keep their drawing', await p.locator('.deck-cell .face.front svg').count() === 75,
+    await p.locator('.deck-cell .face.front svg').count());
   T('pictures load lazily', await p.locator('img.card-img').first().getAttribute('loading') === 'lazy');
   T('pictures are named for a screen reader',
     (await p.locator('img.card-img').first().getAttribute('alt') || '').length > 2);
@@ -123,8 +133,9 @@ try {
   await p.waitForTimeout(500);
   await p.evaluate(() => { document.querySelector('.deck-cell img.card-img').src = '/cards/t/gone.webp'; });
   await p.waitForTimeout(900);
-  T('a missing picture falls back to its drawing', await p.locator('.deck-cell svg').count() === 76,
-    await p.locator('.deck-cell svg').count());
+  T('a missing picture falls back to its drawing',
+    await p.locator('.deck-cell .face.front svg').count() === 76,
+    await p.locator('.deck-cell .face.front svg').count());
 } finally {
   await writeFile(join(ROOT, 'js/card-images.js'), restore);
   await rm(join(ROOT, 'cards'), { recursive: true, force: true });

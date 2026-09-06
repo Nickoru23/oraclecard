@@ -180,7 +180,7 @@
       b.className = 'picker-card';
       b.style.setProperty('--i', i);
       b.setAttribute('aria-label', `${t('pick_h')} ${i + 1}`);
-      b.innerHTML = window.cardBackSVG();
+      b.innerHTML = window.cardObject(d.card, LANG, 'sm', { faceDown: true });
       b.addEventListener('click', () => {
         if (b.classList.contains('taken') || chosen.length >= need) return;
         b.classList.add('taken');
@@ -249,12 +249,12 @@
       grid.innerHTML = window.DECK
         .filter(c => filter === 'all' || c.a === 'major')
         .map(c => `<button class="deck-cell" data-id="${c.id}" aria-label="${c.name[LANG]}">
-                     ${window.cardFace(c, LANG, 'sm')}</button>`).join('');
+                     ${window.cardObject(c, LANG, 'sm')}</button>`).join('');
     }
     grid.addEventListener('click', e => {
       const b = e.target.closest('.deck-cell'); if (!b) return;
       const c = window.DECK.find(x => x.id === b.dataset.id);
-      dlg.querySelector('[data-modal-art]').innerHTML = window.cardFace(c, LANG, 'full');
+      dlg.querySelector('[data-modal-art]').innerHTML = window.cardObject(c, LANG, 'full');
       dlg.querySelector('[data-modal-body]').innerHTML =
         `<h3>${c.name[LANG]}</h3>
          <div class="kw">${c.kw[LANG].map(k => `<span>${k}</span>`).join('')}</div>
