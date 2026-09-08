@@ -102,7 +102,7 @@
 
   <div class="fx-card" id="ck-card" hidden>
     <h3 id="ck-card-h"></h3>
-    <div class="art" id="ck-art"></div>
+    <div class="art" id="ck-art" data-turn></div>
     <p class="nm" id="ck-name"></p>
     <p class="mean" id="ck-mean"></p>
   </div>
@@ -154,7 +154,10 @@ window.initCookie = function () {
   function paintCard(c) {
     const L = T[lang()];
     document.getElementById('ck-card-h').textContent = c.label;
-    document.getElementById('ck-art').innerHTML = window.cardObject(c.card, lang(), 'full');
+    /* a redrawn card is face up again, so the turn it was left in goes with it */
+    const artEl = document.getElementById('ck-art');
+    artEl.classList.remove('is-turned');
+    artEl.innerHTML = window.cardObject(c.card, lang(), 'full');
     document.getElementById('ck-name').textContent = c.card.name[lang()];
     document.getElementById('ck-mean').textContent = c.card.up[lang()];
     document.getElementById('tomorrow').textContent = L.ck_tomorrow;

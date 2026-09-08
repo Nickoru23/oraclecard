@@ -311,7 +311,21 @@ header.site{
   touch-action:pan-y;
   user-select:none;-webkit-user-select:none
 }
-.is-3d.is-held{cursor:grabbing}
+.is-3d.is-held,[data-turn].is-3d.is-held{cursor:grabbing}
+.is-3d.by-pointer:focus-visible{outline:none}
+
+/* A card that answers to a click by turning over.
+
+   Only the turn is eased, and it is eased by declaring --flip an angle so the
+   browser can interpolate it. A transition on the whole transform would be
+   wrong here twice over: card3d.js writes the transform every frame, so the
+   ease would fight the loop and lag the card half a second behind the pointer,
+   and re-easing a transform sixty times a second costs enough frames that a
+   thrown card visibly crawls. Where --flip cannot be registered the card still
+   turns, just at once. */
+@property --flip{syntax:"<angle>";inherits:false;initial-value:0deg}
+[data-turn].is-3d{cursor:grab;transition:--flip .55s cubic-bezier(.2,.9,.25,1)}
+.is-turned{--flip:180deg}
 /* the sheen: one highlight that tracks the pointer across the face */
 .has-sheen{position:relative}
 .has-sheen::after{
@@ -692,22 +706,24 @@ html.df-open{overflow:hidden}
     radial-gradient(800px 640px at 50% 96%, rgba(46,72,180,.34), transparent 64%),
     linear-gradient(178deg, #0B0A20 0%, var(--void) 58%, #04030C 100%);
   opacity:0;
-  transition:opacity .5s ease;
-  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)
+  transition:opacity .5s ease
 }
 .df.is-in{opacity:1}
 
-/* the sky behind the words, drifting just enough to be alive */
+/* The sky behind the words, and it holds still. That is a measurement, not a
+   preference: this covers the whole viewport, and everything that animates a
+   surface that size costs most of the frame budget. A drifting background
+   position, a backdrop-filter over the page beneath, and even a slow opacity
+   breathe each took the page from sixty frames a second to somewhere between
+   sixteen and thirty three, which showed as a card that crawled instead of
+   settling when it was thrown. The words are the animation here. The sky is
+   the ground they arrive on, and it is cheap because it does nothing. */
 .df-sky{
   position:absolute;inset:-40px;pointer-events:none;
   background-image:var(--stars),var(--stars);
   background-size:620px 620px,380px 380px;
-  opacity:.55;
-  animation:df-drift 140s linear infinite
-}
-@keyframes df-drift{
-  from{background-position:0 0,0 0}
-  to{background-position:620px 310px,-380px 190px}
+  background-position:0 0,190px 90px;
+  opacity:.55
 }
 
 .df-in{
@@ -801,14 +817,19 @@ html.df-open{overflow:hidden}
   animation-delay:calc(var(--df-card-delay,1.6s) + .7s)
 }
 
+/* pointer-events goes with the opacity, and it is in the keyframes rather than
+   on the rules so that everything arriving this way gets it. The card is
+   interactive now, and one that cannot yet be seen must not be turnable: a
+   click into the empty space where it is about to appear would otherwise fade
+   it in already showing its back. Same for the button underneath it, where an
+   early click would close the greeting nobody had read yet. */
 @keyframes df-rise{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:none}
+  from{opacity:0;transform:translateY(12px);pointer-events:none}
+  to{opacity:1;transform:none;pointer-events:auto}
 }
 
 /* Someone who has asked for less movement gets the same fortune with none of
    the theatre: everything is simply there. */
-.df.is-instant .df-sky{animation:none}
 .df.is-instant .df-w,
 .df.is-instant .df-eyebrow,
 .df.is-instant .df-card,

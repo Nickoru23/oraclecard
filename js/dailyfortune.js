@@ -79,7 +79,7 @@
          <p class="df-words">${words(c.fortune)}</p>
          <div class="df-card">
            <p class="df-cardlabel">${esc(t('df_card'))}</p>
-           <div class="df-cardart">${window.cardObject(c.card, lang, 'full')}</div>
+           <div class="df-cardart" data-turn>${window.cardObject(c.card, lang, 'full')}</div>
            <p class="df-cardname">${esc(c.card.name[lang])}</p>
          </div>
          <button type="button" class="btn btn-gold df-go">${esc(t('df_enter'))}</button>
@@ -108,8 +108,17 @@
     };
     const onKey = e => { if (e.key === 'Escape') close(); };
     go.addEventListener('click', close);
-    el.addEventListener('click', e => { if (e.target === el || e.target === el.firstElementChild) close(); });
     document.addEventListener('keydown', onKey);
+
+    /* A click outside closes it, but only one that also started outside. The
+       card can be picked up and thrown, and a drag that ends over the sky fires
+       a click on the sky as well, so without this the greeting would vanish
+       halfway through a spin. */
+    const sky = el.querySelector('.df-sky');
+    const outside = t => t === el || t === sky;
+    let from = null;
+    el.addEventListener('pointerdown', e => { from = e.target; });
+    el.addEventListener('click', e => { if (outside(e.target) && outside(from)) close(); });
 
     /* the focus waits for the words, so a screen reader is not talked over and
        a keyboard is not handed a button before it exists to the eye */

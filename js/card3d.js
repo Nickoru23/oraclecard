@@ -31,6 +31,18 @@
 
   const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 
+  /* One release for the whole page. A drag that ends off its card, or one whose
+     pointer capture is taken away, has to be caught on the window, but only one
+     card can be dragged at a time, so the card being dragged puts its release
+     here rather than each card adding listeners of its own. Two per card would
+     never come off again, and the deck and the card of the day both redraw
+     themselves on a language change, so every switch would leave another set
+     behind holding on to the cards it had just discarded. */
+  let releasing = null;
+  const letGo = () => { const r = releasing; releasing = null; if (r) r(); };
+  window.addEventListener('pointerup', letGo);
+  window.addEventListener('pointercancel', letGo);
+
   function mount(el, opts) {
     if (!el || el.__c3d) return;
     el.__c3d = true;
@@ -113,28 +125,47 @@
         e.preventDefault();
         if (typeof el.focus === 'function') el.focus({ preventScroll: true });
         dragging = true; moved = false; pid = e.pointerId;
+        releasing = release;
         px = e.clientX; py = e.clientY; vx = vy = 0;
         el.classList.add('is-held');
         try { el.setPointerCapture(pid); } catch (x) {}
       });
 
       const release = () => {
+        if (releasing === release) releasing = null;
         if (!dragging) return;
         dragging = false;
         el.classList.remove('is-held');
         try { el.releasePointerCapture(pid); } catch (x) {}
         tx = 0; ty = 0; tsc = 1; run();
       };
-      /* the release is listened for on the window as well as the card. A drag
-         that ends off the element, or one whose pointer capture was taken away
-         by something else, would otherwise leave the card spinning forever. */
+      /* these three die with the card; the window is covered by letGo above */
       el.addEventListener('pointerup', release);
       el.addEventListener('pointercancel', release);
       el.addEventListener('lostpointercapture', release);
-      window.addEventListener('pointerup', release);
-      window.addEventListener('pointercancel', release);
       /* a drag must not also count as a click on the card underneath */
       el.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); } }, true);
+    }
+
+    /* ---------- the focus ring ----------
+       Chrome shows one for a div that script has focused, but not for a button
+       somebody clicked, so a card held in a plain div would sprout a ring on
+       every click while a deck cell, which is a button, never does. The ring is
+       kept for the keyboard, which is who it is for, and dropped when a pointer
+       is what put the focus there. */
+    el.addEventListener('pointerdown', () => el.classList.add('by-pointer'));
+    el.addEventListener('keydown', () => el.classList.remove('by-pointer'));
+    el.addEventListener('blur', () => el.classList.remove('by-pointer'));
+
+    /* ---------- turning it over ----------
+       A card marked data-turn is turned by a click or by Enter, the way a card
+       in a spread is. A drag is not a click, so spinning one does not flip it. */
+    if (el.hasAttribute('data-turn')) {
+      const turn = () => el.classList.toggle('is-turned');
+      el.addEventListener('click', () => { if (!moved) turn(); });
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); turn(); }
+      });
     }
 
     /* ---------- the keyboard ---------- */
@@ -161,7 +192,10 @@
   /* ---------- who gets it ----------
      Every card face on the site, wherever it is drawn, and whenever it is
      drawn: the deck browser repaints on a language change, the picker builds
-     its fan on every draw, and a spread appears long after load. */
+     its fan on every draw, and a spread appears long after load.
+
+     These names exist only to give some of them a gentler tilt. What actually
+     decides whether something is a card is the rule below it. */
   const SELECTOR = '.card, .deck-cell, .picker-card, .hero-fan .f, [data-modal-art]';
 
   function sweep(root) {
@@ -172,16 +206,30 @@
     });
   }
 
+  /* Anything holding a card object is a card. window.cardObject draws every two
+     sided card on the site into a .c3d-faces, so whatever contains one is the
+     thing that tilts and turns, wherever it was drawn and whoever drew it. That
+     is what keeps the greeting, the fortune page and the card of the day
+     behaving like the deck without any of them being named here. */
+  function faces(root) {
+    (root || document).querySelectorAll('.c3d-faces').forEach(f => {
+      const holder = f.parentElement;
+      if (holder && !holder.__c3d) mount(holder, { tilt: 12, sheen: true });
+    });
+  }
+
+  const scan = root => { sweep(root); faces(root); };
+
   const start = () => {
-    sweep();
-    /* anything drawn later is picked up as it arrives */
+    scan();
+    /* anything drawn later is picked up as it arrives. The scan starts at the
+       element whose children changed rather than at the node that arrived, so a
+       card that is itself the new node is still found. */
     new MutationObserver(muts => {
       for (const m of muts) {
-        for (const n of m.addedNodes) {
-          if (n.nodeType !== 1) continue;
-          if (n.matches && n.matches(SELECTOR)) sweep(n.parentNode);
-          else sweep(n);
-        }
+        if (!m.addedNodes.length) continue;
+        const at = m.target && m.target.nodeType === 1 ? m.target : null;
+        scan(at);
       }
     }).observe(document.body, { childList: true, subtree: true });
   };
@@ -189,5 +237,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
 
-  window.Card3D = { mount, sweep };
+  window.Card3D = { mount, sweep: scan };
 })();

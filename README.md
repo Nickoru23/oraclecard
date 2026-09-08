@@ -61,7 +61,7 @@ npm run qa             # all seven checks
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
 | `qa:cards` | the cards as objects: they tilt toward the pointer and the rendered matrix really is 3D, a drag spins them and selects no text, a throw settles, arrow keys turn them, a drawn card still turns over. Then it makes its own pictures to check a card prefers one and falls back to its drawing when one is missing, and puts everything back |
 | `qa:stripe` | the paid path end to end against a Stripe stand in: the request shape, the three tiers, what checkout refuses, the payment check, the held tiers and the owner token, the order book, and that a generated reading survives the metadata cache whole. No network, no account, no charges |
-| `qa:fortune` | the daily fortune: it opens by itself on a first visit in all three languages, the words carry climbing delays and a late one starts invisible, the card behind it is a real two sided card, it keeps the day and the streak, it closes and stays closed, it never opens over the reading form or the page after payment, and its own page writes the same words the same way |
+| `qa:fortune` | the daily fortune: it opens by itself on a first visit in all three languages, the words carry climbing delays and a late one starts invisible, nothing is clickable before it has arrived, the card tilts and spins and throws and turns over like any other, a throw that ends on the sky does not close the greeting, Escape does, it keeps the day and the streak, it never opens over the reading form or the page after payment, and its own page and the card of the day carry the same card |
 
 The `/api/*` paths need `netlify dev` or a deployed site. The pages render without them.
 
@@ -181,6 +181,15 @@ out of a blur, with the card that brought them rising underneath.
   still so it can be read again, kept and shared.
 * **Nothing is loaded for it.** The fortune, the card and the drawing are all
   already in the page.
+* **The card is a card.** It tilts, spins, throws, takes arrow keys and turns
+  over, exactly as one in the deck does. It is not named in `card3d.js`: what
+  makes something a card there is holding a `.c3d-faces`, which is what
+  `window.cardObject` draws every two sided card into. The card of the day was
+  drawn flat and one sided until this pass, and is now a card too.
+* **The sky holds still**, which is a measurement rather than a preference. A
+  drifting star field, a backdrop filter over the page beneath, and a slow
+  opacity breathe each cost most of the frame budget on a surface that size,
+  and the symptom was a thrown card that crawled instead of settling.
 * **Reduced motion gets the same fortune with none of the theatre.**
 
 `fortuna.html` was `galleta.html`, and the fortune cookie it was named after is
@@ -291,7 +300,7 @@ output, so parts of it are still absent.
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
 of any third party, 295 keys at parity across the three languages, no dashes on
-screen, 22 ledger assertions, 48 Stripe assertions, 21 card assertions and 30
+screen, 22 ledger assertions, 48 Stripe assertions, 21 card assertions and 54
 daily fortune assertions green. The whole site is about 390 KB before
 compression, which is less than it was before this pass despite the new deck,
 because 272 KB of unused image placeholders went with it.
