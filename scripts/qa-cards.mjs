@@ -144,6 +144,39 @@ try {
   await rm(join(ROOT, 'cards'), { recursive: true, force: true });
 }
 
+/* ---- a reversed card is the whole card upside down ----
+
+   Built here rather than drawn from a spread, because a card comes up reversed
+   about a third of the time and a check that is right two rounds in three is
+   not a check. The markup is the markup app.js lays a spread with, and the
+   drawing is the real one, so what is under test is the rule and nothing else. */
+await p.evaluate(() => {
+  /* a minor card, which the illustration part of this check never covers, so
+     this is the drawing and not a picture standing in for it */
+  const c = window.DECK.find(x => x.a !== 'major');
+  const box = document.createElement('div');
+  box.innerHTML =
+    `<div class="card" id="qa-up"><div class="face front">${window.cardSVG(c, 'es', 'sm')}</div></div>` +
+    `<div class="card" id="qa-rev"><div class="face front rev">${window.cardSVG(c, 'es', 'sm')}</div></div>` +
+    `<div class="card" id="qa-revimg"><div class="face front rev">` +
+      `<img class="card-img" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="></div></div>`;
+  document.body.appendChild(box);
+});
+const HALF = 'matrix(-1, 0, 0, -1, 0, 0)';
+const upright = await p.$eval('#qa-up .front svg', n => getComputedStyle(n).transform);
+T('an upright card is not turned', upright === 'none', upright);
+T('a reversed card is turned a half turn',
+  await p.$eval('#qa-rev .front svg', n => getComputedStyle(n).transform) === HALF,
+  await p.$eval('#qa-rev .front svg', n => getComputedStyle(n).transform));
+/* the number and the name are lettered into the same drawing, so the whole card
+   goes round: turning the sigil alone leaves the name the right way up */
+T('and its lettering goes round with it',
+  await p.$eval('#qa-rev .front svg', n => n.querySelectorAll('text').length) > 0);
+/* the day illustrations land, a reversed card has to turn just the same */
+T('an illustrated card reverses too',
+  await p.$eval('#qa-revimg .front img', n => getComputedStyle(n).transform) === HALF,
+  await p.$eval('#qa-revimg .front img', n => getComputedStyle(n).transform));
+
 console.log('errors:', errs.length ? errs.slice(0, 4) : 'none');
 await b.close(); server.close();
 process.exit(errs.length ? 1 : 0);

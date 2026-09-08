@@ -352,8 +352,12 @@ header.site{
 }
 .card .back{background:var(--deep)}
 .card .front{transform:rotateY(180deg);background:#F2EBDC}
-.card .front svg .art{transform-origin:150px 250px}
-.card .front.rev svg .art{transform:rotate(180deg)}
+/* A reversed card is the whole card upside down: the sigil, the number at the
+   top and the name lettered along the bottom, all of it, the way a card comes
+   off the table when it is dealt turned. Rotating only the drawing inside the
+   frame left the name the right way up, which is not a reversed card, it is a
+   card with an upside down picture on it. */
+.card .front.rev svg,.card .front.rev img{transform:rotate(180deg);transform-origin:50% 50%}
 .card .front.rev:after{content:"\21BA";position:absolute;top:7px;right:9px;
   font-size:13px;color:#B4453C;opacity:.9;line-height:1}
 .card-slot{display:flex;flex-direction:column;align-items:center;gap:12px;width:var(--cw,168px)}
