@@ -1,25 +1,36 @@
 /* ===== The Witch Atelier — design system =====
 
-   Read off the references: a night sky, not a room.
+   An instrument, not a poster of one.
 
-   1. The ground is deep space. Indigo into violet, nebula bloom in the corners,
-      a field of stars behind everything. It never scrolls, so the page moves
-      through it.
-   2. Everything you read sits on GLASS. A panel is a pane of dark violet glass
-      with a lit edge, blurred behind, generously rounded. Not paper, not a card
-      with a border: a pane with light behind it.
-   3. Two lights and one metal. Violet is the primary, cyan the second, and a
-      pale gold for the small ornamental rings. Everything that matters glows a
-      little; nothing glows a lot.
-   4. Display type is a light serif in near white, large and airy. Body text is
-      a small sans, dimmed, never pure white, so the headings carry the page.
-   5. Circles carry structure. Rings around numbers, rings around sigils, a
-      rule with a lit diamond at its middle. Where the old system drew a printed
-      corner, this one draws an orbit.
+   The earlier pass built the night sky out of the things that make a page look
+   generated: one radius stamped on every block, one violet glow stamped on
+   every element, glass panels for everything, and the whole page centred. When
+   everything glows, nothing does.
 
-   The token names carry over from the earlier passes on purpose, so the per
-   page styles written against them keep working. --ink is the surface a panel
-   is made of, --bone is the text printed on it, and both are now dark.       */
+   What replaced it:
+
+   1. The ground is still deep space, because that was chosen from references,
+      but it is quieter: two clouds of colour instead of six, and the star field
+      carries the rest. A page should not look like a gradient.
+   2. Structure is ENGRAVED. Hairlines, ticks, rules and small caps, the way a
+      dial or an ephemeris is engraved. Panels are plates with a ruled edge, not
+      slabs of frosted glass, and they are barely rounded.
+   3. Light is SPENT, not sprinkled. One thing on a screen may glow: the action
+      you are meant to take. The glow token is used exactly once in this file,
+      on the primary button. What else is lit is lit because it is an object
+      that would catch light, a card, or because it has just been earned, a
+      sigil and the toast that announces it. Everything else earns its place
+      with weight, spacing and a rule.
+   4. Type carries the page. A light serif at real size for display, small caps
+      with wide tracking for anything that labels something, and figures that
+      line up in columns. No web font is loaded, because nothing on this site is
+      loaded from anywhere: what is here is the system stack, used properly.
+   5. Circles carry structure, and one circle carries meaning: the orrery behind
+      the opening line is where the Sun and the Moon actually are.
+
+   The token names carry over on purpose, so the per page styles written against
+   them keep working. --ink is the surface a plate is made of, --bone is the
+   text on it.                                                                */
 
 :root{
   /* the sky */
@@ -57,13 +68,26 @@
   --jade:#5FD9A8;
   --deep:#16314F;            /* the blue inside the cards */
 
+  /* Light is spent, not sprinkled. These are used four times in this file:
+     the primary action, the lit sigil, the sigil toast, and the card faces.
+     Anything else that wants attention gets weight or a rule instead. */
   --glow-violet:0 0 34px rgba(139,92,246,.42);
   --glow-cyan:0 0 30px rgba(79,216,211,.34);
   --shadow:0 20px 50px -26px rgba(0,0,0,.85);
   --shadow-lift:0 34px 74px -30px rgba(0,0,0,.92);
-  --r:18px;                  /* an orbit, not a printed corner */
-  --r-sm:12px;
+
+  /* A plate is engraved, so its corner is nearly square. The pill is kept for
+     the one thing that is a button in the old sense, and for the cards, which
+     really are rounded objects. */
+  --r:3px;                   /* a plate */
+  --r-sm:2px;                /* a field */
+  --r-card:11px;             /* an actual card */
+  --r-pill:999px;
   --maxw:1120px;
+
+  /* the hairlines everything is ruled with */
+  --hair:rgba(168,148,255,.22);
+  --hair-lit:rgba(217,184,114,.55);
 
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -90,20 +114,19 @@ body{
 /* the nebula: broad clouds of colour, and the dark they sit in */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  /* Two clouds and the dark they sit in. Six of them read as a stock gradient;
+     the star field is what should be doing the work. */
   background:
-    radial-gradient(980px 720px at 16% -8%, rgba(112,58,190,.55), transparent 62%),
-    radial-gradient(880px 700px at 88% 2%, rgba(46,72,180,.44), transparent 60%),
-    radial-gradient(760px 600px at 74% 92%, rgba(150,52,150,.34), transparent 62%),
-    radial-gradient(700px 620px at 4% 74%, rgba(38,80,175,.34), transparent 62%),
-    radial-gradient(1300px 1000px at 50% 40%, rgba(26,17,64,.9), transparent 70%),
-    linear-gradient(178deg, var(--night) 0%, var(--void) 56%, #05040F 100%);
+    radial-gradient(1200px 900px at 22% -12%, rgba(96,52,168,.40), transparent 64%),
+    radial-gradient(1000px 820px at 84% 106%, rgba(40,62,158,.34), transparent 62%),
+    linear-gradient(178deg, var(--night) 0%, var(--void) 62%, #05040E 100%);
 }
 /* the stars, and the grain that stops the gradients banding */
 body::after{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:var(--stars), var(--grain);
   background-size:620px 620px, 160px 160px;
-  opacity:.5;
+  opacity:.62;
 }
 header.site,section,footer.site,.privacy-notice,main{position:relative;z-index:1}
 
@@ -112,15 +135,21 @@ a{color:var(--violet-hi);text-decoration:none;text-underline-offset:3px}
 a:hover{text-decoration:underline;color:var(--cyan-hi)}
 :focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}
 
-h1,h2,h3,h4{font-family:var(--serif);font-weight:400;line-height:1.16;margin:0 0 .5em;
-            letter-spacing:.002em;color:var(--bone);
-            text-shadow:0 0 40px rgba(139,92,246,.28)}
-h1{font-size:clamp(2.4rem,6.4vw,4.1rem)}
-h2{font-size:clamp(1.8rem,4.2vw,2.7rem)}
-h3{font-size:clamp(1.2rem,2.6vw,1.55rem)}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:400;line-height:1.1;margin:0 0 .5em;
+            color:var(--bone);text-wrap:balance}
+/* the display sizes are set wide apart on purpose: a scale that steps in small
+   even increments reads as a template, and gives a page no voice */
+h1{font-size:clamp(2.6rem,7vw,4.6rem);letter-spacing:-.014em}
+h2{font-size:clamp(1.7rem,3.8vw,2.5rem);letter-spacing:-.008em}
+h3{font-size:clamp(1.14rem,2.2vw,1.4rem);letter-spacing:-.002em}
+h4{font-size:1.02rem}
+/* figures line up wherever they are counted or compared */
+.tallies dd,.streak b,.counter,.price,.cal,.or-read{font-variant-numeric:tabular-nums}
 p{margin:0 0 1em}
-.eyebrow{font-size:.68rem;letter-spacing:.34em;text-transform:uppercase;
-         color:var(--cyan);font-weight:600;margin-bottom:1.1rem}
+/* Anything that labels something is engraved: small, wide, upper case, and the
+   same everywhere, so a label never competes with what it labels. */
+.eyebrow,.label{font-size:.63rem;letter-spacing:.36em;text-transform:uppercase;
+         color:var(--gold);font-weight:600;margin-bottom:1.2rem}
 .lede{font-size:1.1rem;color:var(--bone-dim);max-width:62ch}
 .muted{color:var(--muted)}
 .small{font-size:.86rem}
@@ -141,7 +170,7 @@ header.site{
 .brand{font-family:var(--serif);font-size:1.5rem;color:var(--bone);letter-spacing:.03em;
   text-decoration:none;display:flex;align-items:center;gap:10px;white-space:nowrap}
 .brand:hover{text-decoration:none;color:var(--violet-hi)}
-.brand .mark{width:22px;height:22px;flex:none;filter:drop-shadow(0 0 8px rgba(139,92,246,.6))}
+.brand .mark{width:22px;height:22px;flex:none}
 .brand .mark path[fill="#241F18"]{fill:var(--bone)}
 .brand .mark path[fill="#8C5E20"]{fill:var(--cyan)}
 .nav nav{margin-left:auto;display:flex;gap:26px;align-items:center}
@@ -153,12 +182,12 @@ header.site{
   opacity:0;transition:opacity .2s ease
 }
 .nav nav a:hover::after{opacity:1}
-.lang{display:flex;gap:2px;border:1px solid var(--line-2);border-radius:999px;padding:3px;
-      background:rgba(0,0,0,.3)}
-.lang button{background:none;border:0;color:var(--muted);font:inherit;font-size:.74rem;
-  letter-spacing:.1em;padding:4px 11px;border-radius:999px;cursor:pointer;transition:.16s}
+.lang{display:flex;gap:0;border:0;padding:0;background:none;align-items:center}
+.lang button{background:none;border:0;border-bottom:1px solid transparent;color:var(--muted);
+  font:inherit;font-size:.7rem;font-weight:600;
+  letter-spacing:.18em;padding:3px 9px;border-radius:0;cursor:pointer;transition:.16s}
 .lang button:hover{color:var(--bone)}
-.lang button[aria-pressed="true"]{background:var(--violet-btn);color:#fff;box-shadow:var(--glow-violet)}
+.lang button[aria-pressed="true"]{color:var(--gold-deep);border-bottom-color:var(--gold)}
 
 .menu-btn{display:none;margin-left:auto;width:44px;height:44px;border:1px solid var(--line-2);
           border-radius:999px;background:rgba(0,0,0,.3);cursor:pointer;padding:0;
@@ -196,10 +225,13 @@ header.site{
 }
 
 /* ---------- buttons: pills that carry light ---------- */
+/* Two kinds of action and they do not look alike. The one you are meant to
+   take is the only lit thing on the screen. The other is a word with a rule
+   under it, which is what a secondary action should have been all along. */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  font:inherit;font-size:.82rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  padding:15px 32px;border-radius:999px;border:1px solid var(--line-2);cursor:pointer;
+  font:inherit;font-size:.76rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  padding:15px 30px;border-radius:var(--r-pill);border:1px solid var(--line-2);cursor:pointer;
   background:transparent;color:var(--bone);
   transition:background .2s ease,border-color .2s ease,box-shadow .2s ease,
              color .2s ease,transform .12s ease;
@@ -208,58 +240,114 @@ header.site{
 .btn:hover{text-decoration:none}
 .btn:active{transform:translateY(1px)}
 .btn-gold{
-  background:linear-gradient(135deg,var(--violet-btn) 0%,#4A28AD 100%);
-  border-color:transparent;color:#fff;box-shadow:var(--glow-violet)
+  background:var(--violet-btn);
+  border-color:rgba(217,184,114,.55);color:#fff;
+  box-shadow:0 0 24px -2px rgba(139,92,246,.5),inset 0 1px 0 rgba(255,255,255,.16)
 }
-.btn-gold:hover{
-  background:linear-gradient(135deg,var(--violet-btn-hi) 0%,var(--violet-lo) 100%);
-  box-shadow:0 0 46px rgba(139,92,246,.62);color:#fff
+.btn-gold:hover{background:var(--violet-btn-hi);box-shadow:0 0 32px -2px rgba(139,92,246,.62),
+                inset 0 1px 0 rgba(255,255,255,.22);color:#fff}
+/* the quiet one: no pill, no fill, no glow, just a ruled word */
+.btn-ghost{
+  border:0;border-bottom:1px solid var(--hair-lit);border-radius:0;
+  padding:12px 2px;color:var(--gold-deep);letter-spacing:.22em
 }
-.btn-ghost{border-color:var(--cyan);color:var(--cyan-hi)}
-.btn-ghost:hover{background:rgba(79,216,211,.12);box-shadow:var(--glow-cyan);color:var(--cyan-hi)}
+.btn-ghost:hover{background:transparent;color:var(--bone);border-bottom-color:var(--bone)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
-.btn-lg{padding:17px 38px;font-size:.86rem}
+.btn-lg{padding:17px 36px;font-size:.8rem}
+.btn-ghost.btn-lg{padding:13px 2px}
 
 /* ---------- the divider: a lit rule with a diamond at its middle ---------- */
+/* a graduated rule, the way a scale is graduated: a long hairline with a
+   centre tick and two shorter ones, drawn rather than glowing */
 .rule{
-  border:0;height:30px;margin:0;
+  border:0;height:22px;margin:0;
   background:
-    linear-gradient(90deg,transparent,rgba(168,148,255,.4) 22%,rgba(168,148,255,.4) 44%,transparent 48%) center/100% 1px no-repeat,
-    linear-gradient(90deg,transparent 52%,rgba(168,148,255,.4) 56%,rgba(168,148,255,.4) 78%,transparent) center/100% 1px no-repeat,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M8 0 16 8 8 16 0 8Z' fill='%234FD8D3'/%3E%3C/svg%3E") center/13px 13px no-repeat;
-  filter:drop-shadow(0 0 10px rgba(79,216,211,.6));
+    linear-gradient(90deg,transparent,var(--hair) 18%,var(--hair) 82%,transparent) center/100% 1px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='22'%3E%3Cg stroke='%23D9B872' stroke-width='1'%3E%3Cline x1='75' y1='3' x2='75' y2='19'/%3E%3Cline x1='39' y1='8' x2='39' y2='14' opacity='.55'/%3E%3Cline x1='111' y1='8' x2='111' y2='14' opacity='.55'/%3E%3Cline x1='11' y1='10' x2='11' y2='12' opacity='.35'/%3E%3Cline x1='139' y1='10' x2='139' y2='12' opacity='.35'/%3E%3C/g%3E%3C/svg%3E") center/150px 22px no-repeat;
 }
 
 /* ---------- hero ----------
    Every one of the references puts a lit circle behind its opening line. Two
    thin rings, faint enough to read as an orbit rather than a border. */
-.hero{padding:104px 0 76px;text-align:center;position:relative;isolation:isolate}
-.hero::before,.hero::after{
-  content:"";position:absolute;z-index:-1;left:50%;top:44%;
-  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
-  border:1px solid rgba(168,148,255,.15)
-}
-.hero::before{
-  width:min(720px,88vw);aspect-ratio:1;
-  box-shadow:inset 0 0 120px rgba(139,92,246,.14),0 0 70px rgba(139,92,246,.09)
-}
-.hero::after{
-  width:min(468px,60vw);aspect-ratio:1;border-color:rgba(79,216,211,.13);
-  box-shadow:inset 0 0 70px rgba(79,216,211,.08)
-}
-@media(max-width:640px){.hero::after{display:none}}
+/* The hero used to draw two rings that meant nothing. The orrery stands in
+   their place and means something, so the decoration is gone. */
+.hero{padding:96px 0 72px;text-align:center;position:relative;isolation:isolate}
 .hero h1{margin-bottom:.3em}
 .hero .lede{margin:0 auto 2.4rem}
-.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero-cta{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;align-items:center}
+
+/* ---------- the orrery ----------
+   Where the Sun and the Moon actually are. It sits behind the opening line, so
+   the middle of it has to stay out of the way: only the band takes the pointer,
+   and the text is above it. */
+/* It paints above the words rather than behind them, because behind them means
+   behind the block that covers the whole opening, and then nothing can take
+   hold of it. Nothing here takes the pointer except the band, so the headline
+   underneath is still selectable and every link still works. */
+.orrery{
+  position:absolute;z-index:1;left:50%;top:47%;pointer-events:none;
+  width:min(1080px,124vw);aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  color:var(--violet-hi);
+  touch-action:pan-y
+}
+.or-svg{width:100%;height:100%;display:block;overflow:visible}
+/* The centre is text, not instrument: the pointer passes through everything
+   except the band, so selecting the headline still works. */
+.or-svg,.or-deep,.or-near{pointer-events:none}
+.or-grip{pointer-events:stroke;cursor:grab}
+.orrery.is-turning .or-grip{cursor:grabbing}
+.or-rule{stroke:currentColor}
+.or-sign text{
+  font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:.28em;
+  fill:var(--muted);opacity:.5
+}
+.or-sign text.is-here{fill:var(--gold-deep);opacity:1}
+.or-sun{color:var(--gold-deep)}
+.or-sun-disc{fill:var(--gold-deep)}
+.or-moon{color:var(--bone)}
+.or-moon-dark{fill:#0B0A1E}
+.or-moon-lit{fill:var(--bone)}
+.or-moon-term{fill:var(--bone)}
+.or-moon-term.is-dark{fill:#0B0A1E}
+.or-arm{color:var(--violet-hi)}
+/* The readout is pinned to the viewport rather than to the dial. The dial is
+   deliberately taller than the screen, so a reading placed on its rim would be
+   telling you the date somewhere below your feet, which is exactly where it was
+   until this was looked at while turning. */
+.or-read{
+  position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+  margin:0;white-space:nowrap;z-index:70;
+  padding:9px 18px;border:1px solid var(--hair-lit);border-radius:var(--r);
+  background:rgba(10,8,28,.92);backdrop-filter:blur(10px);
+  font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);
+  opacity:0;transition:opacity .25s ease;pointer-events:none
+}
+.or-read.is-out{opacity:1}
+.orrery:focus-visible{outline:none}
+.orrery:focus-visible .or-rule{color:var(--cyan)}
+@media(max-width:760px){
+  .orrery{width:min(720px,160vw);top:45%}
+  .or-sign text{font-size:24px}
+}
+@media(prefers-reduced-motion:reduce){.or-svg{cursor:default}}
 
 /* ---------- panes ---------- */
 .grid{display:grid;gap:22px}
 .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+/* A plate: ruled, barely rounded, and lit only along its top edge, the way a
+   piece of engraved metal catches light. No drop shadow, because a plate is set
+   into the page rather than floating above it. */
 .panel{
-  background:var(--ink);backdrop-filter:blur(14px);
-  border:1px solid var(--line);border-radius:var(--r);padding:32px;
-  position:relative;box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.06)
+  background:var(--ink);backdrop-filter:blur(12px);
+  border:1px solid var(--line);border-radius:var(--r);padding:30px 32px;
+  position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
+}
+.panel::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--hair-lit) 30%,var(--hair-lit) 70%,transparent);
+  opacity:.6;pointer-events:none
 }
 .panel::before{content:none}
 .panel > *{position:relative}
@@ -269,16 +357,17 @@ header.site{
 
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:36px}
+/* Positions on a scale, not four floating pills. The selected one is marked
+   underneath, the way a setting is marked on an instrument. */
+.tabs{border-bottom:1px solid var(--line);gap:0;justify-content:center}
 .tab{
-  background:var(--ink-2);border:1px solid var(--line);color:var(--muted);
-  font:inherit;font-size:.86rem;letter-spacing:.04em;padding:11px 22px;border-radius:999px;
-  cursor:pointer;transition:.18s;backdrop-filter:blur(10px)
+  background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);
+  font:inherit;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600;
+  padding:14px 22px;margin-bottom:-1px;border-radius:0;
+  cursor:pointer;transition:color .18s ease,border-color .18s ease
 }
-.tab:hover{border-color:var(--line-2);color:var(--bone)}
-.tab[aria-selected="true"]{
-  background:linear-gradient(135deg,var(--violet-btn),#4A28AD);
-  border-color:transparent;color:#fff;box-shadow:var(--glow-violet)
-}
+.tab:hover{color:var(--bone)}
+.tab[aria-selected="true"]{color:var(--gold-deep);border-bottom-color:var(--gold)}
 
 /* Two sides on every card that can be turned.
 
@@ -377,8 +466,10 @@ header.site{
   content:"";position:absolute;left:-1px;top:0;bottom:0;width:1px;
   background:linear-gradient(180deg,var(--cyan),transparent);opacity:.7
 }
-.reading h2,.reading h4{font-family:var(--serif);font-size:1.4rem;color:var(--bone);margin:1.6em 0 .4em;
-                        text-shadow:0 0 26px rgba(139,92,246,.3)}
+/* a reading is a document, so its headings are ruled rather than lit */
+.reading h2,.reading h4{font-family:var(--serif);font-size:1.36rem;color:var(--bone);
+                        margin:1.7em 0 .4em;padding-bottom:.3em;
+                        border-bottom:1px solid var(--line)}
 .reading h2:first-child,.reading h4:first-child{margin-top:0}
 .reading p{color:var(--bone-dim)}
 .kw{display:flex;gap:8px;flex-wrap:wrap;margin:.6em 0 1em}
@@ -488,14 +579,14 @@ footer.site nav a:hover{color:var(--cyan-hi)}
 .banner-wrap{display:flex;align-items:center;justify-content:center;margin:0 0 26px}
 .banner{position:relative;padding:0 0 22px;text-align:center;flex:none;max-width:100%}
 .banner::before{
-  content:"";position:absolute;left:12%;right:12%;bottom:8px;height:1px;
-  background:linear-gradient(90deg,transparent,var(--violet-hi),var(--cyan),transparent);
-  opacity:.75
+  content:"";position:absolute;left:16%;right:16%;bottom:9px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--hair) 20%,var(--hair) 80%,transparent)
 }
+/* the same tick the graduated rule uses, so a heading and a divider are
+   plainly the same instrument rather than two different ideas */
 .banner::after{
-  content:"";position:absolute;left:50%;bottom:3px;width:11px;height:11px;
-  transform:translateX(-50%) rotate(45deg);
-  background:var(--cyan);box-shadow:var(--glow-cyan)
+  content:"";position:absolute;left:50%;bottom:3px;width:1px;height:13px;
+  transform:translateX(-50%);background:var(--gold)
 }
 .banner > *{position:relative;z-index:1;margin:0}
 .banner-tail{display:none}
@@ -540,21 +631,16 @@ main:focus{outline:none}
 /* ---------- the tally in the header ---------- */
 .tally{
   display:inline-flex;align-items:center;gap:7px;
-  padding:6px 13px 6px 9px;border-radius:999px;
+  padding:6px 13px 6px 9px;border-radius:var(--r);
   border:1px solid var(--line-2);background:rgba(0,0,0,.3);
   color:var(--muted);font-size:.82rem;line-height:1;text-decoration:none;
   transition:border-color .2s ease,color .2s ease,box-shadow .2s ease
 }
-.tally:hover{text-decoration:none;border-color:var(--cyan);color:var(--cyan-hi);box-shadow:var(--glow-cyan)}
+.tally:hover{text-decoration:none;border-color:var(--hair-lit);color:var(--gold-deep)}
 .tally .flame{width:15px;height:15px;flex:none;opacity:.45}
 .tally b{font-variant-numeric:tabular-nums;font-weight:600}
-.tally.is-lit{color:var(--cyan-hi);border-color:rgba(79,216,211,.55)}
-.tally.is-lit .flame{opacity:1;color:var(--cyan);animation:flicker 3.4s ease-in-out infinite}
-@keyframes flicker{
-  0%,100%{opacity:1;filter:drop-shadow(0 0 6px rgba(79,216,211,.8))}
-  46%{opacity:.75;filter:drop-shadow(0 0 3px rgba(79,216,211,.4))}
-  63%{opacity:1;filter:drop-shadow(0 0 9px rgba(79,216,211,.9))}
-}
+.tally.is-lit{color:var(--gold-deep);border-color:var(--hair-lit)}
+.tally.is-lit .flame{opacity:1;color:var(--gold)}
 @media(max-width:640px){
   .nav nav .tally{align-self:center;margin:8px auto 4px;font-size:.9rem;padding:9px 18px 9px 14px}
   .nav nav .tally .flame{width:17px;height:17px}
@@ -579,24 +665,20 @@ main:focus{outline:none}
   flex:none;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
   color:var(--cyan-hi);border:1px solid var(--line-2);border-radius:999px;padding:7px 16px
 }
-.ritual-row .go:hover{background:rgba(79,216,211,.12);border-color:var(--cyan);
-                      text-decoration:none;box-shadow:var(--glow-cyan)}
+.ritual-row .go:hover{background:transparent;border-color:var(--hair-lit);
+                      text-decoration:none;color:var(--gold-deep)}
 .ritual-row .state{
   flex:none;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
   font-weight:700;color:var(--jade)
 }
-.ritual-row.is-done{
-  background:rgba(95,217,168,.08);border-color:rgba(95,217,168,.34);
-  box-shadow:0 0 26px -8px rgba(95,217,168,.4)
-}
+.ritual-row.is-done{background:rgba(95,217,168,.07);border-color:rgba(95,217,168,.34)}
 .ritual-row.is-done .what{color:var(--bone)}
 
 .ritual-complete{
   display:flex;align-items:center;gap:14px;margin:22px 0 0;
   padding:16px 20px;border:1px solid rgba(95,217,168,.4);border-radius:var(--r);
   background:rgba(95,217,168,.10);
-  font-family:var(--serif);font-size:1.14rem;color:var(--bone);
-  box-shadow:0 0 34px -10px rgba(95,217,168,.5)
+  font-family:var(--serif);font-size:1.14rem;color:var(--bone)
 }
 .ritual-complete svg{width:28px;height:28px;flex:none}
 
@@ -616,16 +698,13 @@ main:focus{outline:none}
 .tallies div{
   aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:5px;padding:8px;text-align:center;
-  border:1px solid var(--line-2);background:rgba(0,0,0,.22);
-  box-shadow:inset 0 0 26px rgba(139,92,246,.14),0 0 22px -10px rgba(139,92,246,.6)
+  border:1px solid var(--line-2);background:rgba(0,0,0,.22)
 }
-.tallies div:nth-child(2){border-color:rgba(79,216,211,.4);
-  box-shadow:inset 0 0 26px rgba(79,216,211,.12),0 0 22px -10px rgba(79,216,211,.6)}
+.tallies div:nth-child(2){border-color:var(--hair-lit)}
 .tallies dt{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
             font-weight:700;margin:0;order:2;line-height:1.3}
-.tallies dd{margin:0;font-family:var(--serif);font-size:2.1rem;line-height:1;color:var(--bone);
-            font-variant-numeric:tabular-nums;order:1;
-            text-shadow:0 0 22px rgba(139,92,246,.6)}
+.tallies dd{margin:0;font-family:var(--serif);font-size:2.2rem;line-height:1;color:var(--bone);
+            font-variant-numeric:tabular-nums;order:1}
 
 .cal-h{margin:0 0 .6em}
 .cal{display:grid;grid-template-columns:repeat(14,1fr);gap:6px;max-width:340px}
@@ -633,8 +712,7 @@ main:focus{outline:none}
   display:block;aspect-ratio:1;border-radius:50%;
   border:1px solid var(--line);background:transparent
 }
-.cal i.on{background:var(--violet);border-color:var(--violet-hi);
-          box-shadow:0 0 12px rgba(139,92,246,.85)}
+.cal i.on{background:var(--violet-hi);border-color:var(--violet-hi)}
 .cal i.now{outline:1px solid var(--cyan);outline-offset:2px}
 
 /* ---------- the sigils ---------- */

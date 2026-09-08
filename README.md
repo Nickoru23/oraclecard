@@ -22,9 +22,10 @@ js/
   deck.js i18n.js app.js  the deck texts, the three languages, the page engine
   dailyfortune.js         the greeting: the day's words, written onto the dark
   lang.js                 the language, which lives in the address
+  orrery.js               the dial in the hero: the real Sun and Moon, turnable
   astro.js horoscope.js zodiac.js fortunes.js legal.js notice.js ornament.js
 netlify/functions/        checkout, reading, free-reading, orders, diag
-scripts/                  a static server, two generators and nine checks, see below
+scripts/                  a static server, two generators and ten checks, see below
 legacy/                   an earlier unrelated prototype, kept for reference
 ```
 
@@ -51,13 +52,14 @@ Two the functions read that the handover's table omits:
 ```bash
 npm install            # playwright, for the checks only. Nothing ships.
 npm run serve          # http://localhost:4321
-npm run qa             # all nine checks
+npm run qa             # all ten checks
 ```
 
 | Check | What it holds to |
 |---|---|
 | `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description |
 | `qa:shell` | the header and footer are copied by hand into every page, so this compares the navigation contract across them: the same links in the same order carrying the same strings, the same language switch, the same footer. Byte equality would be the wrong instrument and the file says why |
+| `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still |
 | `qa:langs` | the language is in the address: every page answers in the language its address names, agrees with its own canonical and names its two alternates, a deep link never moves whatever the reader prefers, the front door does, choosing a language changes the address and stays on the same page, links keep the language and assets do not, and the committed sitemap and robots.txt are what the generator would write |
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
 | `qa:dashes` | rule 4, no dashes reach the screen |
@@ -167,6 +169,60 @@ Two things only that proves:
    (`READING CACHE FAILED`) instead of swallowing it, so it will be visible in
    the Netlify function log.
 
+## The look
+
+An instrument, not a poster of one.
+
+The pass before this built the night sky out of the things that make a page look
+generated: one radius stamped on every block, one violet glow stamped on every
+element, glass panels for everything, and the whole page centred. When everything
+glows, nothing does.
+
+* **Light is spent, not sprinkled.** The glow token is used once in the whole
+  stylesheet, on the primary action. What else is lit is lit because it is an
+  object that would catch light, a card, or because it has just been earned, a
+  sigil. Everything else is engraved: hairlines, ticks, rules and small caps.
+* **A plate is not a card.** Panels are barely rounded, ruled, and lit along the
+  top edge the way a piece of engraved metal is. The four free things on the
+  front page were four identical slabs and are now an index, ruled apart, whose
+  rule lights along its length as you reach it.
+* **The tabs, the language switch and the tally** were pills with gradients and
+  glow. They are settings on a scale now, marked underneath.
+* **No web font is loaded**, because nothing on this site is loaded from
+  anywhere. What carries the type is contrast and tracking, not a typeface
+  nobody has.
+
+### The orrery
+
+The ring behind the opening line is where the Sun and the Moon actually are.
+`js/astro.js` already computed that for the card of the day; `js/orrery.js` is a
+second use for it. The zodiac band is divided the way the ecliptic is divided,
+the houses take their names from whatever language the page is in, and the Moon
+carries the shape it has tonight.
+
+**Turning it turns time.** Take hold of the band and one revolution is a year, so
+the Sun walks once round and the Moon runs thirteen laps beside it, both at their
+true positions for whatever date you wind to. Let go and it comes back to now,
+because now is the only date it is telling the truth about. Arrow keys step a
+day, Escape returns.
+
+Three things were wrong while it was being built, and each is worth knowing:
+
+* A dial made of hairlines has nothing to take hold of. There is an invisible
+  ring the width of the band for that, and it is the only part of the drawing
+  that takes the pointer, so the headline underneath is still selectable.
+* A dial painted behind the block that covers the opening cannot be reached at
+  all. It paints above, and passes the pointer through everywhere but the band.
+* The readout was pinned to the viewport and appeared below the fold, because a
+  fixed child of a transformed element is fixed to that element. It lives on the
+  body now.
+
+The Moon is built from a half disc and the terminator ellipse rather than one
+path of two arcs. The one path is the obvious way and it is wrong: the
+terminator's endpoints are exactly a diameter apart, the degenerate case for an
+elliptical arc, and the browser answers by scaling the radii up until they fit,
+so the lit part spills outside the disc on the gibbous phases.
+
 ## The language is in the address
 
 `/lectura.html` is Spanish, `/en/lectura.html` is English, `/de/lectura.html` is
@@ -263,7 +319,7 @@ output, so parts of it are still absent.
   is here, so nothing is lost at runtime, but the source of truth for the card
   copy is not in version control.
 * `scripts/build-deck.mjs`, `build-legal.mjs`, `build-deploy-zip.mjs`, and the
-  eleven original `qa-*.mjs`. The nine checks here cover the rules the handover
+  eleven original `qa-*.mjs`. The ten checks here cover the rules the handover
   calls deliberate; they are not the originals.
 **Resolved since the handover**
 
@@ -340,9 +396,10 @@ output, so parts of it are still absent.
 ## Verified
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
-of any third party, 296 keys at parity across the three languages, no dashes on
+of any third party, 297 keys at parity across the three languages, no dashes on
 screen, 22 ledger assertions, 48 Stripe assertions, 25 card assertions, 54 daily
-fortune assertions and 47 language assertions green. The front page went from
-15,088 elements to 1,241. The whole site is about 390 KB before
+fortune assertions, 47 language assertions and 20 orrery assertions green. The
+front page went from 15,088 elements to 1,241, and holds 60 frames a second at
+rest and above 50 while the dial is being turned. The whole site is about 390 KB before
 compression, which is less than it was before this pass despite the new deck,
 because 272 KB of unused image placeholders went with it.

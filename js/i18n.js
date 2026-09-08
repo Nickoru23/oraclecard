@@ -2,6 +2,7 @@
 window.T = {
   es: {
     skip:'Saltar al contenido',
+    orrery_label:'El Sol y la Luna donde están ahora. Gira la banda para mover la fecha.',
     nav_free:'Juega con la baraja', nav_reading:'Lectura completa', nav_deck:'La baraja',
     hero_eyebrow:'Taller de tarot',
     hero_h1:'Una lectura escrita<br>para tu pregunta.',
@@ -229,6 +230,7 @@ window.T = {
   },
   en: {
     skip:'Skip to the content',
+    orrery_label:'The Sun and the Moon where they are now. Turn the band to move the date.',
     nav_free:'Play with the deck', nav_reading:'Full reading', nav_deck:'The deck',
     hero_eyebrow:'A tarot atelier',
     hero_h1:'A reading written<br>for your question.',
@@ -457,6 +459,7 @@ window.T = {
 
   de: {
     skip:'Zum Inhalt springen',
+    orrery_label:'Sonne und Mond, wo sie gerade stehen. Dreh den Ring, um das Datum zu bewegen.',
     nav_free:'Spiel mit dem Deck', nav_reading:'Vollständige Deutung', nav_deck:'Das Deck',
     hero_eyebrow:'Ein Tarot-Atelier',
     hero_h1:'Eine Deutung, geschrieben<br>für deine Frage.',

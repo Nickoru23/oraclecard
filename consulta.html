@@ -8,7 +8,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/css/app.css">
 <style>
-  .formcard{border:1px solid var(--line);border-radius:18px;padding:30px;
+  .formcard{border:1px solid var(--line);border-radius:var(--r);padding:30px;
             background:var(--ink-2);margin-top:26px;max-width:720px}
   .welcome{text-align:center;margin-bottom:28px}
   .welcome h2{font-size:1.5rem;margin:0 0 .5em}
@@ -18,7 +18,7 @@
          text-transform:uppercase;margin-bottom:18px}
   /* the card count is a choice, not a dropdown. it is the first decision */
   .picks{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px}
-  .pick{border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;
+  .pick{border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:left;
         background:transparent;color:inherit;cursor:pointer;font:inherit}
   .pick strong{display:block;color:var(--bone);margin-bottom:4px}
   .pick span{font-size:.84rem;color:var(--muted);line-height:1.45}
@@ -34,7 +34,7 @@
          font-size:.78rem;color:var(--muted);margin:-8px 0 22px}
   .qmeta.is-ok{color:var(--gold)}
   .btn-block{width:100%;text-align:center}
-  .more{border:1px solid var(--line);border-radius:12px;padding:0 16px;margin:0 0 22px}
+  .more{border:1px solid var(--line);border-radius:var(--r);padding:0 16px;margin:0 0 22px}
   .more summary{cursor:pointer;padding:14px 0;color:var(--bone);font-size:.95rem;list-style:none}
   .more summary::-webkit-details-marker{display:none}
   .more summary::after{content:'+';float:right;color:var(--gold);font-size:1.2rem;line-height:1}
@@ -45,14 +45,14 @@
   .why p{font-size:.88rem;line-height:1.6;color:var(--muted);margin:0 0 9px}
   .why b{color:var(--bone);font-weight:400}
   .opt{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:8px}
-  .explore{border:1px solid var(--line);border-radius:16px;padding:22px;margin:34px 0 0;
+  .explore{border:1px solid var(--line);border-radius:var(--r);padding:22px;margin:34px 0 0;
            background:var(--ink-2);max-width:720px}
   .explore h3{margin:0 0 .3em;font-size:1.15rem}
   .explore p{margin:0 0 14px;color:var(--muted);font-size:.93rem;line-height:1.6}
   .err{color:var(--rose);font-size:.9rem;margin:-8px 0 14px}
   .upsell{margin-top:46px}
   @media(max-width:480px){
-    .formcard{padding:20px 16px;border-radius:14px}
+    .formcard{padding:20px 16px;border-radius:var(--r)}
     .row3.picks{grid-template-columns:1fr}
   }
 </style>

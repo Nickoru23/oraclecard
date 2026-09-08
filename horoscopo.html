@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/app.css">
 <style>
   .signs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
-  .sign{border:1px solid var(--line);border-radius:14px;padding:18px 12px;text-align:center;
+  .sign{border:1px solid var(--line);border-radius:var(--r);padding:18px 12px;text-align:center;
         background:transparent;color:inherit;font:inherit;cursor:pointer;transition:.18s}
   .sign:hover,.sign:focus-visible{border-color:var(--gold);background:rgba(140,94,32,.10)}
   .sign .glyph{display:block;width:52px;margin:0 auto}
@@ -20,14 +20,14 @@
   .hd .glyph{width:64px;flex:0 0 64px}
   .hd h2{margin:0;font-size:1.9rem}
   .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:30px 0 10px}
-  .slot{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--ink-2)}
-  .slot .art{max-width:170px;margin:0 auto 14px;border-radius:8px}
-  .slot .art svg{width:100%;height:auto;display:block;border-radius:8px}
+  .slot{border:1px solid var(--line);border-radius:var(--r);padding:18px;background:var(--ink-2)}
+  .slot .art{max-width:170px;margin:0 auto 14px;border-radius:var(--r-card)}
+  .slot .art svg{width:100%;height:auto;display:block;border-radius:var(--r-card)}
   .slot h3{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
   .slot .cn{color:var(--bone);margin:0 0 8px;font-size:1.05rem}
   .slot p{margin:0;font-size:.93rem;line-height:1.6;color:var(--muted)}
   .slot .lead{color:var(--bone);margin-bottom:8px}
-  .sky{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:20px 0 0;
+  .sky{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:20px 0 0;
        max-width:520px;background:var(--ink-2)}
   .sky-h{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}
   .sky-l{margin:0;color:var(--bone);font-size:.95rem;line-height:1.6}

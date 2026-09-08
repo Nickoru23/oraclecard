@@ -23,6 +23,11 @@
       if (typeof v === 'string') el[el.dataset.thtml === '1' ? 'innerHTML' : 'textContent'] = v;
     });
     document.querySelectorAll('[data-tph]').forEach(el => { el.placeholder = t(el.dataset.tph); });
+    /* a name for something that has no text of its own, the orrery above all */
+    document.querySelectorAll('[data-t-label]').forEach(el => {
+      const v = t(el.dataset.tLabel);
+      if (typeof v === 'string') el.setAttribute('aria-label', v);
+    });
     document.querySelectorAll('.lang button').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
     document.dispatchEvent(new CustomEvent('langchange'));

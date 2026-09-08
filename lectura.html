@@ -17,7 +17,7 @@
      visitor needs to answer it well sits inside the same frame */
   /* one card, the way losarcanos does it: the visitor never wonders what
      belongs to what, and the question is plainly the centre of it */
-  .formcard{border:1px solid var(--line);border-radius:18px;padding:30px;
+  .formcard{border:1px solid var(--line);border-radius:var(--r);padding:30px;
             background:var(--ink-2);margin-top:26px}
   .welcome{text-align:center;margin-bottom:30px}
   .welcome h2{font-size:1.5rem;margin:0 0 .5em}
@@ -37,7 +37,7 @@
   /* the price is a choice about time, so it is laid out as three offers */
   .tiers{display:grid;gap:12px;margin:6px 0 26px}
   .tier{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;
-        border:1px solid var(--line);border-radius:14px;padding:16px;background:transparent;
+        border:1px solid var(--line);border-radius:var(--r);padding:16px;background:transparent;
         color:inherit;font:inherit;text-align:left;cursor:pointer;transition:.18s;width:100%}
   .tier:hover{border-color:var(--gold)}
   .tier[aria-pressed=true]{border-color:var(--gold);background:rgba(140,94,32,.11)}
@@ -48,7 +48,7 @@
   .tier .price{color:var(--gold);font-size:1.5rem;white-space:nowrap}
   .tier-note{font-size:.84rem;color:var(--muted);margin:-14px 0 26px;line-height:1.55}
   /* the optional half of the form, folded away until wanted */
-  .more{border:1px solid var(--line);border-radius:12px;padding:0 16px;margin:0 0 22px}
+  .more{border:1px solid var(--line);border-radius:var(--r);padding:0 16px;margin:0 0 22px}
   .more summary{cursor:pointer;padding:14px 0;color:var(--bone);font-size:.95rem;list-style:none}
   .more summary::-webkit-details-marker{display:none}
   .more summary::after{content:'+';float:right;color:var(--gold);font-size:1.2rem;line-height:1}
@@ -64,7 +64,7 @@
     .tier .price{grid-column:2;margin-top:6px}
   }
   @media(max-width:480px){
-    .formcard{padding:20px 16px;border-radius:14px}
+    .formcard{padding:20px 16px;border-radius:var(--r)}
     .row3{grid-template-columns:1fr}
   }
 </style>
