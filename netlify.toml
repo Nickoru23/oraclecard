@@ -36,6 +36,38 @@
   status = 200
   force = true
 
+# ---------------------------------------------------------------------------
+# The language lives in the address.
+#
+# /lectura.html is Spanish, /en/lectura.html is English, /de/lectura.html is
+# German. All three serve the same file: which language it opens in is read
+# from the path, so a link somebody shares opens in the language they were
+# reading rather than in whatever the person opening it happened to choose last.
+#
+# These are rewrites, status 200, not redirects: the address stays as it is in
+# the bar. They sit above the page rules below so that /en/fortuna resolves too.
+# Assets are referenced from the root, so nothing under /css, /js or /api is
+# reached through a prefix and none of this touches them.
+[[redirects]]
+  from = "/en"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/de"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/en/*"
+  to = "/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/de/*"
+  to = "/:splat"
+  status = 200
+
 [[redirects]]
   from = "/fortuna"
   to = "/fortuna.html"

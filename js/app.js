@@ -2,18 +2,15 @@
 (function () {
   'use strict';
 
-  /* ---------- language ---------- */
+  /* ---------- language ----------
+     Where it lives, how it is read and how it is changed is all in js/lang.js,
+     because the legal pages need the same and share no other script with these.
+     What is left here is the lettering. */
   const store = {
     get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch {} },
   };
-  function detectLang() {
-    const stored = store.get('umbral.lang', null);
-    if (stored === 'en' || stored === 'es' || stored === 'de') return stored;
-    const nav = (navigator.language || 'es').slice(0, 2).toLowerCase();
-    return nav === 'en' ? 'en' : nav === 'de' ? 'de' : 'es';
-  }
-  let LANG = detectLang();
+  let LANG = (window.Lang && window.Lang.code) || 'es';
   if (!window.T[LANG]) LANG = 'es';
   const t = k => window.T[LANG][k];
   window.getLang = () => LANG;
@@ -30,9 +27,13 @@
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
     document.dispatchEvent(new CustomEvent('langchange'));
   }
+  /* Changing the language changes the address. When there is no address to
+     change, which is only ever a file opened from disk, it letters in place. */
   window.setLang = function (l) {
-    LANG = l; store.set('umbral.lang', l); applyLang();
+    if (l === LANG || !window.T[l]) return;
     if (window.Ritual) window.Ritual.langSeen(l);
+    if (window.Lang && window.Lang.go(l)) return;
+    LANG = l; applyLang();
   };
 
   /* ---------- drawing ---------- */

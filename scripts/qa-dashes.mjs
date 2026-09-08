@@ -3,7 +3,7 @@
    this looks for is the dash characters themselves and a hyphen used as one. */
 import { chromium } from 'playwright';
 import { serve } from './serve.mjs';
-import { PAGES, LANGS, BASE, PREP } from './pages.mjs';
+import { PAGES, LANGS, BASE, PREP, addr } from './pages.mjs';
 
 const BAD = /[—–‒―]|(?:^|\s)-(?:\s|$)/;
 const server = await serve();
@@ -12,10 +12,10 @@ let bad = 0;
 
 for (const lang of LANGS) {
   const ctx = await browser.newContext();
-  await ctx.addInitScript(PREP, lang);
+  await ctx.addInitScript(PREP);
   for (const p of PAGES) {
     const page = await ctx.newPage();
-    await page.goto(BASE + p, { waitUntil: 'networkidle' });
+    await page.goto(BASE.replace(/\/$/, '') + addr(p, lang), { waitUntil: 'networkidle' });
     await page.waitForTimeout(200);
     const hits = await page.evaluate(pattern => {
       const re = new RegExp(pattern);

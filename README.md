@@ -21,9 +21,10 @@ js/
   ledger.js               the ledger as it is drawn, and the tally in the header
   deck.js i18n.js app.js  the deck texts, the three languages, the page engine
   dailyfortune.js         the greeting: the day's words, written onto the dark
+  lang.js                 the language, which lives in the address
   astro.js horoscope.js zodiac.js fortunes.js legal.js notice.js ornament.js
 netlify/functions/        checkout, reading, free-reading, orders, diag
-scripts/                  a static server and eight checks, see below
+scripts/                  a static server, two generators and nine checks, see below
 legacy/                   an earlier unrelated prototype, kept for reference
 ```
 
@@ -50,13 +51,14 @@ Two the functions read that the handover's table omits:
 ```bash
 npm install            # playwright, for the checks only. Nothing ships.
 npm run serve          # http://localhost:4321
-npm run qa             # all eight checks
+npm run qa             # all nine checks
 ```
 
 | Check | What it holds to |
 |---|---|
 | `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description |
 | `qa:shell` | the header and footer are copied by hand into every page, so this compares the navigation contract across them: the same links in the same order carrying the same strings, the same language switch, the same footer. Byte equality would be the wrong instrument and the file says why |
+| `qa:langs` | the language is in the address: every page answers in the language its address names, agrees with its own canonical and names its two alternates, a deep link never moves whatever the reader prefers, the front door does, choosing a language changes the address and stays on the same page, links keep the language and assets do not, and the committed sitemap and robots.txt are what the generator would write |
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
 | `qa:dashes` | rule 4, no dashes reach the screen |
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
@@ -165,6 +167,44 @@ Two things only that proves:
    (`READING CACHE FAILED`) instead of swallowing it, so it will be visible in
    the Netlify function log.
 
+## The language is in the address
+
+`/lectura.html` is Spanish, `/en/lectura.html` is English, `/de/lectura.html` is
+German. All three are the same file: `netlify.toml` rewrites the two prefixes at
+status 200 and `js/lang.js` reads the language back off the path. No build step,
+no third copy of anything.
+
+It used to be a key in `localStorage` and nothing else, which had two costs. A
+page someone sent in English opened in whatever language the person receiving it
+had last chosen, so the two of them were looking at different sites through one
+link. And a search engine only ever saw one of the three, so two thirds of 296
+translated strings were invisible from outside the browser they were typed in.
+
+Who wins, in order:
+
+* **the address.** A prefix is that language, always.
+* **the root.** No prefix is Spanish, always. Not "Spanish unless the browser
+  says otherwise": a page has to be in the language of the address it is at, or
+  a shared link is a coin toss again.
+* **the front door.** The one exception, at `/` and nowhere else: somebody who
+  has chosen before, or whose browser asks for a language the site has, is taken
+  to it. Deep links never move, so a link opens where it was sent and a crawler
+  following one is never bounced.
+
+`js/lang.js` also writes the canonical and the three `hreflang` alternates for
+whatever address it finds itself at, and keeps the language on every link out,
+including the ones the ledger and the spreads draw later. `npm run sitemap`
+writes `sitemap.xml` and `robots.txt`; `qa:langs` fails if the committed files
+have fallen behind.
+
+**What this does not do.** The markup served at all three addresses is the same,
+so the strings themselves arrive when `js/i18n.js` runs. Search engines that
+render JavaScript see three languages; anything that does not, sees the
+scaffolding. Pre-rendering each page in each language would fix that and would
+mean generating and committing 33 files, which is a real trade against how
+simple this is to edit. It is worth doing only if the crawl matters more than
+that, and it can be done later without changing any of the addresses above.
+
 ## The daily fortune
 
 The first thing anyone sees. Once a day, before the site itself, the sky closes
@@ -223,7 +263,7 @@ output, so parts of it are still absent.
   is here, so nothing is lost at runtime, but the source of truth for the card
   copy is not in version control.
 * `scripts/build-deck.mjs`, `build-legal.mjs`, `build-deploy-zip.mjs`, and the
-  eleven original `qa-*.mjs`. The eight checks here cover the rules the handover
+  eleven original `qa-*.mjs`. The nine checks here cover the rules the handover
   calls deliberate; they are not the originals.
 **Resolved since the handover**
 
@@ -300,8 +340,9 @@ output, so parts of it are still absent.
 ## Verified
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
-of any third party, 295 keys at parity across the three languages, no dashes on
-screen, 22 ledger assertions, 48 Stripe assertions, 21 card assertions and 54
-daily fortune assertions green. The whole site is about 390 KB before
+of any third party, 296 keys at parity across the three languages, no dashes on
+screen, 22 ledger assertions, 48 Stripe assertions, 25 card assertions, 54 daily
+fortune assertions and 47 language assertions green. The front page went from
+15,088 elements to 1,241. The whole site is about 390 KB before
 compression, which is less than it was before this pass despite the new deck,
 because 272 KB of unused image placeholders went with it.

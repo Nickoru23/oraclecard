@@ -7,15 +7,23 @@ export const PAGES = [
   'cookies.html', 'atelier.html',
 ];
 
+/* Where a page lives in a given language. The language is part of the address,
+   so this is how a check reaches the English or German version of anything: the
+   root addresses are the Spanish ones and the other two carry a prefix. */
+export const addr = (page, lang) =>
+  (lang === 'es' ? '' : '/' + lang) + '/' + page;
+
 /* Every test browser starts with an empty store, so the daily fortune would
    open over whatever page is under test. What is under test is the page behind
    it, so each context begins with the day already greeted. The fortune has its
    own check, qa-fortune.mjs, which clears this and watches it arrive.
 
-   Pass it to addInitScript with the language: ctx.addInitScript(PREP, lang). */
-export function PREP(lang) {
+   The language is no longer set here, because it is no longer stored: the
+   address decides it. What is left is only the greeting.
+
+   Pass it to addInitScript: ctx.addInitScript(PREP). */
+export function PREP() {
   try {
-    localStorage.setItem('umbral.lang', lang);
     const d = new Date();
     const day = d.getFullYear() + '-' +
                 String(d.getMonth() + 1).padStart(2, '0') + '-' +

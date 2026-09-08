@@ -62,6 +62,7 @@
   </nav>
 </div></footer>
 
+<script src="/js/lang.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/legal.js"></script>
 <script src="/js/notice.js"></script>
@@ -93,18 +94,13 @@
     });
     document.documentElement.lang = lang;
   }
+  /* the address is the language, and changing it is changing the address */
   function setLang(l) {
+    if (window.Lang.go(l)) return;
     document.documentElement.dataset.lang = l;
-    try { localStorage.setItem('umbral.lang', l); } catch (e) {}
     paint();
   }
-  var start = null;
-  try { start = localStorage.getItem('umbral.lang'); } catch (e) {}
-  if (start !== 'en' && start !== 'es' && start !== 'de') {
-    var nav = (navigator.language || 'es').slice(0, 2).toLowerCase();
-    start = nav === 'en' ? 'en' : nav === 'de' ? 'de' : 'es';
-  }
-  document.documentElement.dataset.lang = start;
+  document.documentElement.dataset.lang = window.Lang.code;
   document.querySelector('.lang').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (b) setLang(b.dataset.lang);
   });

@@ -7,7 +7,7 @@
    and the page it lives on writes the same words with the same animation. */
 import { chromium } from 'playwright';
 import { serve } from './serve.mjs';
-import { BASE as base, LANGS } from './pages.mjs';
+import { BASE as base, LANGS, addr } from './pages.mjs';
 
 const server = await serve();
 const b = await chromium.launch();
@@ -18,9 +18,10 @@ const check = (name, cond, got) => {
 };
 
 /* a browser that has never been here, in one language */
+const at = (page, lang) => base.replace(/\/$/, '') + addr(page, lang || 'es');
+
 async function fresh(lang) {
   const ctx = await b.newContext();
-  await ctx.addInitScript(l => { try { localStorage.setItem('umbral.lang', l); } catch (e) {} }, lang);
   const p = await ctx.newPage();
   p.on('pageerror', e => errs.push(`${lang}: ${e.message}`));
   await ctx.route('**/*', r => r.request().url().startsWith(base) ? r.continue() : r.abort());
@@ -30,7 +31,7 @@ async function fresh(lang) {
 /* ---- it opens by itself, in every language ---- */
 for (const lang of LANGS) {
   const { ctx, p } = await fresh(lang);
-  await p.goto(base + 'index.html', { waitUntil: 'networkidle' });
+  await p.goto(at('index.html', lang), { waitUntil: 'networkidle' });
   await p.waitForSelector('.df', { timeout: 3000 }).catch(() => {});
   check(`${lang}: opens on a first visit`, await p.locator('.df').count() === 1);
   check(`${lang}: the words are there`, (await p.locator('.df-w').count()) > 3,

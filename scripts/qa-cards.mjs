@@ -14,7 +14,7 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const server = await serve();
 const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1280,height:900}});
-await ctx.addInitScript(PREP, 'es');
+await ctx.addInitScript(PREP);
 const p=await ctx.newPage();
 const errs=[];
 /* A resource that fails to load is expected here: one picture is broken on

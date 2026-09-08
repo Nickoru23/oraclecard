@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
 <title>Tu lectura · The Witch Atelier</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -69,6 +70,7 @@
 <script src="/js/deck.js"></script>
 <script src="/js/deck-art.js"></script>
 <script src="/js/card-images.js"></script>
+<script src="/js/lang.js"></script>
 <script src="/js/i18n.js"></script>
 <script>
 (async function () {
@@ -89,7 +91,8 @@
   document.getElementById('stage-t').textContent = S.drawing;
   document.getElementById('stage-n').textContent = S.writing_note;
 
-  if (!sid) { location.replace('/lectura.html'); return; }
+  /* back to the form, in the language they were reading it in */
+  if (!sid) { location.replace(window.Lang.href('/lectura.html', window.Lang.code)); return; }
   setTimeout(() => { document.getElementById('stage-t').textContent = S.writing; }, 2600);
 
   try {

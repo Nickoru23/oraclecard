@@ -1,7 +1,12 @@
 /* A static server for the site, with no dependencies, so the checks below can
    run against the real files. It serves this repository from its root, which
    is what netlify.toml publishes. The /api/* paths are not faked here: use
-   `netlify dev` for those. */
+   `netlify dev` for those.
+
+   It does do one thing netlify.toml does, because the checks would otherwise be
+   testing a site nobody visits: /en/ and /de/ serve the same files as the root.
+   Those are the English and German addresses of every page, and the language a
+   page opens in is read from them. */
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
@@ -18,6 +23,9 @@ const TYPES = {
 export function serve(port = PORT) {
   const server = createServer(async (req, res) => {
     let path = decodeURIComponent(req.url.split('?')[0]);
+    /* the language prefixes are addresses, not directories: they rewrite to the
+       same file, exactly as the rewrites in netlify.toml do */
+    path = path.replace(/^\/(en|de)(?=\/|$)/, '') || '/';
     if (path.endsWith('/')) path += 'index.html';
     const file = join(ROOT, normalize(path).replace(/^(\.\.[/\\])+/, ''));
     try {

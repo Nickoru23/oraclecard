@@ -8,7 +8,7 @@ import { BASE as base, PREP } from './pages.mjs';
 const server = await serve();
 const b = await chromium.launch();
 const ctx = await b.newContext();
-await ctx.addInitScript(PREP, 'es');   /* the fortune is greeted; qa-fortune.mjs covers it */
+await ctx.addInitScript(PREP);   /* the fortune is greeted; qa-fortune.mjs covers it */
 await ctx.route('**/*', r => r.request().url().startsWith(base) ? r.continue() : r.abort());
 const p = await ctx.newPage();
 const errs = [];
