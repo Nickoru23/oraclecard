@@ -23,7 +23,7 @@ js/
   dailyfortune.js         the greeting: the day's words, written onto the dark
   astro.js horoscope.js zodiac.js fortunes.js legal.js notice.js ornament.js
 netlify/functions/        checkout, reading, free-reading, orders, diag
-scripts/                  a static server and seven checks, see below
+scripts/                  a static server and eight checks, see below
 legacy/                   an earlier unrelated prototype, kept for reference
 ```
 
@@ -50,12 +50,13 @@ Two the functions read that the handover's table omits:
 ```bash
 npm install            # playwright, for the checks only. Nothing ships.
 npm run serve          # http://localhost:4321
-npm run qa             # all seven checks
+npm run qa             # all eight checks
 ```
 
 | Check | What it holds to |
 |---|---|
-| `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3 |
+| `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description |
+| `qa:shell` | the header and footer are copied by hand into every page, so this compares the navigation contract across them: the same links in the same order carrying the same strings, the same language switch, the same footer. Byte equality would be the wrong instrument and the file says why |
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
 | `qa:dashes` | rule 4, no dashes reach the screen |
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
@@ -222,7 +223,7 @@ output, so parts of it are still absent.
   is here, so nothing is lost at runtime, but the source of truth for the card
   copy is not in version control.
 * `scripts/build-deck.mjs`, `build-legal.mjs`, `build-deploy-zip.mjs`, and the
-  eleven original `qa-*.mjs`. The seven checks here cover the rules the handover
+  eleven original `qa-*.mjs`. The eight checks here cover the rules the handover
   calls deliberate; they are not the originals.
 **Resolved since the handover**
 

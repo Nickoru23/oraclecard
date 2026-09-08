@@ -245,11 +245,37 @@
     const dlg = document.getElementById('card-modal');
     let filter = 'all';
 
+    /* The cells are laid out empty and take their drawings as they come into
+       view. All 78 drawn at load put 13,933 elements into a page whose first
+       screen needs 800, every one of them below the fold, and 11,060 of those
+       were individual strokes in the card art. Each cell keeps the card's
+       proportions from the start, so the page is exactly as tall as it will be
+       and nothing moves underneath anyone. */
+    let watcher = null;
+
     function paint() {
       grid.innerHTML = window.DECK
         .filter(c => filter === 'all' || c.a === 'major')
-        .map(c => `<button class="deck-cell" data-id="${c.id}" aria-label="${c.name[LANG]}">
-                     ${window.cardObject(c, LANG, 'sm')}</button>`).join('');
+        .map(c => `<button class="deck-cell" data-id="${c.id}" aria-label="${c.name[LANG]}"></button>`)
+        .join('');
+      draw();
+    }
+
+    function draw() {
+      if (watcher) watcher.disconnect();
+      const cells = [...grid.querySelectorAll('.deck-cell')];
+      const fill = cell => {
+        if (cell.firstChild) return;
+        const c = window.DECK.find(x => x.id === cell.dataset.id);
+        if (c) cell.innerHTML = window.cardObject(c, LANG, 'sm');
+      };
+      /* without the observer, which is every browser this site cares about but
+         not every browser there is, the deck simply arrives all at once */
+      if (!('IntersectionObserver' in window)) { cells.forEach(fill); return; }
+      watcher = new IntersectionObserver(entries => {
+        for (const e of entries) if (e.isIntersecting) { fill(e.target); watcher.unobserve(e.target); }
+      }, { rootMargin: '700px 0px' });
+      cells.forEach(c => watcher.observe(c));
     }
     grid.addEventListener('click', e => {
       const b = e.target.closest('.deck-cell'); if (!b) return;

@@ -30,6 +30,26 @@ await p.goto('http://127.0.0.1:4321/index.html',{waitUntil:'networkidle'});
 await p.locator('.privacy-notice .btn').click().catch(()=>{}); await p.waitForTimeout(400);
 
 const T=(n,c,g)=>{ if(!c) errs.push('FAIL '+n); console.log((c?'ok  ':'FAIL')+'  '+n+(c?'':'  '+JSON.stringify(g))); };
+
+/* The deck browser lays its cells out empty and draws each one as it comes into
+   view, so most of the assertions below need the deck to have been looked at.
+   Scrolling through it is what a visitor does and what fills it. */
+async function walkTheDeck(page) {
+  const left = () => page.evaluate(() =>
+    [...document.querySelectorAll('.deck-cell')].filter(c => !c.firstChild).length);
+  for (let y = 0; y < 24 && await left(); y++) {
+    await page.evaluate(i => window.scrollTo(0, i * 700), y);
+    await page.waitForTimeout(120);
+  }
+  await page.waitForTimeout(250);
+  return left();
+}
+T('the deck lays out before it draws', await p.evaluate(() =>
+    document.querySelectorAll('.deck-cell').length === 78 &&
+    [...document.querySelectorAll('.deck-cell')].every(c => !c.firstChild)));
+const lightPage = await p.evaluate(() => document.querySelectorAll('*').length);
+T('and the page it lands in is a page, not a deck', lightPage < 2000, lightPage);
+T('every cell is drawn once it is looked at', await walkTheDeck(p) === 0);
 T('deck cells are 3d', await p.locator('.deck-cell.is-3d').count()===78, await p.locator('.deck-cell.is-3d').count());
 T('hero fan is 3d', await p.locator('.hero-fan .f.is-3d').count()===5);
 T('every card has two sides', await p.locator('.deck-cell .c3d-faces .face.back').count()===78,
@@ -121,6 +141,7 @@ try {
   await p.goto('http://127.0.0.1:4321/index.html', { waitUntil: 'networkidle' });
   await p.locator('.privacy-notice .btn').click().catch(() => {});
   await p.waitForTimeout(400);
+  await walkTheDeck(p);
 
   T('three cards take a picture', await p.locator('.deck-cell img.card-img').count() === 3,
     await p.locator('.deck-cell img.card-img').count());

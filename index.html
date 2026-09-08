@@ -9,7 +9,10 @@
 <link rel="stylesheet" href="/css/app.css">
 <style>
   #deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
+  /* the card's own proportions, so a cell waiting for its drawing takes exactly
+     the room the drawing will take and the page never resettles under anyone */
   .deck-cell{background:none;border:0;padding:0;cursor:grab;border-radius:10px;
+    aspect-ratio:300/510;
     line-height:0;transition:transform .2s ease,box-shadow .2s ease;
     box-shadow:0 10px 26px -12px rgba(0,0,0,.9),0 0 20px -8px rgba(139,92,246,.5)}
   /* no transform here: card3d.js owns the transform on a card, and a rule that
