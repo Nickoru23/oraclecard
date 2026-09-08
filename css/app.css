@@ -522,6 +522,21 @@ footer.site nav a:hover{color:var(--cyan-hi)}
 .vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
+/* The way past the header. It is the first thing in the tab order and it is off
+   screen until it is focused, which is the only time anyone wants it: on the
+   front page the header is followed by ninety one deck cards, and tabbing
+   through all of them to reach the page is not a way in. */
+.skip{
+  position:fixed;left:14px;top:-70px;z-index:200;
+  background:rgba(14,11,38,.97);color:var(--bone);
+  border:1px solid var(--line-2);border-radius:999px;
+  padding:12px 24px;font-size:.84rem;
+  box-shadow:var(--shadow-lift);
+  transition:top .18s ease
+}
+.skip:focus{top:14px;text-decoration:none;outline:2px solid var(--cyan);outline-offset:3px}
+main:focus{outline:none}
+
 /* ---------- the tally in the header ---------- */
 .tally{
   display:inline-flex;align-items:center;gap:7px;

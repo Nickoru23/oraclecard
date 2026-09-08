@@ -32,8 +32,8 @@
   .fx-card{max-width:340px;margin:34px auto 0;text-align:center}
   .fx-card .art{width:min(170px,46vw);margin:12px auto 0;border-radius:var(--r-sm);
                 box-shadow:var(--shadow-lift),0 0 56px -16px rgba(139,92,246,.85)}
-  .fx-card h3{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cyan);
-              font-weight:700;font-family:var(--sans);margin:0}
+  .fx-card h2{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cyan);
+              font-weight:700;font-family:var(--sans);margin:0;line-height:1.4}
   .fx-card .nm{font-family:var(--serif);font-size:1.12rem;color:var(--bone);margin:16px 0 0}
   .fx-card p.mean{color:var(--muted);font-size:.92rem;line-height:1.6;margin:8px 0 0}
   .streak{display:flex;justify-content:center;gap:26px;margin:34px 0 0;padding-top:22px;
@@ -49,6 +49,8 @@
 </style>
 </head>
 <body>
+
+<a class="skip" href="#main" data-t="skip"></a>
 
 <header class="site"><div class="wrap nav">
   <a class="brand" href="/">
@@ -72,13 +74,16 @@
   </nav>
 </div></header>
 
+<main id="main" tabindex="-1">
+
 <section><div class="wrap">
   <p class="eyebrow center" data-t="ck_eyebrow"></p>
   <h1 data-banner style="font-size:clamp(1.7rem,4.6vw,2.5rem);margin-bottom:.2em" data-t="ck_h1"></h1>
   <p class="lede center" style="margin:0 auto" data-t="ck_lede"></p>
 
   <div class="fx-stage" id="stage">
-    <button type="button" class="fx-btn" id="reveal" aria-describedby="tap">
+    <button type="button" class="fx-btn" id="reveal">
+      <span class="vh" data-t="ck_tap"></span>
       <svg viewBox="0 0 200 200" role="img" aria-hidden="true">
         <circle class="fx-halo" cx="100" cy="100" r="52" fill="rgba(139,92,246,.30)"/>
         <circle cx="100" cy="100" r="34" fill="rgba(168,148,255,.16)"
@@ -101,7 +106,7 @@
   <p class="df-words fx-words" id="fortune"></p>
 
   <div class="fx-card" id="ck-card" hidden>
-    <h3 id="ck-card-h"></h3>
+    <h2 id="ck-card-h"></h2>
     <div class="art" id="ck-art" data-turn></div>
     <p class="nm" id="ck-name"></p>
     <p class="mean" id="ck-mean"></p>
@@ -119,6 +124,7 @@
     <div><span data-t="ck_total"></span><b id="s-total">0</b></div>
   </div>
 </div></section>
+</main>
 
 <footer class="site"><div class="wrap">
   <span>&copy; <span id="yr"></span> The Witch Atelier</span>

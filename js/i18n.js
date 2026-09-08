@@ -1,6 +1,7 @@
 /* ===== The Witch Atelier, UI strings ===== */
 window.T = {
   es: {
+    skip:'Saltar al contenido',
     nav_free:'Juega con la baraja', nav_reading:'Lectura completa', nav_deck:'La baraja',
     hero_eyebrow:'Taller de tarot',
     hero_h1:'Una lectura escrita<br>para tu pregunta.',
@@ -227,6 +228,7 @@ window.T = {
     cr_third_d:'Nada. Ni analítica, ni publicidad, ni fuentes externas, ni mapas, ni vídeos, ni un solo archivo pedido a otro servidor. Por eso este sitio no necesita banner de consentimiento.',
   },
   en: {
+    skip:'Skip to the content',
     nav_free:'Play with the deck', nav_reading:'Full reading', nav_deck:'The deck',
     hero_eyebrow:'A tarot atelier',
     hero_h1:'A reading written<br>for your question.',
@@ -454,6 +456,7 @@ window.T = {
   },
 
   de: {
+    skip:'Zum Inhalt springen',
     nav_free:'Spiel mit dem Deck', nav_reading:'Vollständige Deutung', nav_deck:'Das Deck',
     hero_eyebrow:'Ein Tarot-Atelier',
     hero_h1:'Eine Deutung, geschrieben<br>für deine Frage.',
