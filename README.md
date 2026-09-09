@@ -45,6 +45,7 @@ Two the functions read that the handover's table omits:
 | Name | Used by | Notes |
 |---|---|---|
 | `FREE_SECRET` | `free-reading.mjs` | signs the per visitor free reading cookie |
+| `RESEND_API_BASE` | `reading.mjs` | overrides the Resend host, for tests. Same idea as `STRIPE_API_BASE`, so the copy by email can be proved to go without sending one |
 | `STRIPE_API_BASE` | `checkout.mjs`, `reading.mjs`, `orders.mjs` | overrides the Stripe host, for tests. `reading.mjs` and `orders.mjs` hard coded the host until this was fixed, so only checkout was ever testable |
 
 ## Working on it
@@ -65,7 +66,7 @@ npm run qa             # all ten checks
 | `qa:dashes` | rule 4, no dashes reach the screen |
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
 | `qa:cards` | the cards as objects, and a reversed one being the whole card upside down: they tilt toward the pointer and the rendered matrix really is 3D, a drag spins them and selects no text, a throw settles, arrow keys turn them, a drawn card still turns over. Then it makes its own pictures to check a card prefers one and falls back to its drawing when one is missing, and puts everything back |
-| `qa:stripe` | the paid path end to end against a Stripe stand in: the request shape, the three tiers, what checkout refuses, the payment check, the held tiers and the owner token, the order book, and that a generated reading survives the metadata cache whole. No network, no account, no charges |
+| `qa:stripe` | the paid path end to end against a Stripe and a Resend stand in: the request shape, the three tiers, what checkout refuses, the payment check, the held tiers and the owner token, the order book, and that a generated reading survives the metadata cache whole. No network, no account, no charges |
 | `qa:fortune` | the daily fortune: it opens by itself on a first visit in all three languages, the words carry climbing delays and a late one starts invisible, nothing is clickable before it has arrived, the card tilts and spins and throws and turns over like any other, a throw that ends on the sky does not close the greeting, Escape does, it keeps the day and the streak, it never opens over the reading form or the page after payment, and its own page and the card of the day carry the same card |
 
 The `/api/*` paths need `netlify dev` or a deployed site. The pages render without them.
@@ -397,7 +398,7 @@ output, so parts of it are still absent.
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
 of any third party, 297 keys at parity across the three languages, no dashes on
-screen, 22 ledger assertions, 48 Stripe assertions, 25 card assertions, 54 daily
+screen, 22 ledger assertions, 58 Stripe assertions, 25 card assertions, 54 daily
 fortune assertions, 47 language assertions and 20 orrery assertions green. The
 front page went from 15,088 elements to 1,241, and holds 60 frames a second at
 rest and above 50 while the dial is being turned. The whole site is about 390 KB before
