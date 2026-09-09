@@ -25,7 +25,7 @@ js/
   orrery.js               the dial in the hero: the real Sun and Moon, turnable
   astro.js horoscope.js zodiac.js fortunes.js legal.js notice.js ornament.js
 netlify/functions/        checkout, reading, free-reading, orders, diag
-scripts/                  a static server, two generators and ten checks, see below
+scripts/                  a static server, two generators and eleven checks, see below
 legacy/                   an earlier unrelated prototype, kept for reference
 ```
 
@@ -45,6 +45,7 @@ Two the functions read that the handover's table omits:
 | Name | Used by | Notes |
 |---|---|---|
 | `FREE_SECRET` | `free-reading.mjs` | signs the per visitor free reading cookie |
+| `SITE_URL` | `checkout.mjs` | the origin Stripe returns a buyer to. **Deliberately unset.** It falls back to the origin of the request, which on production is the same address and on a deploy preview is the preview, which is what you want when testing a purchase. It was also set as a *secret*, and its value is the site's own address, so Netlify's scanner refused every build on finding it in `sitemap.xml` and `robots.txt`, where it has to be |
 | `RESEND_API_BASE` | `reading.mjs` | overrides the Resend host, for tests. Same idea as `STRIPE_API_BASE`, so the copy by email can be proved to go without sending one |
 | `STRIPE_API_BASE` | `checkout.mjs`, `reading.mjs`, `orders.mjs` | overrides the Stripe host, for tests. `reading.mjs` and `orders.mjs` hard coded the host until this was fixed, so only checkout was ever testable |
 
@@ -53,13 +54,14 @@ Two the functions read that the handover's table omits:
 ```bash
 npm install            # playwright, for the checks only. Nothing ships.
 npm run serve          # http://localhost:4321
-npm run qa             # all ten checks
+npm run qa             # all eleven checks
 ```
 
 | Check | What it holds to |
 |---|---|
 | `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description |
 | `qa:shell` | the header and footer are copied by hand into every page, so this compares the navigation contract across them: the same links in the same order carrying the same strings, the same language switch, the same footer. Byte equality would be the wrong instrument and the file says why |
+| `qa:served` | `publish = "."` is the whole repository, so every file in it is a public URL unless something says otherwise. This walks the repository rather than the site and fails if anything a visitor should not receive has no 404 rule, under each of the three language prefixes. Adding a script or a note fails it until it is denied or listed as public |
 | `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still |
 | `qa:langs` | the language is in the address: every page answers in the language its address names, agrees with its own canonical and names its two alternates, a deep link never moves whatever the reader prefers, the front door does, choosing a language changes the address and stays on the same page, links keep the language and assets do not, and the committed sitemap and robots.txt are what the generator would write |
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
@@ -320,7 +322,7 @@ output, so parts of it are still absent.
   is here, so nothing is lost at runtime, but the source of truth for the card
   copy is not in version control.
 * `scripts/build-deck.mjs`, `build-legal.mjs`, `build-deploy-zip.mjs`, and the
-  eleven original `qa-*.mjs`. The ten checks here cover the rules the handover
+  eleven original `qa-*.mjs`. The eleven checks here cover the rules the handover
   calls deliberate; they are not the originals.
 **Resolved since the handover**
 
@@ -397,7 +399,8 @@ output, so parts of it are still absent.
 ## Verified
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
-of any third party, 297 keys at parity across the three languages, no dashes on
+of any third party, 297 keys at parity across the three languages, nothing served
+that is not the site, no dashes on
 screen, 22 ledger assertions, 58 Stripe assertions, 25 card assertions, 54 daily
 fortune assertions, 47 language assertions and 20 orrery assertions green. The
 front page went from 15,088 elements to 1,241, and holds 60 frames a second at

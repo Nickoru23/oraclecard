@@ -6,6 +6,147 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# ---------------------------------------------------------------------------
+# What the host must not serve.
+#
+# publish = "." is the whole repository, so without these the site hands out its
+# own server source at /netlify/functions/free-reading.mjs, its test suite at
+# /scripts/, and its internal notes at /HANDOVER.md. None of that holds a
+# secret, the keys are environment variables, but free-reading.mjs is a written
+# description of the scheme that stops somebody taking unlimited free readings,
+# which is not a thing to hand out.
+#
+# These sit above every other rule so they match first, and they are repeated
+# under the two language prefixes because those rewrite to the bare path and a
+# rewrite ends the chain.
+# ---------------------------------------------------------------------------
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/README.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/HANDOVER.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/en/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/en/netlify/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/en/README.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/en/HANDOVER.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/en/package.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/en/package-lock.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/en/netlify.toml"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/de/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/de/netlify/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/de/README.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/de/HANDOVER.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/de/package.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/de/package-lock.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/de/netlify.toml"
+  to = "/404"
+  status = 404
+  force = true
+
 [[redirects]]
   from = "/api/checkout"
   to = "/.netlify/functions/checkout"
