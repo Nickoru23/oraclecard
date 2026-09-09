@@ -243,19 +243,42 @@ export default async function handler(req) {
         + 'generate and bill again:', e.code || '', e.message);
     }
 
-    /* optional: email a copy, only if Resend is configured */
+    /* A copy by email, when Resend is configured.
+
+       This is awaited, and the awaiting is the whole point. It used to be fired
+       and forgotten, which reads as harmless and is not: the moment a function
+       returns its response the runtime is free to freeze the container, and a
+       promise nobody is waiting on dies there. The email simply never arrived,
+       with nothing in the log to say so.
+
+       Awaiting costs a few hundred milliseconds on a request that already took
+       twenty seconds to write. A failure is still not fatal, the visitor has
+       their reading either way, but it is now loud, because the likeliest
+       failure by far is a sending domain that has not been verified at Resend
+       and that is invisible until somebody goes looking. */
     if (process.env.RESEND_API_KEY && s.customer_details?.email) {
-      fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'content-type': 'application/json' },
-        body: JSON.stringify({
-          from: process.env.MAIL_FROM || 'The Witch Atelier <lecturas@thewitchatelier.com>',
-          to: s.customer_details.email,
-          subject: { es: 'Tu lectura de The Witch Atelier', en: 'Your Witch Atelier reading',
-                     de: 'Deine Deutung aus dem Witch Atelier' }[lang],
-          text: reading,
-        }),
-      }).catch(e => console.error('mail', e.message));
+      const base = (process.env.RESEND_API_BASE || 'https://api.resend.com').replace(/\/$/, '');
+      try {
+        const mail = await fetch(`${base}/emails`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'content-type': 'application/json' },
+          body: JSON.stringify({
+            from: process.env.MAIL_FROM || 'The Witch Atelier <lecturas@thewitchatelier.com>',
+            to: s.customer_details.email,
+            subject: { es: 'Tu lectura de The Witch Atelier', en: 'Your Witch Atelier reading',
+                       de: 'Deine Deutung aus dem Witch Atelier' }[lang],
+            text: reading,
+          }),
+        });
+        if (!mail.ok) {
+          console.error('MAIL NOT SENT', mail.status, (await mail.text()).slice(0, 300),
+            '\n  the reading was delivered on screen. Check that the address in '
+            + 'MAIL_FROM is on a domain verified at Resend.');
+        }
+      } catch (e) {
+        console.error('MAIL NOT SENT', e.message,
+          '\n  the reading was delivered on screen.');
+      }
     }
 
     return json({ reading, draws: draws.map(shape) });

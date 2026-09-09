@@ -13,7 +13,9 @@ process.env.STRIPE_API_BASE = 'https://stripe.invalid/v1';
 process.env.ANTHROPIC_API_KEY = 'sk-ant-standin';
 process.env.SITE_URL = 'https://thewitchatelier.test';
 process.env.OWNER_TOKEN = 'owner_token_for_the_test';
-delete process.env.RESEND_API_KEY;
+process.env.RESEND_API_KEY = 're_standin';
+process.env.RESEND_API_BASE = 'https://resend.invalid';
+process.env.MAIL_FROM = 'The Witch Atelier <lecturas@thewitchatelier.test>';
 
 let pass = 0, fail = 0;
 const ok = (name, cond, got) => {
@@ -25,6 +27,10 @@ const ok = (name, cond, got) => {
 
 const STRIPE = { sessions: new Map(), seq: 0, calls: [] };
 let anthropicCalls = 0;
+/* The post is recorded, and so is whether it had finished before the function
+   answered. A serverless runtime is free to freeze the container the moment a
+   response is returned, so a send that is merely started never happens. */
+const MAIL = { sent: [], inFlight: 0, refuse: false };
 
 /* a reading the length the paid prompt actually asks for, 700 to 900 words */
 const READING = (() => {
@@ -46,6 +52,16 @@ globalThis.fetch = async (url, opt = {}) => {
   const u = String(url);
   const J = (o, st = 200) => new Response(JSON.stringify(o), {
     status: st, headers: { 'content-type': 'application/json' } });
+
+  if (u.startsWith('https://resend.invalid/')) {
+    MAIL.inFlight++;
+    await new Promise(r => setTimeout(r, 20));      /* a real send takes a moment */
+    MAIL.inFlight--;
+    if (MAIL.refuse) return J({ message: 'The domain is not verified' }, 403);
+    const body = JSON.parse(opt.body);
+    MAIL.sent.push({ ...body, auth: String(opt.headers?.Authorization || '') });
+    return J({ id: 'mail_' + MAIL.sent.length });
+  }
 
   if (u.startsWith('https://api.anthropic.com/')) {
     anthropicCalls++;
@@ -263,6 +279,52 @@ for (let i = 0; i < 140; i++) await buy();          /* 140 people who did not pa
 o = await list(process.env.OWNER_TOKEN);
 const ids = o.body.pending.concat(o.body.done).map(x => x.id);
 ok('a paid order 140 abandoned sessions back is still listed', ids.includes(early), ids.length);
+
+/* ---------- the copy by email ----------
+
+   Only worth having if it actually goes. The send used to be started and not
+   waited for, which looks harmless and is not: the runtime is free to freeze
+   the container the moment the response is returned, so the send died there and
+   nothing in the log said so. */
+MAIL.sent.length = 0;
+const mailed = await buy({ email: 'buyer@example.test', lang: 'de' });
+STRIPE.sessions.get(mailed).payment_status = 'paid';
+const mr = await get(mailed);
+await mr.json();
+ok('a paid reading is emailed to the buyer', MAIL.sent.length === 1, MAIL.sent.length);
+ok('nothing is still in flight when the answer is returned', MAIL.inFlight === 0, MAIL.inFlight);
+ok('it goes to the address that paid', MAIL.sent[0]?.to === 'buyer@example.test', MAIL.sent[0]?.to);
+ok('it carries the reading itself', (MAIL.sent[0]?.text || '').includes('## The question'));
+ok('the subject is in the language it was bought in',
+  MAIL.sent[0]?.subject === 'Deine Deutung aus dem Witch Atelier', MAIL.sent[0]?.subject);
+ok('it is sent from MAIL_FROM', MAIL.sent[0]?.from === process.env.MAIL_FROM, MAIL.sent[0]?.from);
+ok('with the key, as a bearer token', MAIL.sent[0]?.auth === 'Bearer re_standin');
+
+/* a refused send, which in practice means a sending domain nobody verified */
+MAIL.refuse = true;
+const errs = [];
+const realError = console.error;
+console.error = (...a) => errs.push(a.join(' '));
+const stubborn = await buy({ email: 'buyer2@example.test' });
+STRIPE.sessions.get(stubborn).payment_status = 'paid';
+const sr = await get(stubborn);
+const sbody = await sr.json();
+console.error = realError;
+MAIL.refuse = false;
+ok('a refused email does not cost the visitor their reading',
+  sr.status === 200 && (sbody.reading || '').includes('## The question'), sr.status);
+ok('and it is said out loud rather than swallowed',
+  errs.some(e => e.includes('MAIL NOT SENT') && e.includes('not verified')), errs.slice(0, 1));
+
+/* and with no key at all, nothing is attempted */
+const key = process.env.RESEND_API_KEY;
+delete process.env.RESEND_API_KEY;
+MAIL.sent.length = 0;
+const quiet = await buy({ email: 'buyer3@example.test' });
+STRIPE.sessions.get(quiet).payment_status = 'paid';
+await (await get(quiet)).json();
+process.env.RESEND_API_KEY = key;
+ok('without a key nothing is sent and nothing breaks', MAIL.sent.length === 0, MAIL.sent.length);
 
 console.log(fail ? `\n${fail} failed, ${pass} passed` : `\nall ${pass} checks passed`);
 process.exit(fail ? 1 : 0);
