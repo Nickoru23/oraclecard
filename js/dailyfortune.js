@@ -82,7 +82,7 @@
            <div class="df-cardart" data-turn>${window.cardObject(c.card, lang, 'full')}</div>
            <p class="df-cardname">${esc(c.card.name[lang])}</p>
          </div>
-         <button type="button" class="btn btn-gold df-go">${esc(t('df_enter'))}</button>
+         <button type="button" class="btn btn-lit df-go">${esc(t('df_enter'))}</button>
          <p class="df-note small">${esc(t('df_note'))}</p>
        </div>`;
 

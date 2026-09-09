@@ -13,7 +13,7 @@
   .welcome{text-align:center;margin-bottom:28px}
   .welcome h2{font-size:1.5rem;margin:0 0 .5em}
   .welcome p{color:var(--muted);margin:0;line-height:1.65}
-  .badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);
+  .badge{display:inline-block;border:1px solid var(--star);color:var(--star);
          border-radius:999px;padding:4px 14px;font-size:.75rem;letter-spacing:.1em;
          text-transform:uppercase;margin-bottom:18px}
   /* the card count is a choice, not a dropdown. it is the first decision */
@@ -22,26 +22,26 @@
         background:transparent;color:inherit;cursor:pointer;font:inherit}
   .pick strong{display:block;color:var(--bone);margin-bottom:4px}
   .pick span{font-size:.84rem;color:var(--muted);line-height:1.45}
-  .pick[aria-pressed=true]{border-color:var(--gold);background:rgba(140,94,32,.11)}
+  .pick[aria-pressed=true]{border-color:var(--star);background:rgba(140,94,32,.11)}
   .row3{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px}
   .row3 label{font-size:.72rem;letter-spacing:.08em}
   .note{font-size:.85rem;color:var(--bone);margin:0 0 12px;line-height:1.55}
-  .note b{color:var(--gold);font-weight:600}
-  .qwarn{border-left:2px solid var(--gold);padding:2px 0 2px 16px;margin:30px 0 14px;
+  .note b{color:var(--star);font-weight:600}
+  .qwarn{border-left:2px solid var(--star);padding:2px 0 2px 16px;margin:30px 0 14px;
          font-size:.92rem;line-height:1.65;color:var(--bone)}
   #f-q{min-height:180px;font-size:1.02rem}
   .qmeta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
          font-size:.78rem;color:var(--muted);margin:-8px 0 22px}
-  .qmeta.is-ok{color:var(--gold)}
+  .qmeta.is-ok{color:var(--star)}
   .btn-block{width:100%;text-align:center}
   .more{border:1px solid var(--line);border-radius:var(--r);padding:0 16px;margin:0 0 22px}
   .more summary{cursor:pointer;padding:14px 0;color:var(--bone);font-size:.95rem;list-style:none}
   .more summary::-webkit-details-marker{display:none}
-  .more summary::after{content:'+';float:right;color:var(--gold);font-size:1.2rem;line-height:1}
+  .more summary::after{content:'+';float:right;color:var(--star);font-size:1.2rem;line-height:1}
   .more[open] summary::after{content:'\2212'}
   .more .inner{padding-bottom:6px}
-  .why{border-left:2px solid var(--gold);padding:2px 0 2px 16px;margin:26px 0 0}
-  .why h3{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+  .why{border-left:2px solid var(--star);padding:2px 0 2px 16px;margin:26px 0 0}
+  .why h3{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--star);margin:0 0 10px}
   .why p{font-size:.88rem;line-height:1.6;color:var(--muted);margin:0 0 9px}
   .why b{color:var(--bone);font-weight:400}
   .opt{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:8px}
@@ -141,7 +141,7 @@
     </div>
 
     <p class="err" id="form-err" hidden></p>
-    <button class="btn btn-gold btn-lg btn-block" id="go-btn" type="submit" data-t="free_draw"></button>
+    <button class="btn btn-lit btn-lg btn-block" id="go-btn" type="submit" data-t="free_draw"></button>
   </form>
 
   <div class="explore">
@@ -156,7 +156,7 @@
   <div class="panel upsell" id="upsell" hidden>
     <h3 data-t="upsell_h"></h3>
     <p data-t="upsell_p"></p>
-    <p><a class="btn btn-gold" href="/lectura.html" data-t="upsell_cta"></a>
+    <p><a class="btn btn-lit" href="/lectura.html" data-t="upsell_cta"></a>
        <button type="button" class="btn btn-ghost" id="again-btn" data-t="free_again"></button></p>
   </div>
 </div></section>

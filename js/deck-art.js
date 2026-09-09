@@ -14,9 +14,9 @@
 
      a night field, indigo at the top and near black at the foot
      a scatter of stars, fixed per card so it never reflows
-     a gold sigil at the centre, over a soft bloom
+     a starlight sigil at the centre, over a soft bloom
      a constellation reaching out from it
-     a double gold frame with a diamond at each corner
+     a double starlight frame with a diamond at each corner
      the number above in Roman, the name below in small caps
 
    The glow is faked with two strokes rather than an SVG filter: a wide
@@ -29,8 +29,10 @@
   const C = {
     top:   '#191441',
     bottom:'#0A0819',
-    gold:  '#D9B872',
-    goldHi:'#F4E3B8',
+    /* the engraved line: starlight rather than gilding, so a card and the
+       page around it are lit by the same colour */
+    line:  '#B9C9F2',
+    lineHi:'#E8EFFF',
     cyan:  '#4FD8D3',
     violet:'#A98BFF',
     star:  '#EDEAFF',
@@ -41,7 +43,7 @@
 
   /* a stroked path, with a wide soft copy under it standing in for a glow */
   const G = (d, w, c, g) => {
-    w = w || 2.2; c = c || C.gold; g = g || C.violet;
+    w = w || 2.2; c = c || C.line; g = g || C.violet;
     return `<path d="${d}" fill="none" stroke="${g}" stroke-width="${w + 5}" opacity=".15"
               stroke-linecap="round" stroke-linejoin="round"/>` +
            `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}"
@@ -56,9 +58,9 @@
       stroke-dasharray="${N(c - g)} ${N(g)}" stroke-dashoffset="${N(c * 0.75 - g / 2)}"
       stroke-linecap="round"`;
     return `${a} stroke="${C.violet}" stroke-width="${(w || 2.2) + 5}" opacity=".15"/>` +
-           `${a} stroke="${C.gold}" stroke-width="${w || 2.2}"/>`;
+           `${a} stroke="${C.line}" stroke-width="${w || 2.2}"/>`;
   };
-  const DOT = (x, y, r, c) => `<circle cx="${N(x)}" cy="${N(y)}" r="${N(r)}" fill="${c || C.gold}"/>`;
+  const DOT = (x, y, r, c) => `<circle cx="${N(x)}" cy="${N(y)}" r="${N(r)}" fill="${c || C.line}"/>`;
   const LINE = (x1, y1, x2, y2, w, c, g) => G(`M${N(x1)} ${N(y1)}L${N(x2)} ${N(y2)}`, w, c, g);
 
   function star(cx, cy, R, r, pts, rot) {
@@ -70,7 +72,7 @@
     }
     return d + 'Z';
   }
-  const STAR = (x, y, R, pts, w, c) => G(star(x, y, R, R * 0.42, pts || 8), w || 1.8, c || C.gold);
+  const STAR = (x, y, R, pts, w, c) => G(star(x, y, R, R * 0.42, pts || 8), w || 1.8, c || C.line);
   const poly = (cx, cy, r, n, rot) => {
     let d = '';
     for (let i = 0; i < n; i++) {
@@ -215,7 +217,7 @@
 
   const SUIT = {
     wands: s => `<g transform="translate(0,0) scale(${s})">` +
-      G('M0 -30L0 30', 2.2) + G('M0 -30c-9 -10 -3 -20 0 -24c3 4 9 14 0 24Z', 1.8, C.goldHi) +
+      G('M0 -30L0 30', 2.2) + G('M0 -30c-9 -10 -3 -20 0 -24c3 4 9 14 0 24Z', 1.8, C.lineHi) +
       G('M-7 22h14', 1.6) + '</g>',
     cups: s => `<g transform="scale(${s})">` +
       G('M-18 -22h36l-4 20a14 14 0 0 1 -28 0Z', 2) + G('M0 12v14', 2) + G('M-13 26h26', 2) +
@@ -223,7 +225,7 @@
     swords: s => `<g transform="scale(${s})">` +
       G('M0 -32L7 -6L0 26L-7 -6Z', 2) + G('M-13 -6h26', 2) + RING(0, 30, 4.5, 1.5, C.cyan) + '</g>',
     pentacles: s => `<g transform="scale(${s})">` +
-      RING(0, 0, 24, 2) + G(star(0, 0, 15, 6.2, 5), 1.6, C.goldHi) + '</g>',
+      RING(0, 0, 24, 2) + G(star(0, 0, 15, 6.2, 5), 1.6, C.lineHi) + '</g>',
   };
   const place = (glyph, x, y) => `<g transform="translate(${N(x)} ${N(y)})">${glyph}</g>`;
 
@@ -249,7 +251,7 @@
   }
 
   /* the ace: the glyph held large, over a bloom, in a ring */
-  const ace = suit => RING(X, Y, 88, 1.4, C.gold, C.cyan) +
+  const ace = suit => RING(X, Y, 88, 1.4, C.line, C.cyan) +
     place(SUIT[suit](2.2), X, Y) +
     (() => { let s = ''; for (let i = 0; i < 8; i++) {
       const a = (i * 45 - 90) * Math.PI / 180;
@@ -263,7 +265,7 @@
     14: () => G(`M${X - 32} ${Y - 70}v-16l16 10 16 -20 16 20 16 -10v16Z`, 2, C.cyan),
   };
   const court = (n, suit) => RANK[n]() + place(SUIT[suit](2), X, Y + 16) +
-    LINE(X - 44, Y + 84, X + 44, Y + 84, 1.2, C.gold, C.gold);
+    LINE(X - 44, Y + 84, X + 44, Y + 84, 1.2, C.line, C.line);
 
   const minor = card => card.n === 1 ? ace(card.suit)
     : card.n >= 11 ? court(card.n, card.suit)
@@ -278,19 +280,19 @@
   const FACE = 'Palatino Linotype,Palatino,Georgia,serif';
 
   const frame = () =>
-    `<rect x="12" y="12" width="276" height="486" rx="9" fill="none" stroke="${C.gold}"
+    `<rect x="12" y="12" width="276" height="486" rx="9" fill="none" stroke="${C.line}"
        stroke-width="1.3" opacity=".55"/>
-     <rect x="19.5" y="19.5" width="261" height="471" rx="6" fill="none" stroke="${C.gold}"
+     <rect x="19.5" y="19.5" width="261" height="471" rx="6" fill="none" stroke="${C.line}"
        stroke-width=".7" opacity=".3"/>` +
     [[19.5, 19.5], [280.5, 19.5], [19.5, 490.5], [280.5, 490.5]]
-      .map(p => `<path d="M${p[0]} ${p[1] - 5}l5 5l-5 5l-5 -5Z" fill="${C.gold}" opacity=".75"/>`).join('');
+      .map(p => `<path d="M${p[0]} ${p[1] - 5}l5 5l-5 5l-5 -5Z" fill="${C.line}" opacity=".75"/>`).join('');
 
   const lettering = name => {
     const n = name.length;
     const size = n <= 15 ? 15 : n <= 21 ? 12.5 : 11;
     const track = n <= 15 ? 2.6 : n <= 21 ? 1.4 : .8;
-    return `<path d="M56 446H244" stroke="${C.gold}" stroke-width=".7" opacity=".38" fill="none"/>
-      <text x="150" y="470" text-anchor="middle" fill="${C.goldHi}" font-family="${FACE}"
+    return `<path d="M56 446H244" stroke="${C.line}" stroke-width=".7" opacity=".38" fill="none"/>
+      <text x="150" y="470" text-anchor="middle" fill="${C.lineHi}" font-family="${FACE}"
         font-size="${size}" letter-spacing="${track}">${name}</text>`;
   };
 
@@ -319,7 +321,7 @@
   ${constellation(seed)}
   <g class="art">${sigil}</g>
   ${frame()}
-  ${num ? `<text x="150" y="56" text-anchor="middle" fill="${C.gold}" font-family="${FACE}"
+  ${num ? `<text x="150" y="56" text-anchor="middle" fill="${C.line}" font-family="${FACE}"
       font-size="17" letter-spacing="3">${num}</text>` : STAR(150, 48, 9, 6, 1.3, C.cyan)}
   ${lettering(name)}
 </svg>`;
@@ -348,9 +350,9 @@
   ${orbit}
   ${RING(150, 255, 74, 1.6)}
   ${RING(150, 255, 52, 1)}
-  ${G(star(150, 255, 46, 18, 8), 1.8, C.gold)}
+  ${G(star(150, 255, 46, 18, 8), 1.8, C.line)}
   ${G(star(150, 255, 26, 10, 8, -67.5), 1.4, C.cyan)}
-  ${DOT(150, 255, 5, C.goldHi)}
+  ${DOT(150, 255, 5, C.lineHi)}
   ${frame()}
 </svg>`;
   };

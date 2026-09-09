@@ -194,6 +194,14 @@ glows, nothing does.
 * **No web font is loaded**, because nothing on this site is loaded from
   anywhere. What carries the type is contrast and tracking, not a typeface
   nobody has.
+* **The accent is starlight, not gilding.** `--star` is `#8FB0FF`, the blue
+  white of a hot star, which is the one star colour the Sun is not. It marks
+  what is lit, chosen or current: the eyebrows, the ticks, the ornamental
+  rings, the underline under the language you are reading. At 8.9 to 1 on the
+  ground it carries small text, and it sits further from the near white body
+  text than the gold it replaced did, so a lit thing reads as lit. The card
+  linework and the twelve sign medallions were redrawn in the same light, so a
+  card and the page around it are lit by one colour rather than two.
 
 ### The orrery
 
@@ -208,6 +216,22 @@ the Sun walks once round and the Moon runs thirteen laps beside it, both at thei
 true positions for whatever date you wind to. Let go and it comes back to now,
 because now is the only date it is telling the truth about. Arrow keys step a
 day, Escape returns.
+
+### The ephemeris
+
+The card of the day opens on a table of where the sky actually is, worked out in
+the browser by the same `js/astro.js`. The Sun and the Moon each get their sign
+and their arc to the minute, with the date each one crosses into the next sign.
+The Moon also gets its phase, how much of it is lit, and the dates of the next
+new and full moon, all found by walking the elongation and bisecting where it
+crosses. Under that sit the two older reckonings: the lunar mansion, one of the
+twenty eight stations the Moon keeps against the fixed stars, and the planetary
+ruler of the weekday, which is the arrangement the weekday names still carry.
+
+Planets are deliberately absent. Their positions need a heavier series than the
+Sun and the Moon do, and the page is not a chart service. Everything here is
+computed on the visitor's own machine from the date on their clock, which is
+rule 3 again: nothing is fetched, so there is nothing to consent to.
 
 Three things were wrong while it was being built, and each is worth knowing:
 
@@ -399,7 +423,7 @@ output, so parts of it are still absent.
 ## Verified
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
-of any third party, 297 keys at parity across the three languages, nothing served
+of any third party, 318 keys at parity across the three languages, nothing served
 that is not the site, no dashes on
 screen, 22 ledger assertions, 58 Stripe assertions, 25 card assertions, 54 daily
 fortune assertions, 47 language assertions and 20 orrery assertions green. The

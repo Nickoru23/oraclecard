@@ -75,14 +75,14 @@
   /* the rule under an entry lights along its length as you reach it */
   .item::after{
     content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;
-    background:linear-gradient(90deg,var(--gold),transparent);
+    background:linear-gradient(90deg,var(--star),transparent);
     transition:width .4s cubic-bezier(.2,.9,.25,1)
   }
   .item:hover,.item:focus-visible{text-decoration:none;padding-left:18px}
   .item:hover::after,.item:focus-visible::after{width:100%}
   .item .tag{grid-column:1;grid-row:1}
   .item h3{grid-column:1;grid-row:2;margin:0;color:var(--bone)}
-  .item:hover h3{color:var(--gold-deep)}
+  .item:hover h3{color:var(--star-hi)}
   .item p{grid-column:1;grid-row:3;margin:5px 0 0;color:var(--muted);font-size:.92rem;
           line-height:1.6;max-width:56ch}
   .item .go{
@@ -90,10 +90,10 @@
     color:var(--muted);white-space:nowrap
   }
   .item .go::after{content:' \2192';display:inline-block;transition:transform .22s ease}
-  .item:hover .go{color:var(--gold-deep)}
+  .item:hover .go{color:var(--star-hi)}
   .item:hover .go::after{transform:translateX(5px)}
-  .tag{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600}
-  .tag-gold{color:var(--cyan)}
+  .tag{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--star);font-weight:600}
+  .tag-price{color:var(--cyan)}
   .item-paid{display:block}
   @media(max-width:640px){
     .item{grid-template-columns:1fr}
@@ -137,7 +137,7 @@
   <h1 data-t="hero_h1" data-thtml="1"></h1>
   <p class="lede" data-t="hero_lede"></p>
   <div class="hero-cta">
-    <a class="btn btn-gold btn-lg" href="#gratis" data-t="cta_free"></a>
+    <a class="btn btn-lit btn-lg" href="#gratis" data-t="cta_free"></a>
     <a class="btn btn-ghost btn-lg" href="#pago" data-t="cta_paid"></a>
   </div>
   <div class="hero-fan" id="fan" aria-hidden="true"></div>
@@ -191,7 +191,7 @@
     <p class="lede" data-t="paid_sub"></p>
   </div>
   <a class="item item-paid plate" href="/lectura.html">
-    <span class="tag tag-gold">9 € / 19 € / 29 €</span>
+    <span class="tag tag-price">9 € / 19 € / 29 €</span>
     <h3 data-t="it_full_t"></h3>
     <p data-t="it_full_d"></p>
     <span class="go" data-t="cta_paid"></span>
@@ -213,7 +213,7 @@
   </div>
   <p class="center muted small" id="sp-desc" style="margin-top:-18px"></p>
   <div class="center" style="margin:20px 0 34px">
-    <button class="btn btn-gold" id="sp-draw" data-t="draw"></button>
+    <button class="btn btn-lit" id="sp-draw" data-t="draw"></button>
   </div>
   <div id="sp-out"></div>
 </div></section>
@@ -227,7 +227,7 @@
       <h2 style="margin-bottom:.3em" data-t="paid_h1"></h2>
       <p class="lede" data-t="paid_lede"></p>
     </div>
-    <a class="btn btn-gold btn-lg" href="/lectura.html" data-t="cta_paid"></a>
+    <a class="btn btn-lit btn-lg" href="/lectura.html" data-t="cta_paid"></a>
   </div>
 </div></section>
 

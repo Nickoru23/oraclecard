@@ -11,7 +11,7 @@
   .signs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
   .sign{border:1px solid var(--line);border-radius:var(--r);padding:18px 12px;text-align:center;
         background:transparent;color:inherit;font:inherit;cursor:pointer;transition:.18s}
-  .sign:hover,.sign:focus-visible{border-color:var(--gold);background:rgba(140,94,32,.10)}
+  .sign:hover,.sign:focus-visible{border-color:var(--star);background:rgba(140,94,32,.10)}
   .sign .glyph{display:block;width:52px;margin:0 auto}
   .sign .glyph svg,.hd .glyph svg{width:100%;height:auto;display:block}
   .sign .nm{display:block;margin-top:6px;color:var(--bone);font-size:.95rem}
@@ -23,19 +23,30 @@
   .slot{border:1px solid var(--line);border-radius:var(--r);padding:18px;background:var(--ink-2)}
   .slot .art{max-width:170px;margin:0 auto 14px;border-radius:var(--r-card)}
   .slot .art svg{width:100%;height:auto;display:block;border-radius:var(--r-card)}
-  .slot h3{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+  .slot h3{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--star);margin:0 0 6px}
   .slot .cn{color:var(--bone);margin:0 0 8px;font-size:1.05rem}
   .slot p{margin:0;font-size:.93rem;line-height:1.6;color:var(--muted)}
   .slot .lead{color:var(--bone);margin-bottom:8px}
   .sky{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:20px 0 0;
        max-width:520px;background:var(--ink-2)}
-  .sky-h{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}
+  .sky-h{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--star);margin:0 0 8px}
   .sky-l{margin:0;color:var(--bone);font-size:.95rem;line-height:1.6}
+  /* the table: a label column that never moves, and a reading beside it */
+  .eph{margin:0;display:grid;gap:0}
+  .eph-row{display:grid;grid-template-columns:88px 1fr;gap:0 16px;align-items:baseline;
+           padding:9px 0;border-top:1px solid var(--line)}
+  .eph-row:first-child{border-top:0;padding-top:2px}
+  .eph dt{font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--star);
+          font-weight:600;margin:0}
+  .eph dd{margin:0;color:var(--bone);font-size:1rem;line-height:1.45;
+          font-variant-numeric:tabular-nums}
+  .eph dd span{display:block;color:var(--muted);font-size:.85rem;margin-top:2px}
+  @media(max-width:420px){.eph-row{grid-template-columns:1fr;gap:2px}}
   .sky-n{margin:9px 0 0;font-size:.78rem;color:var(--muted);line-height:1.5}
   .hor-sky{font-size:.97rem;line-height:1.7;color:var(--muted);margin:14px 0 0;max-width:62ch}
   .hor-open{font-size:1.05rem;line-height:1.7;color:var(--bone);margin:22px 0 0;max-width:62ch}
   .hor-close{font-size:.95rem;line-height:1.7;color:var(--muted);margin:22px 0 0;max-width:62ch;
-             border-left:2px solid var(--gold);padding-left:16px}
+             border-left:2px solid var(--star);padding-left:16px}
   .facts{display:flex;flex-wrap:wrap;gap:26px;margin:26px 0 0;padding-top:20px;border-top:1px solid var(--line)}
   .fact{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .fact b{display:block;margin-top:5px;font-size:1.15rem;letter-spacing:0;text-transform:none;color:var(--bone);font-weight:400}
@@ -100,7 +111,7 @@
       <h2 style="margin:0 0 .3em;font-size:clamp(1.2rem,2.6vw,1.55rem)" data-t="hor_cta"></h2>
       <p class="lede" style="margin:0" data-t="free_welcome_p"></p>
     </div>
-    <a class="btn btn-gold btn-lg" href="/consulta.html" data-t="cta_consulta"></a>
+    <a class="btn btn-lit btn-lg" href="/consulta.html" data-t="cta_consulta"></a>
   </div>
 </div></section>
 </main>
@@ -154,18 +165,50 @@ window.initHoroscope = function () {
     dateEl.textContent = s().hor_today.replace('{d}', txt);
   }
 
-  /* where the Sun and the Moon actually are, right now */
+  /* The day's ephemeris: where the Sun and the Moon actually are, when each of
+     them next moves on, and the two divisions of the Moon's path that the old
+     almanacs kept. All of it computed here, none of it fetched. */
   function paintSky() {
-    const L = s(), k = A.sky();
-    document.getElementById('sky').innerHTML = `
-      <p class="sky-h">${L.sky_h}</p>
-      <p class="sky-l">${L.sky_sun.replace('{s}', L[k.sun.id]).replace('{d}', Math.floor(k.sun.degree) + '°')}</p>
-      <p class="sky-l">${L.sky_moon
-          .replace('{s}', L[k.moon.id])
-          .replace('{p}', L['ph_' + k.phase.phase])
-          .replace('{pct}', Math.round(k.phase.illumination * 100))}</p>
-      <p class="sky-n">${L.sky_note}</p>`;
-    return k;
+    const L = s(), code = lang();
+    const e = A.ephemeris();
+
+    const day = d => d.toLocaleDateString(code, { day: 'numeric', month: 'long' });
+    const time = d => d.toLocaleTimeString(code, { hour: '2-digit', minute: '2-digit' });
+    const arc = p => `${p.deg}° ${String(p.min).padStart(2, '0')}'`;
+    /* "today" and "tomorrow" read better than a date two hours away */
+    const when = d => {
+      const now = new Date(), t = new Date(now); t.setDate(t.getDate() + 1);
+      if (d.toDateString() === now.toDateString()) return L.eph_today;
+      if (d.toDateString() === t.toDateString()) return L.eph_tomorrow;
+      return day(d);
+    };
+    const row = (label, value, ...under) =>
+      `<div class="eph-row"><dt>${label}</dt><dd>${value}` +
+      under.filter(Boolean).map(u => `<span>${u}</span>`).join('') + '</dd></div>';
+
+    const moonMoves = e.moon.leaves
+      ? L.eph_moon_enters
+          .replace('{s}', L[A.SIGN_IDS[e.moon.leaves.into]])
+          .replace('{d}', when(e.moon.leaves.at))
+          .replace('{t}', time(e.moon.leaves.at))
+      : '';
+
+    document.getElementById('sky').innerHTML =
+      `<p class="sky-h">${L.sky_h}</p>
+       <dl class="eph">
+         ${row(L.eph_sun, `${L[e.sun.id]} ${arc(e.sun)}`,
+               L.eph_enters.replace('{s}', L[e.sun.enters.sign]).replace('{d}', day(e.sun.enters.at)))}
+         ${row(L.eph_moon, `${L[e.moon.id]} ${arc(e.moon)}`, moonMoves)}
+         ${row(L.eph_phase,
+               `${L['ph_' + e.phase.phase]}, ${L.eph_lit.replace('{pct}', Math.round(e.phase.illumination * 100))}`,
+               e.newMoon ? L.eph_new.replace('{d}', day(e.newMoon)) : '',
+               e.fullMoon ? L.eph_full.replace('{d}', day(e.fullMoon)) : '')}
+         ${row(L.eph_mansion,
+               L.eph_mansion_v.replace('{n}', e.mansion.number).replace('{name}', e.mansion.name))}
+         ${row(L.eph_ruler, L['pl_' + e.ruler])}
+       </dl>
+       <p class="sky-n">${L.eph_note}</p>`;
+    return A.sky();
   }
 
   function paintGrid() {
