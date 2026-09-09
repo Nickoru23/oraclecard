@@ -339,7 +339,7 @@
     return `<svg viewBox="0 0 300 510" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs>
     <linearGradient id="gb" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1E1750"/><stop offset="1" stop-color="#0A0819"/>
+      <stop offset="0" stop-color="${C.top}"/><stop offset="1" stop-color="${C.bottom}"/>
     </linearGradient>
     <radialGradient id="bb" cx="50%" cy="50%" r="52%">
       <stop offset="0" stop-color="${C.cyan}" stop-opacity=".22"/>
