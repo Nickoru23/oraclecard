@@ -37,7 +37,7 @@ window.LEGAL = {
       ['Propiedad intelectual',
        'Los textos, la baraja de 78 cartas y el diseño de este sitio son obra propia y están protegidos por derechos de autor. Las ilustraciones de las cartas son originales: no reproducen ninguna baraja existente.'],
       ['Responsabilidad',
-       'El servicio se presta tal cual. No se garantiza que las lecturas sean exactas, útiles o adecuadas a un fin concreto. La responsabilidad se limita a lo que la ley permita e, en todo caso, al importe pagado por la lectura.'],
+       'El servicio se presta tal cual. No se garantiza que las lecturas sean exactas, útiles o adecuadas a un fin concreto. La responsabilidad se limita a lo que la ley permita y, en todo caso, al importe pagado por la lectura.'],
       ['Ley aplicable y reclamaciones',
        'Se aplica el derecho austriaco, sin perjuicio de los derechos que la ley del país de residencia reconozca a los consumidores. La Comisión Europea ofrece una plataforma de resolución de litigios en línea: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>. No estamos obligados ni dispuestos a participar en un procedimiento de arbitraje de consumo.'],
     ],
