@@ -33,46 +33,59 @@
    text on it.                                                                */
 
 :root{
-  /* the sky */
-  --void:#080719;
-  --night:#0E0C24;
-  --deep-1:#1A1140;          /* violet nebula */
-  --deep-2:#111C46;          /* indigo nebula */
+  /* The sky is black, not a colour that is nearly black. The nebula it used
+     to be was two saturated clouds doing the work the stars should do, and
+     against them nothing on the page could be the darkest thing on screen.
+     What is left is a barely warm graphite that lifts at the top of the page
+     and gives out below, so a plate still reads as a surface set into it. */
+  --void:#08080A;
+  --night:#0D0D10;
+  --deep-1:#141319;          /* the warm side of the ground */
+  --deep-2:#101216;          /* the cool side */
 
   /* glass */
-  --ink:rgba(24,20,58,.62);        /* a pane */
-  --ink-2:rgba(32,27,72,.72);      /* a raised pane */
-  --veil:rgba(44,36,96,.58);       /* a tint */
-  --veil-2:rgba(60,48,124,.62);    /* a stronger tint, for selected things */
-  --line:rgba(168,148,255,.16);
-  --line-2:rgba(168,148,255,.30);
+  --ink:rgba(20,20,24,.66);        /* a pane */
+  --ink-2:rgba(28,28,33,.76);      /* a raised pane */
+  --veil:rgba(38,38,44,.60);       /* a tint */
+  --veil-2:rgba(54,52,48,.64);     /* a stronger tint, for selected things */
+  --line:rgba(232,230,224,.13);
+  --line-2:rgba(232,230,224,.26);
 
   /* light on it */
-  --bone:#F0ECFF;            /* the text */
-  --bone-dim:#C3BCE8;
-  --muted:#948CC0;
+  --bone:#F2F0EA;            /* the text */
+  --bone-dim:#CFCBC1;
+  --muted:#8E8B84;
 
-  --violet:#8B5CF6;
-  /* the same violet, taken down far enough that white sits on it at 4.5:1.
-     Anything filled that carries white text uses these two, not the one above. */
-  --violet-btn:#7A48E8;
-  --violet-btn-hi:#8355F0;
-  --violet-hi:#A98BFF;
-  --violet-lo:#5B34C7;
-  --cyan:#4FD8D3;
-  --cyan-hi:#8BF0EC;
-  --magenta:#D946A8;
-  --gold:#D9B872;            /* the thin ornamental rings */
-  --gold-deep:#F0D9A0;
+  /* What used to be violet is the colour of a lit object: a warm graphite
+     that is barely lighter than the ground, so the primary action reads as an
+     outline rather than as a slab of colour. */
+  --violet:#D6C9A8;
+  --violet-btn:#191712;
+  --violet-btn-hi:#262219;
+  --violet-hi:#D6C9A8;
+  --violet-lo:#3A352A;
+  /* What used to be cyan labels things. Labels are quiet, so it is bone, one
+     step below the accent, and the accent stays for what is lit or chosen. */
+  --cyan:#B0ADA4;
+  --cyan-hi:#E8E6E0;
+  --magenta:#C08A6A;
+  /* The accent is candlelight on black: a pale, desaturated champagne. The
+     gold this replaces was #D9B872 on a violet indigo ground, where a warm
+     hue on a cool page read as a stain. On black there is no competing hue
+     left to fight, so the same warmth reads as light instead. It marks what
+     is lit, chosen or current, and at 11.9 to 1 on the ground it carries the
+     small tracked type the labels are set in. */
+  --star:#D6C9A8;            /* the thin ornamental rings, the lit mark */
+  --star-hi:#EFE7D4;
   --rose:#F2789B;
   --jade:#5FD9A8;
-  --deep:#16314F;            /* the blue inside the cards */
+  --deep:#111014;            /* the dark inside the cards */
 
   /* Light is spent, not sprinkled. These are used four times in this file:
      the primary action, the lit sigil, the sigil toast, and the card faces.
      Anything else that wants attention gets weight or a rule instead. */
-  --glow-violet:0 0 34px rgba(139,92,246,.42);
-  --glow-cyan:0 0 30px rgba(79,216,211,.34);
+  --glow-violet:0 0 34px rgba(214,201,168,.26);
+  --glow-cyan:0 0 30px rgba(232,230,224,.20);
   --shadow:0 20px 50px -26px rgba(0,0,0,.85);
   --shadow-lift:0 34px 74px -30px rgba(0,0,0,.92);
 
@@ -86,16 +99,16 @@
   --maxw:1120px;
 
   /* the hairlines everything is ruled with */
-  --hair:rgba(168,148,255,.22);
-  --hair-lit:rgba(217,184,114,.55);
+  --hair:rgba(232,230,224,.18);
+  --hair-lit:rgba(214,201,168,.50);
 
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 
   /* the star field, three sizes so it has depth */
   --stars:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='620' height='620'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='40' cy='72' r='1.1' opacity='.75'/%3E%3Ccircle cx='170' cy='34' r='.7' opacity='.5'/%3E%3Ccircle cx='300' cy='118' r='1.4' opacity='.85'/%3E%3Ccircle cx='426' cy='60' r='.8' opacity='.55'/%3E%3Ccircle cx='560' cy='140' r='1.1' opacity='.7'/%3E%3Ccircle cx='96' cy='210' r='.9' opacity='.6'/%3E%3Ccircle cx='236' cy='266' r='1.3' opacity='.8'/%3E%3Ccircle cx='368' cy='222' r='.7' opacity='.45'/%3E%3Ccircle cx='498' cy='300' r='1'  opacity='.65'/%3E%3Ccircle cx='596' cy='250' r='.8' opacity='.5'/%3E%3Ccircle cx='28'  cy='352' r='1.2' opacity='.75'/%3E%3Ccircle cx='150' cy='430' r='.8' opacity='.5'/%3E%3Ccircle cx='286' cy='392' r='1'  opacity='.7'/%3E%3Ccircle cx='412' cy='470' r='1.4' opacity='.85'/%3E%3Ccircle cx='540' cy='412' r='.7' opacity='.45'/%3E%3Ccircle cx='72'  cy='520' r='1'  opacity='.65'/%3E%3Ccircle cx='206' cy='568' r='.8' opacity='.5'/%3E%3Ccircle cx='340' cy='530' r='1.2' opacity='.75'/%3E%3Ccircle cx='470' cy='596' r='.9' opacity='.55'/%3E%3Ccircle cx='592' cy='500' r='1.1' opacity='.7'/%3E%3C/g%3E%3C/svg%3E");
-  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
-  --halftone:radial-gradient(circle at 50% 50%, rgba(168,148,255,.18) .9px, transparent 1.1px);
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E");
+  --halftone:radial-gradient(circle at 50% 50%, rgba(232,230,224,.14) .9px, transparent 1.1px);
 }
 
 *{box-sizing:border-box}
@@ -117,16 +130,16 @@ body::before{
   /* Two clouds and the dark they sit in. Six of them read as a stock gradient;
      the star field is what should be doing the work. */
   background:
-    radial-gradient(1200px 900px at 22% -12%, rgba(96,52,168,.40), transparent 64%),
-    radial-gradient(1000px 820px at 84% 106%, rgba(40,62,158,.34), transparent 62%),
-    linear-gradient(178deg, var(--night) 0%, var(--void) 62%, #05040E 100%);
+    radial-gradient(1200px 900px at 22% -12%, rgba(52,48,42,.32), transparent 64%),
+    radial-gradient(1000px 820px at 84% 106%, rgba(30,32,38,.26), transparent 62%),
+    linear-gradient(178deg, var(--night) 0%, var(--void) 62%, #040405 100%);
 }
 /* the stars, and the grain that stops the gradients banding */
 body::after{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:var(--stars), var(--grain);
   background-size:620px 620px, 160px 160px;
-  opacity:.62;
+  opacity:.78;
 }
 header.site,section,footer.site,.privacy-notice,main{position:relative;z-index:1}
 
@@ -149,7 +162,7 @@ p{margin:0 0 1em}
 /* Anything that labels something is engraved: small, wide, upper case, and the
    same everywhere, so a label never competes with what it labels. */
 .eyebrow,.label{font-size:.63rem;letter-spacing:.36em;text-transform:uppercase;
-         color:var(--gold);font-weight:600;margin-bottom:1.2rem}
+         color:var(--star);font-weight:600;margin-bottom:1.2rem}
 .lede{font-size:1.1rem;color:var(--bone-dim);max-width:62ch}
 .muted{color:var(--muted)}
 .small{font-size:.86rem}
@@ -163,7 +176,7 @@ section.tight{padding:56px 0}
 /* ---------- the header, glass over the sky ---------- */
 header.site{
   position:sticky;top:0;z-index:60;
-  background:rgba(10,8,28,.72);backdrop-filter:blur(16px);
+  background:rgba(9,9,11,.72);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--line);
 }
 .nav{display:flex;align-items:center;gap:20px;height:70px}
@@ -174,7 +187,10 @@ header.site{
 .brand .mark path[fill="#241F18"]{fill:var(--bone)}
 .brand .mark path[fill="#8C5E20"]{fill:var(--cyan)}
 .nav nav{margin-left:auto;display:flex;gap:26px;align-items:center}
-.nav nav a{color:var(--muted);font-size:.9rem;position:relative}
+/* A navigation label that wraps is a navigation label that is too long, so
+   it never wraps: if one no longer fits, that is the bar asking for a shorter
+   word rather than a second line. */
+.nav nav a{color:var(--muted);font-size:.9rem;position:relative;white-space:nowrap}
 .nav nav a:hover{color:var(--bone);text-decoration:none}
 .nav nav a::after{
   content:"";position:absolute;left:0;right:0;bottom:-7px;height:1px;
@@ -187,7 +203,7 @@ header.site{
   font:inherit;font-size:.7rem;font-weight:600;
   letter-spacing:.18em;padding:3px 9px;border-radius:0;cursor:pointer;transition:.16s}
 .lang button:hover{color:var(--bone)}
-.lang button[aria-pressed="true"]{color:var(--gold-deep);border-bottom-color:var(--gold)}
+.lang button[aria-pressed="true"]{color:var(--star-hi);border-bottom-color:var(--star)}
 
 .menu-btn{display:none;margin-left:auto;width:44px;height:44px;border:1px solid var(--line-2);
           border-radius:999px;background:rgba(0,0,0,.3);cursor:pointer;padding:0;
@@ -199,8 +215,17 @@ header.site{
 .menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
 .menu-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
 
+/* The bar has to hold six labels in whichever language is longest, and German
+   and Spanish are half again as long as English. So it tightens before it
+   drops anything, drops the one link that is also a section further down the
+   front page, and only then hands over to the button. The handover is at 860
+   rather than 640 because between those two the row was wider than the bar in
+   two of the three languages, which nobody saw while the labels were still
+   allowed to wrap onto a second line. */
+@media(max-width:1080px){.nav nav{gap:16px}.nav nav a{font-size:.85rem}}
+@media(max-width:940px){.nav nav{gap:12px}.nav nav a{font-size:.8rem}}
 @media(max-width:900px){.nav nav a.hide-sm{display:none}}
-@media(max-width:640px){
+@media(max-width:860px){
   .nav{height:64px;gap:12px;position:relative}
   .brand{font-size:1.06rem;gap:8px}
   .brand .mark{width:18px;height:18px}
@@ -208,7 +233,13 @@ header.site{
   .nav nav{
     position:absolute;top:calc(100% + 14px);left:0;right:0;z-index:60;
     flex-direction:column;align-items:stretch;gap:0;margin:0;
-    background:rgba(14,11,38,.96);backdrop-filter:blur(18px);
+    /* Opaque, and no backdrop-filter. The header above it already has one,
+       and an element that filters its backdrop while hanging outside the box
+       of an ancestor that also filters its backdrop is composited by Chrome
+       in an order that does not match its own z-index: the menu won every
+       pointer test while the page underneath painted straight through it. A
+       menu has nothing to gain from showing the page anyway. */
+    background:var(--night);
     border:1px solid var(--line-2);border-radius:var(--r);
     padding:8px;box-shadow:var(--shadow-lift);
     opacity:0;visibility:hidden;transform:translateY(-8px);
@@ -218,7 +249,7 @@ header.site{
   .nav nav a{display:block;padding:14px 16px;font-size:.98rem;color:var(--bone-dim);
              border-radius:var(--r-sm);white-space:normal}
   .nav nav a::after{display:none}
-  .nav nav a:hover,.nav nav a:focus-visible{background:rgba(139,92,246,.16);color:var(--bone)}
+  .nav nav a:hover,.nav nav a:focus-visible{background:rgba(214,201,168,.16);color:var(--bone)}
   .nav nav a.hide-xs,.nav nav a.hide-sm{display:block}
   .nav .lang{margin:8px 4px 2px;justify-content:center}
   .nav .lang button{flex:1;padding:10px 0;font-size:.78rem}
@@ -239,17 +270,23 @@ header.site{
 }
 .btn:hover{text-decoration:none}
 .btn:active{transform:translateY(1px)}
-.btn-gold{
+/* The one lit thing on a screen. It used to be a slab of violet with a glow
+   around it, which on black would have been the only saturated object on the
+   page. It is a ring of light now: near black inside, a champagne hairline
+   round it, champagne lettering, and just enough spill to say it is the thing
+   to press. */
+.btn-lit{
   background:var(--violet-btn);
-  border-color:rgba(217,184,114,.55);color:#fff;
-  box-shadow:0 0 24px -2px rgba(139,92,246,.5),inset 0 1px 0 rgba(255,255,255,.16)
+  border-color:rgba(214,201,168,.62);color:var(--star-hi);
+  box-shadow:0 0 26px -6px rgba(214,201,168,.38),inset 0 1px 0 rgba(255,255,255,.06)
 }
-.btn-gold:hover{background:var(--violet-btn-hi);box-shadow:0 0 32px -2px rgba(139,92,246,.62),
-                inset 0 1px 0 rgba(255,255,255,.22);color:#fff}
+.btn-lit:hover{background:var(--violet-btn-hi);border-color:var(--star);
+                box-shadow:0 0 34px -4px rgba(214,201,168,.52),
+                inset 0 1px 0 rgba(255,255,255,.09);color:#fff}
 /* the quiet one: no pill, no fill, no glow, just a ruled word */
 .btn-ghost{
   border:0;border-bottom:1px solid var(--hair-lit);border-radius:0;
-  padding:12px 2px;color:var(--gold-deep);letter-spacing:.22em
+  padding:12px 2px;color:var(--star-hi);letter-spacing:.22em
 }
 .btn-ghost:hover{background:transparent;color:var(--bone);border-bottom-color:var(--bone)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
@@ -263,7 +300,7 @@ header.site{
   border:0;height:22px;margin:0;
   background:
     linear-gradient(90deg,transparent,var(--hair) 18%,var(--hair) 82%,transparent) center/100% 1px no-repeat,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='22'%3E%3Cg stroke='%23D9B872' stroke-width='1'%3E%3Cline x1='75' y1='3' x2='75' y2='19'/%3E%3Cline x1='39' y1='8' x2='39' y2='14' opacity='.55'/%3E%3Cline x1='111' y1='8' x2='111' y2='14' opacity='.55'/%3E%3Cline x1='11' y1='10' x2='11' y2='12' opacity='.35'/%3E%3Cline x1='139' y1='10' x2='139' y2='12' opacity='.35'/%3E%3C/g%3E%3C/svg%3E") center/150px 22px no-repeat;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='22'%3E%3Cg stroke='%23D6C9A8' stroke-width='1'%3E%3Cline x1='75' y1='3' x2='75' y2='19'/%3E%3Cline x1='39' y1='8' x2='39' y2='14' opacity='.55'/%3E%3Cline x1='111' y1='8' x2='111' y2='14' opacity='.55'/%3E%3Cline x1='11' y1='10' x2='11' y2='12' opacity='.35'/%3E%3Cline x1='139' y1='10' x2='139' y2='12' opacity='.35'/%3E%3C/g%3E%3C/svg%3E") center/150px 22px no-repeat;
 }
 
 /* ---------- hero ----------
@@ -302,14 +339,14 @@ header.site{
   font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:.28em;
   fill:var(--muted);opacity:.5
 }
-.or-sign text.is-here{fill:var(--gold-deep);opacity:1}
-.or-sun{color:var(--gold-deep)}
-.or-sun-disc{fill:var(--gold-deep)}
+.or-sign text.is-here{fill:var(--star-hi);opacity:1}
+.or-sun{color:var(--star-hi)}
+.or-sun-disc{fill:var(--star-hi)}
 .or-moon{color:var(--bone)}
-.or-moon-dark{fill:#0B0A1E}
+.or-moon-dark{fill:#08080A}
 .or-moon-lit{fill:var(--bone)}
 .or-moon-term{fill:var(--bone)}
-.or-moon-term.is-dark{fill:#0B0A1E}
+.or-moon-term.is-dark{fill:#08080A}
 .or-arm{color:var(--violet-hi)}
 /* The readout is pinned to the viewport rather than to the dial. The dial is
    deliberately taller than the screen, so a reading placed on its rim would be
@@ -319,8 +356,8 @@ header.site{
   position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
   margin:0;white-space:nowrap;z-index:70;
   padding:9px 18px;border:1px solid var(--hair-lit);border-radius:var(--r);
-  background:rgba(10,8,28,.92);backdrop-filter:blur(10px);
-  font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);
+  background:rgba(9,9,11,.92);backdrop-filter:blur(10px);
+  font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--star-hi);
   opacity:0;transition:opacity .25s ease;pointer-events:none
 }
 .or-read.is-out{opacity:1}
@@ -367,7 +404,7 @@ header.site{
   cursor:pointer;transition:color .18s ease,border-color .18s ease
 }
 .tab:hover{color:var(--bone)}
-.tab[aria-selected="true"]{color:var(--gold-deep);border-bottom-color:var(--gold)}
+.tab[aria-selected="true"]{color:var(--star-hi);border-bottom-color:var(--star)}
 
 /* Two sides on every card that can be turned.
 
@@ -420,7 +457,7 @@ header.site{
 .has-sheen::after{
   content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
   background:radial-gradient(60% 60% at var(--mx,50%) var(--my,50%),
-              rgba(214,200,255,.30), rgba(139,92,246,.10) 42%, transparent 72%);
+              rgba(238,235,228,.30), rgba(214,201,168,.10) 42%, transparent 72%);
   opacity:0;transition:opacity .3s ease;mix-blend-mode:screen
 }
 .has-sheen:hover::after,.has-sheen:focus-visible::after,.has-sheen.is-held::after{opacity:1}
@@ -436,7 +473,7 @@ header.site{
   position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r-sm);overflow:hidden;
   border:1px solid var(--line-2);
   box-shadow:0 0 0 1px rgba(0,0,0,.4),0 18px 44px -16px rgba(0,0,0,.9),
-             0 0 40px -8px rgba(139,92,246,.34);
+             0 0 40px -8px rgba(214,201,168,.34);
   background:#F2EBDC
 }
 .card .back{background:var(--deep)}
@@ -475,7 +512,7 @@ header.site{
 .kw{display:flex;gap:8px;flex-wrap:wrap;margin:.6em 0 1em}
 .kw span{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);
          border:1px solid var(--line-2);border-radius:999px;padding:4px 13px;
-         background:rgba(79,216,211,.07)}
+         background:rgba(214,201,168,.07)}
 
 /* ---------- forms ---------- */
 label{display:block;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
@@ -488,7 +525,7 @@ select option{background:#14112E;color:var(--bone)}
 textarea{min-height:150px;resize:vertical;line-height:1.7}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 input:focus,textarea:focus,select:focus{outline:0;border-color:var(--violet);
-  box-shadow:0 0 0 3px rgba(139,92,246,.22)}
+  box-shadow:0 0 0 3px rgba(214,201,168,.22)}
 .field-hint{font-size:.8rem;color:var(--muted);margin:-13px 0 18px}
 .counter{font-variant-numeric:tabular-nums}
 
@@ -503,11 +540,11 @@ input:focus,textarea:focus,select:focus{outline:0;border-color:var(--violet);
 .check li{padding-left:30px;position:relative;margin-bottom:12px;color:var(--bone-dim)}
 .check li:before{
   content:"";position:absolute;left:2px;top:.46em;width:13px;height:13px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cpath d='M6.5.8 7.7 5.3 12.2 6.5 7.7 7.7 6.5 12.2 5.3 7.7.8 6.5 5.3 5.3Z' fill='%234FD8D3'/%3E%3C/svg%3E") no-repeat
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cpath d='M6.5.8 7.7 5.3 12.2 6.5 7.7 7.7 6.5 12.2 5.3 7.7.8 6.5 5.3 5.3Z' fill='%23D6C9A8'/%3E%3C/svg%3E") no-repeat
 }
 
 /* ---------- misc ---------- */
-.spin{width:16px;height:16px;border:2px solid rgba(168,148,255,.25);border-top-color:var(--cyan);
+.spin{width:16px;height:16px;border:2px solid rgba(232,230,224,.25);border-top-color:var(--cyan);
       border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 .fade-in{animation:fi .55s ease both}
@@ -526,7 +563,7 @@ footer.site nav a:hover{color:var(--cyan-hi)}
   position:fixed;left:16px;right:16px;bottom:16px;z-index:90;
   max-width:660px;margin:0 auto;
   display:flex;gap:18px;align-items:center;flex-wrap:wrap;
-  background:rgba(16,13,42,.92);backdrop-filter:blur(18px);
+  background:rgba(15,15,18,.92);backdrop-filter:blur(18px);
   border:1px solid var(--line-2);border-radius:var(--r);
   padding:18px 20px;box-shadow:var(--shadow-lift);
   opacity:0;transform:translateY(14px);transition:opacity .26s ease,transform .26s ease
@@ -551,7 +588,7 @@ footer.site nav a:hover{color:var(--cyan-hi)}
 .picker-card{
   width:92px;flex:none;margin:0 -14px 16px;padding:0;border:0;background:none;cursor:grab;
   border-radius:var(--r-sm);line-height:0;
-  box-shadow:0 12px 26px -12px rgba(0,0,0,.9),0 0 22px -6px rgba(139,92,246,.4);
+  box-shadow:0 12px 26px -12px rgba(0,0,0,.9),0 0 22px -6px rgba(214,201,168,.4);
   transform:perspective(900px)
     rotate(calc((var(--i) - 10.5) * 0.9deg))
     translateY(calc(abs(var(--i) - 10.5) * 0.7px))
@@ -565,7 +602,7 @@ footer.site nav a:hover{color:var(--cyan-hi)}
     translateY(-16px) rotate(0deg)
     rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(1.06);
   z-index:5;
-  box-shadow:0 24px 40px -14px rgba(0,0,0,.9),0 0 44px -4px rgba(139,92,246,.75);outline:none
+  box-shadow:0 24px 40px -14px rgba(0,0,0,.9),0 0 44px -4px rgba(214,201,168,.75);outline:none
 }
 .picker-card:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .picker-card.taken{opacity:.18;pointer-events:none;transform:translateY(10px) scale(.94)}
@@ -586,7 +623,7 @@ footer.site nav a:hover{color:var(--cyan-hi)}
    plainly the same instrument rather than two different ideas */
 .banner::after{
   content:"";position:absolute;left:50%;bottom:3px;width:1px;height:13px;
-  transform:translateX(-50%);background:var(--gold)
+  transform:translateX(-50%);background:var(--star)
 }
 .banner > *{position:relative;z-index:1;margin:0}
 .banner-tail{display:none}
@@ -619,7 +656,7 @@ footer.site nav a:hover{color:var(--cyan-hi)}
    through all of them to reach the page is not a way in. */
 .skip{
   position:fixed;left:14px;top:-70px;z-index:200;
-  background:rgba(14,11,38,.97);color:var(--bone);
+  background:rgba(13,13,16,.97);color:var(--bone);
   border:1px solid var(--line-2);border-radius:999px;
   padding:12px 24px;font-size:.84rem;
   box-shadow:var(--shadow-lift);
@@ -636,11 +673,11 @@ main:focus{outline:none}
   color:var(--muted);font-size:.82rem;line-height:1;text-decoration:none;
   transition:border-color .2s ease,color .2s ease,box-shadow .2s ease
 }
-.tally:hover{text-decoration:none;border-color:var(--hair-lit);color:var(--gold-deep)}
+.tally:hover{text-decoration:none;border-color:var(--hair-lit);color:var(--star-hi)}
 .tally .flame{width:15px;height:15px;flex:none;opacity:.45}
 .tally b{font-variant-numeric:tabular-nums;font-weight:600}
-.tally.is-lit{color:var(--gold-deep);border-color:var(--hair-lit)}
-.tally.is-lit .flame{opacity:1;color:var(--gold)}
+.tally.is-lit{color:var(--star-hi);border-color:var(--hair-lit)}
+.tally.is-lit .flame{opacity:1;color:var(--star)}
 @media(max-width:640px){
   .nav nav .tally{align-self:center;margin:8px auto 4px;font-size:.9rem;padding:9px 18px 9px 14px}
   .nav nav .tally .flame{width:17px;height:17px}
@@ -666,7 +703,7 @@ main:focus{outline:none}
   color:var(--cyan-hi);border:1px solid var(--line-2);border-radius:999px;padding:7px 16px
 }
 .ritual-row .go:hover{background:transparent;border-color:var(--hair-lit);
-                      text-decoration:none;color:var(--gold-deep)}
+                      text-decoration:none;color:var(--star-hi)}
 .ritual-row .state{
   flex:none;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
   font-weight:700;color:var(--jade)
@@ -735,14 +772,14 @@ main:focus{outline:none}
 .sg-rim{fill:none;stroke:var(--line-2);stroke-width:1.2;stroke-dasharray:3 4}
 .sg-device{fill:var(--line-2)}
 .sigil.is-earned{
-  background:rgba(139,92,246,.12);border-color:rgba(168,148,255,.45);
-  box-shadow:0 0 30px -12px rgba(139,92,246,.8)
+  background:rgba(214,201,168,.12);border-color:rgba(232,230,224,.45);
+  box-shadow:0 0 30px -12px rgba(214,201,168,.8)
 }
 .sigil.is-earned b{color:var(--bone)}
 .sigil.is-earned span{color:var(--bone-dim)}
 .sigil.is-earned .sg-face{fill:none}
 .sigil.is-earned .sg-rim{stroke:var(--cyan);stroke-width:1.6;stroke-dasharray:none;opacity:.9;
-                         filter:drop-shadow(0 0 5px rgba(79,216,211,.85))}
+                         filter:drop-shadow(0 0 5px rgba(214,201,168,.85))}
 .sigil.is-earned .sg-device{fill:var(--cyan-hi)}
 
 /* ---------- a sigil the moment it is struck ---------- */
@@ -750,10 +787,10 @@ main:focus{outline:none}
   position:fixed;left:50%;bottom:26px;z-index:120;
   transform:translate(-50%,20px);opacity:0;
   display:flex;align-items:center;gap:16px;
-  background:rgba(16,13,42,.95);backdrop-filter:blur(18px);
-  border:1px solid rgba(168,148,255,.5);border-radius:999px;
+  background:rgba(15,15,18,.95);backdrop-filter:blur(18px);
+  border:1px solid rgba(232,230,224,.5);border-radius:999px;
   padding:14px 26px 14px 16px;
-  box-shadow:var(--shadow-lift),0 0 44px -10px rgba(139,92,246,.8);
+  box-shadow:var(--shadow-lift),0 0 44px -10px rgba(214,201,168,.8);
   transition:opacity .3s ease,transform .3s ease;
   max-width:calc(100% - 32px)
 }
@@ -761,7 +798,7 @@ main:focus{outline:none}
 .sigil-toast svg{width:46px;height:46px;flex:none}
 .sigil-toast .sg-face{fill:none}
 .sigil-toast .sg-rim{stroke:var(--cyan);stroke-width:1.6;stroke-dasharray:none;opacity:1;
-                     filter:drop-shadow(0 0 6px rgba(79,216,211,.9))}
+                     filter:drop-shadow(0 0 6px rgba(214,201,168,.9))}
 .sigil-toast .sg-device{fill:var(--cyan-hi)}
 .sigil-toast b{display:block;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;
                color:var(--cyan);font-weight:700;margin-bottom:3px}
@@ -799,9 +836,9 @@ html.df-open{overflow:hidden}
   padding:28px 20px;
   overflow-y:auto;
   background:
-    radial-gradient(900px 700px at 50% 12%, rgba(112,58,190,.42), transparent 66%),
-    radial-gradient(800px 640px at 50% 96%, rgba(46,72,180,.34), transparent 64%),
-    linear-gradient(178deg, #0B0A20 0%, var(--void) 58%, #04030C 100%);
+    radial-gradient(900px 700px at 50% 12%, rgba(58,54,46,.34), transparent 66%),
+    radial-gradient(800px 640px at 50% 96%, rgba(28,30,36,.26), transparent 64%),
+    linear-gradient(178deg, var(--night) 0%, var(--void) 58%, #030304 100%);
   opacity:0;
   transition:opacity .5s ease
 }
@@ -833,7 +870,7 @@ html.df-open{overflow:hidden}
 
 .df-eyebrow{
   font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;
-  color:var(--gold);font-weight:700;margin:0 0 22px;
+  color:var(--star);font-weight:700;margin:0 0 22px;
   opacity:0;animation:df-rise .8s ease .1s forwards
 }
 
@@ -860,19 +897,19 @@ html.df-open{overflow:hidden}
     filter:blur(14px);
     letter-spacing:.36em;
     transform:translateY(14px) scale(1.04);
-    text-shadow:0 0 26px rgba(168,148,255,.95),0 0 60px rgba(139,92,246,.7)
+    text-shadow:0 0 26px rgba(232,230,224,.95),0 0 60px rgba(214,201,168,.7)
   }
   45%{
     opacity:1;
     filter:blur(2.5px);
-    text-shadow:0 0 20px rgba(168,148,255,.8),0 0 46px rgba(139,92,246,.5)
+    text-shadow:0 0 20px rgba(232,230,224,.8),0 0 46px rgba(214,201,168,.5)
   }
   100%{
     opacity:1;
     filter:blur(0);
     letter-spacing:normal;
     transform:none;
-    text-shadow:0 0 34px rgba(139,92,246,.34)
+    text-shadow:0 0 34px rgba(214,201,168,.34)
   }
 }
 
@@ -894,7 +931,7 @@ html.df-open{overflow:hidden}
 .df-cardart{
   width:min(178px,44vw);margin:0 auto;
   border-radius:var(--r-sm);
-  box-shadow:var(--shadow-lift),0 0 60px -14px rgba(139,92,246,.9)
+  box-shadow:var(--shadow-lift),0 0 60px -14px rgba(214,201,168,.9)
 }
 .df-cardname{
   font-family:var(--serif);font-size:1.12rem;color:var(--bone);

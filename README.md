@@ -59,10 +59,10 @@ npm run qa             # all eleven checks
 
 | Check | What it holds to |
 |---|---|
-| `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description |
+| `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description. Then it opens the navigation on a phone and asks what is actually drawn at five points down the panel, because that broke in a way no stylesheet check could see: the menu filtered its backdrop inside a header that filtered its backdrop too, and Chrome composited them in an order matching neither z-index, so every pointer test said the menu was on top while the page painted straight through it |
 | `qa:shell` | the header and footer are copied by hand into every page, so this compares the navigation contract across them: the same links in the same order carrying the same strings, the same language switch, the same footer. Byte equality would be the wrong instrument and the file says why |
 | `qa:served` | `publish = "."` is the whole repository, so every file in it is a public URL unless something says otherwise. This walks the repository rather than the site and fails if anything a visitor should not receive has no 404 rule, under each of the three language prefixes. Adding a script or a note fails it until it is denied or listed as public |
-| `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still |
+| `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still. It also checks the ephemeris as arithmetic over a year of hourly loads rather than on the one date the panel happens to show: every new and full moon is found, found to the minute rather than to the six hour step it was bracketed with, and no arcminute rounds up to sixty |
 | `qa:langs` | the language is in the address: every page answers in the language its address names, agrees with its own canonical and names its two alternates, a deep link never moves whatever the reader prefers, the front door does, choosing a language changes the address and stays on the same page, links keep the language and assets do not, and the committed sitemap and robots.txt are what the generator would write |
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
 | `qa:dashes` | rule 4, no dashes reach the screen |
@@ -194,6 +194,31 @@ glows, nothing does.
 * **No web font is loaded**, because nothing on this site is loaded from
   anywhere. What carries the type is contrast and tracking, not a typeface
   nobody has.
+* **The ground is black, not a colour that is nearly black.** It used to be a
+  violet indigo with two saturated nebula clouds over it, and against those
+  nothing on the page could be the darkest thing on screen: a card, which
+  ought to be the one object you are looking into, sat on a ground brighter
+  than itself. What is left is a barely warm graphite that lifts at the top
+  of the page and gives out below, enough to keep the gradients from banding
+  and to let a plate read as a surface set into it. The star field carries
+  the rest, which is what it was always supposed to do.
+* **The accent is candlelight: `--star` is `#D6C9A8`,** a pale desaturated
+  champagne. It marks what is lit, chosen or current: the eyebrows, the
+  ticks, the ornamental rings, the underline under the language you are
+  reading. There is no second accent. Violet and cyan used to be the two hues
+  the page was built out of, and on black they were the only saturated things
+  on it, so the tokens that carried them now carry a warm graphite and a bone
+  grey instead. The token names did not change, so every rule written against
+  them kept working.
+* **At 11.9 to 1 on the ground** the accent carries the small tracked type the
+  labels are set in, and nothing in the palette falls below 5.3 to 1.
+* **The primary action is a ring of light**, not a slab. It was a filled
+  violet pill with a glow, which on black would have been the loudest object
+  on the page. It is near black inside now, with a champagne hairline round it
+  and champagne lettering.
+* **The card linework and the twelve medallions** are drawn in the same
+  champagne, so a card and the page around it are lit by one colour rather
+  than two.
 
 ### The orrery
 
@@ -208,6 +233,22 @@ the Sun walks once round and the Moon runs thirteen laps beside it, both at thei
 true positions for whatever date you wind to. Let go and it comes back to now,
 because now is the only date it is telling the truth about. Arrow keys step a
 day, Escape returns.
+
+### The ephemeris
+
+The card of the day opens on a table of where the sky actually is, worked out in
+the browser by the same `js/astro.js`. The Sun and the Moon each get their sign
+and their arc to the minute, with the date each one crosses into the next sign.
+The Moon also gets its phase, how much of it is lit, and the dates of the next
+new and full moon, all found by walking the elongation and bisecting where it
+crosses. Under that sit the two older reckonings: the lunar mansion, one of the
+twenty eight stations the Moon keeps against the fixed stars, and the planetary
+ruler of the weekday, which is the arrangement the weekday names still carry.
+
+Planets are deliberately absent. Their positions need a heavier series than the
+Sun and the Moon do, and the page is not a chart service. Everything here is
+computed on the visitor's own machine from the date on their clock, which is
+rule 3 again: nothing is fetched, so there is nothing to consent to.
 
 Three things were wrong while it was being built, and each is worth knowing:
 
@@ -399,10 +440,10 @@ output, so parts of it are still absent.
 ## Verified
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
-of any third party, 297 keys at parity across the three languages, nothing served
+of any third party, 310 keys at parity across the three languages, nothing served
 that is not the site, no dashes on
 screen, 22 ledger assertions, 58 Stripe assertions, 25 card assertions, 54 daily
-fortune assertions, 47 language assertions and 20 orrery assertions green. The
+fortune assertions, 47 language assertions and 24 orrery assertions green. The
 front page went from 15,088 elements to 1,241, and holds 60 frames a second at
 rest and above 50 while the dial is being turned. The whole site is about 390 KB before
 compression, which is less than it was before this pass despite the new deck,

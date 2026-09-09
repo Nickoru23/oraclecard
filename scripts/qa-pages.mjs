@@ -73,6 +73,50 @@ for (const lang of LANGS) {
   await ctx.close();
 }
 
+/* The navigation on a phone, opened.
+
+   This is here because it broke in a way no file check could see. The menu
+   panel hung outside the header and filtered its own backdrop while the header
+   above it filtered its backdrop too, and Chrome composited the two in an
+   order that did not match either z-index: every pointer test said the menu
+   was on top, and the page underneath painted straight through it. So this
+   opens the menu and asks what is actually drawn at five points down the
+   panel, rather than asking what the stylesheet says. */
+for (const lang of LANGS) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 },
+                                         isMobile: true, hasTouch: true });
+  await ctx.addInitScript(PREP);
+  const page = await ctx.newPage();
+  await page.goto(BASE.replace(/\/$/, '') + addr('index.html', lang), { waitUntil: 'networkidle' });
+  await page.waitForTimeout(400);
+  await page.evaluate(() => { const n = document.querySelector('.privacy-notice'); if (n) n.remove(); });
+  const btn = await page.$('.menu-btn');
+  if (!btn) { fails++; console.log(`FAIL ${lang} has no menu button at 390px`); }
+  else {
+    await btn.click();
+    await page.waitForTimeout(350);
+    const m = await page.evaluate(() => {
+      const nav = document.querySelector('.nav nav'), box = nav.getBoundingClientRect();
+      const cs = getComputedStyle(nav);
+      const through = [.15, .3, .45, .6, .75]
+        .map(f => document.elementFromPoint(box.left + box.width / 2, box.top + box.height * f))
+        .filter(el => !el || !nav.contains(el))
+        .map(el => (el ? el.tagName + (typeof el.className === 'string' && el.className
+                      ? '.' + el.className.trim().split(/\s+/).join('.') : '') : 'nothing'));
+      return { links: nav.querySelectorAll('a').length, through,
+               opaque: !/rgba\([^)]*,\s*0?\.\d+\)/.test(cs.backgroundColor),
+               filtered: cs.backdropFilter !== 'none' };
+    });
+    const menuBad = m.through.length || !m.opaque || m.filtered || m.links !== 6;
+    if (menuBad) fails++;
+    console.log(`${menuBad ? 'FAIL' : 'ok  '} ${lang} menu on a phone, ${m.links} links` +
+      (m.through.length ? ` PAGE SHOWS THROUGH: ${m.through.join(', ')}` : '') +
+      (!m.opaque ? ' panel is not opaque' : '') +
+      (m.filtered ? ' panel filters its backdrop inside a header that already does' : ''));
+  }
+  await ctx.close();
+}
+
 await browser.close(); server.close();
 if (foreign.size) { fails++; console.log('\nTHIRD PARTY HOSTS ASKED FOR:', [...foreign].join(', ')); }
 else console.log('\nnothing asked of any third party');

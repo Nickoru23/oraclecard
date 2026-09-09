@@ -14,15 +14,19 @@
   .deck-cell{background:none;border:0;padding:0;cursor:grab;border-radius:var(--r-card);
     aspect-ratio:300/510;
     line-height:0;transition:transform .2s ease,box-shadow .2s ease;
-    box-shadow:0 10px 26px -12px rgba(0,0,0,.9),0 0 20px -8px rgba(139,92,246,.5)}
+    box-shadow:0 10px 26px -12px rgba(0,0,0,.9),0 0 20px -8px rgba(214,201,168,.5)}
   /* no transform here: card3d.js owns the transform on a card, and a rule that
      sets it whole would throw the rotation away. The lift is its scale. */
-  .deck-cell:hover{box-shadow:0 18px 36px -12px rgba(0,0,0,.9),0 0 34px -6px rgba(139,92,246,.85)}
+  .deck-cell:hover{box-shadow:0 18px 36px -12px rgba(0,0,0,.9),0 0 34px -6px rgba(214,201,168,.85)}
   .deck-cell svg{width:100%;height:auto;display:block}
-  dialog{background:rgba(18,15,46,.94);backdrop-filter:blur(20px);color:var(--bone);
+  /* This was mixed by hand rather than taken from a token, so it kept the old
+     violet after everything around it went black. A dialog is a plate lifted
+     off the page, so it is the raised pane, and the ground behind it is the
+     ground. */
+  dialog{background:rgba(17,17,20,.95);backdrop-filter:blur(20px);color:var(--bone);
     border:1px solid var(--line-2);border-radius:var(--r);
     padding:0;max-width:760px;width:calc(100% - 32px);box-shadow:var(--shadow-lift)}
-  dialog::backdrop{background:rgba(4,3,14,.86);backdrop-filter:blur(8px)}
+  dialog::backdrop{background:rgba(4,4,5,.88);backdrop-filter:blur(8px)}
   .modal-in{display:grid;grid-template-columns:220px 1fr;gap:26px;padding:26px}
   .modal-in svg{width:100%;height:auto;border-radius:var(--r-card);display:block}
   .modal-in h4{font-family:var(--serif);color:var(--cyan);margin:1.2em 0 .25em;font-size:1.08rem}
@@ -33,7 +37,7 @@
     .modal-in>div:first-child{max-width:180px;margin:0 auto}}
   .hero-fan{display:flex;justify-content:center;margin-top:46px}
   .hero-fan .f{width:126px;margin:0 -22px;border-radius:var(--r-card);line-height:0;
-    box-shadow:0 22px 48px -18px rgba(0,0,0,.92),0 0 40px -10px rgba(139,92,246,.6);
+    box-shadow:0 22px 48px -18px rgba(0,0,0,.92),0 0 40px -10px rgba(214,201,168,.6);
     border:1px solid var(--line-2)}
   .hero-fan .f svg{width:100%;height:auto;display:block}
   .hero-fan .f:nth-child(1){--fan:-11deg;--lift:12px;z-index:1}
@@ -75,14 +79,14 @@
   /* the rule under an entry lights along its length as you reach it */
   .item::after{
     content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;
-    background:linear-gradient(90deg,var(--gold),transparent);
+    background:linear-gradient(90deg,var(--star),transparent);
     transition:width .4s cubic-bezier(.2,.9,.25,1)
   }
   .item:hover,.item:focus-visible{text-decoration:none;padding-left:18px}
   .item:hover::after,.item:focus-visible::after{width:100%}
   .item .tag{grid-column:1;grid-row:1}
   .item h3{grid-column:1;grid-row:2;margin:0;color:var(--bone)}
-  .item:hover h3{color:var(--gold-deep)}
+  .item:hover h3{color:var(--star-hi)}
   .item p{grid-column:1;grid-row:3;margin:5px 0 0;color:var(--muted);font-size:.92rem;
           line-height:1.6;max-width:56ch}
   .item .go{
@@ -90,11 +94,9 @@
     color:var(--muted);white-space:nowrap
   }
   .item .go::after{content:' \2192';display:inline-block;transition:transform .22s ease}
-  .item:hover .go{color:var(--gold-deep)}
+  .item:hover .go{color:var(--star-hi)}
   .item:hover .go::after{transform:translateX(5px)}
-  .tag{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600}
-  .tag-gold{color:var(--cyan)}
-  .item-paid{display:block}
+  .tag{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--star);font-weight:600}
   @media(max-width:640px){
     .item{grid-template-columns:1fr}
     .item .go{grid-column:1;grid-row:4;margin-top:12px}
@@ -137,7 +139,7 @@
   <h1 data-t="hero_h1" data-thtml="1"></h1>
   <p class="lede" data-t="hero_lede"></p>
   <div class="hero-cta">
-    <a class="btn btn-gold btn-lg" href="#gratis" data-t="cta_free"></a>
+    <a class="btn btn-lit btn-lg" href="#gratis" data-t="cta_free"></a>
     <a class="btn btn-ghost btn-lg" href="#pago" data-t="cta_paid"></a>
   </div>
   <div class="hero-fan" id="fan" aria-hidden="true"></div>
@@ -185,19 +187,6 @@
   <div id="ritual-ledger"></div>
 </div></section>
 
-<section id="pago"><div class="wrap">
-  <div class="split-h">
-    <h2 data-banner data-t="paid_h2"></h2>
-    <p class="lede" data-t="paid_sub"></p>
-  </div>
-  <a class="item item-paid plate" href="/lectura.html">
-    <span class="tag tag-gold">9 € / 19 € / 29 €</span>
-    <h3 data-t="it_full_t"></h3>
-    <p data-t="it_full_d"></p>
-    <span class="go" data-t="cta_paid"></span>
-  </a>
-</div></section>
-
 <hr class="rule">
 
 <section id="tiradas"><div class="wrap">
@@ -213,21 +202,25 @@
   </div>
   <p class="center muted small" id="sp-desc" style="margin-top:-18px"></p>
   <div class="center" style="margin:20px 0 34px">
-    <button class="btn btn-gold" id="sp-draw" data-t="draw"></button>
+    <button class="btn btn-lit" id="sp-draw" data-t="draw"></button>
   </div>
   <div id="sp-out"></div>
 </div></section>
 
 <hr class="rule">
 
-<section class="tight"><div class="wrap">
+<!-- id="pago" now lives here. It used to be on a heading and a lede over a
+     single card further up, which said the same thing as this panel and said
+     it worse. The link in the hero is unchanged and still lands on the paid
+     reading, just on the one place that pitches it. -->
+<section id="pago" class="tight"><div class="wrap">
   <div class="panel cta-panel">
     <div>
       <p class="eyebrow" data-t="paid_eyebrow"></p>
       <h2 style="margin-bottom:.3em" data-t="paid_h1"></h2>
       <p class="lede" data-t="paid_lede"></p>
     </div>
-    <a class="btn btn-gold btn-lg" href="/lectura.html" data-t="cta_paid"></a>
+    <a class="btn btn-lit btn-lg" href="/lectura.html" data-t="cta_paid"></a>
   </div>
 </div></section>
 

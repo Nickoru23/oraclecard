@@ -126,6 +126,90 @@
     return place(sunLon(new Date(Date.UTC(y, m - 1, day, 12))));
   }
 
+  /* ---------- the ephemeris ----------
+
+     Everything below is the Sun and the Moon and nothing else, which is a
+     deliberate limit. The two of them can be had to a couple of arcminutes from
+     the series already above; the planets would need their own orbital elements
+     and would be a different order of both code and of being wrong.
+
+     Nothing here needs to know where the reader is. Sunrise and moonrise do,
+     and this site does not ask, so they are not here.                        */
+
+  /* The next moment the Moon reaches a given elongation from the Sun: 0 for a
+     new moon, 180 for a full one. Walked in six hour steps to find the bracket,
+     then bisected, because elongation runs forward at about twelve degrees a
+     day and never doubles back. */
+  function nextPhase(from, wanted) {
+    const at = t => norm(moonLon(new Date(t)) - sunLon(new Date(t)) - wanted);
+    let lo = from.getTime();
+    const STEP = 6 * 3600000;
+    for (let i = 0; i < 4 * 40; i++) {
+      let hi = lo + STEP;
+      /* the wrap from 359 back to 0 is the crossing we are looking for */
+      if (at(lo) > 270 && at(hi) < 90) {
+        /* both ends move, or this is one step of a bisection and not forty */
+        for (let k = 0; k < 40; k++) {
+          const mid = (lo + hi) / 2;
+          if (at(mid) > 270) lo = mid; else hi = mid;
+        }
+        return new Date(hi);
+      }
+      lo = hi;
+    }
+    return null;
+  }
+
+  /* When the Moon leaves the sign it is in. It moves about half a degree an
+     hour, so a sign lasts two and a bit days and the search is short. */
+  function moonIngress(from) {
+    const here = place(moonLon(from)).index;
+    let lo = from.getTime();
+    const STEP = 3600000;
+    for (let i = 0; i < 24 * 4; i++) {
+      let hi = lo + STEP;
+      if (place(moonLon(new Date(hi))).index !== here) {
+        for (let k = 0; k < 30; k++) {
+          const mid = (lo + hi) / 2;
+          if (place(moonLon(new Date(mid))).index === here) lo = mid; else hi = mid;
+        }
+        return { at: new Date(hi), into: place(moonLon(new Date(hi))).index };
+      }
+      lo = hi;
+    }
+    return null;
+  }
+
+  /* The twenty eight lunar mansions, the older division of the Moon's path that
+     the almanacs used before the twelve signs took over. The names are the
+     Arabic ones, which is how they reached Europe. */
+  const MANSIONS = [
+    'Al Sharatain', 'Al Butain', 'Al Thurayya', 'Al Dabaran', 'Al Haqa', 'Al Hana',
+    'Al Dhira', 'Al Nathra', 'Al Tarf', 'Al Jabha', 'Al Zubra', 'Al Sarfa',
+    'Al Awwa', 'Al Simak', 'Al Ghafr', 'Al Zubana', 'Iklil al Jabha', 'Al Qalb',
+    'Al Shaula', 'Al Naaim', 'Al Balda', 'Sad al Dhabih', 'Sad Bula', 'Sad al Suud',
+    'Sad al Akhbiya', 'Al Fargh al Mukdim', 'Al Fargh al Mukhir', 'Batn al Hut',
+  ];
+  function mansion(d) {
+    const i = Math.floor(norm(moonLon(d)) / (360 / 28));
+    return { index: i, number: i + 1, name: MANSIONS[i] };
+  }
+
+  /* The planet that rules the day, in the Chaldean order the week is named
+     from. Sunday is the Sun and it runs from there. */
+  const RULERS = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
+  const dayRuler = d => RULERS[(d || new Date()).getDay()];
+
+  /* degrees as a reader expects to see them, whole degrees and arcminutes.
+     Rounded as one number, so the minutes can never come out as 60. */
+  function dms(deg) {
+    const total = Math.round(deg * 60);
+    return { deg: Math.floor(total / 60), min: total % 60 };
+  }
+
+  /* a longitude rounded to the arcminute that will be printed from it */
+  const toArcmin = lon => Math.round(norm(lon) * 60) / 60;
+
   function sky(date) {
     const d = date || new Date();
     const s = place(sunLon(d));
@@ -133,7 +217,32 @@
     return { date: d, sun: s, moon: m, phase: moonPhase(d) };
   }
 
+  /* The whole day's reading, in one call, for the panel that shows it. */
+  function ephemeris(date) {
+    const d = date || new Date();
+    const s = place(toArcmin(sunLon(d)));
+    const m = place(toArcmin(moonLon(d)));
+    const ph = moonPhase(d);
+    /* the Sun's next sign, and the day it enters it */
+    const nextSign = (s.index + 1) % 12;
+    const y = d.getUTCFullYear();
+    let sunEnters = ingress(y, nextSign);
+    if (sunEnters <= d) sunEnters = ingress(y + 1, nextSign);
+    return {
+      date: d,
+      sun: { ...s, ...dms(s.degree), enters: { sign: SIGN_IDS[nextSign], at: sunEnters } },
+      moon: { ...m, ...dms(m.degree), leaves: moonIngress(d) },
+      phase: ph,
+      newMoon: nextPhase(d, 0),
+      fullMoon: nextPhase(d, 180),
+      mansion: mansion(d),
+      ruler: dayRuler(d),
+    };
+  }
+
   window.ASTRO = {
-    SIGN_IDS, sunLon, moonLon, moonPhase, place, ingress, signDates, signOfDate, sky, jd,
+    SIGN_IDS, MANSIONS, RULERS,
+    sunLon, moonLon, moonPhase, place, ingress, signDates, signOfDate, sky, jd,
+    nextPhase, moonIngress, mansion, dayRuler, dms, toArcmin, ephemeris,
   };
 })();

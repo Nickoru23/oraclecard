@@ -1,11 +1,26 @@
 /* ===== The Witch Atelier — zodiac sigils =====
+
    The unicode glyphs (♈ ♉ ♊) came out of whatever font the browser had lying
-   around and looked nothing like the deck. These are drawn instead, in the same
-   register as the cards: a cream field, a deep roundel, a gold line-drawn sigil
-   and a couple of sparkles. Original geometry — simplified on purpose, the way
-   the card figures are. */
+   around and looked nothing like the deck, so these are drawn. The geometry is
+   original and simplified on purpose, the way the card figures are.
+
+   The treatment used to be a cream paper roundel with a deep blue disc and gold
+   ink, which is what the site looked like two designs ago. Against the night it
+   read as a sticker from somewhere else. They are engraved now, like everything
+   else: the night for a ground, one hairline ring with ticks on it in the same
+   language as the dial in the hero, the sigil cut in starlight, and the sparks
+   drawn as the stars they were always meant to be.                           */
 (function () {
-  const C = { paper: '#EDE6D6', deep: '#16314F', pale: '#F4EFE4', gold: '#C9A227' };
+  /* The disc has to sit a step above the ground rather than level with it.
+     On the old violet page any dark disc read as an object; on black a disc
+     the colour of the page is not there at all, so the ground of the medallion
+     is the one thing here that is lighter than what surrounds it. */
+  const C = {
+    night: '#16151A',      /* the disc */
+    rim:   '#544C3E',      /* the hairline around it */
+    star:  '#D6C9A8',      /* the sigil, and the sparks */
+    faint: '#7A7264',      /* the ticks */
+  };
 
   /* drawn inside a 100×100 field, sigil living roughly between 24 and 76 */
   const SIGIL = {
@@ -41,21 +56,37 @@
     return d + 'Z';
   }
 
-  /* the same medallion the card roundels are built from, at badge size */
+  /* the graduated ring, the same idea as the band on the dial in the hero */
+  const ticks = (() => {
+    let d = '';
+    for (let a = 0; a < 360; a += 15) {
+      const r = a % 90 === 0 ? 5 : 3;
+      const t = a * Math.PI / 180;
+      const x = 50 + Math.cos(t), y = 50 + Math.sin(t);
+      d += `M${(50 + 46 * Math.cos(t)).toFixed(1)} ${(50 + 46 * Math.sin(t)).toFixed(1)}` +
+           `L${(50 + (46 - r) * Math.cos(t)).toFixed(1)} ${(50 + (46 - r) * Math.sin(t)).toFixed(1)}`;
+    }
+    return d;
+  })();
+
   window.signSVG = function (id, opts) {
     opts = opts || {};
     const d = SIGIL[id];
     if (!d) return '';
     const sparks = (SPARKS[id] || []).map(([x, y], i) =>
-      `<path d="${star(x, y, i ? 3.4 : 4.4, 1.2, 4)}" fill="${C.gold}" opacity="${i ? 0.7 : 0.9}"/>`).join('');
-    return `<svg viewBox="0 0 100 100" class="sigil" role="img" aria-label="${opts.label || id}"
+      `<path d="${star(x, y, i ? 3.2 : 4.2, 1.1, 4)}" fill="${C.star}" opacity="${i ? 0.55 : 0.8}"/>`).join('');
+    /* No class here. It used to carry "sigil", which is the ledger's class for
+       an earned mark: a bordered, blurred pane with a two column grid in it.
+       Every medallion was wearing it, and on the old violet ground the pane
+       was tinted the same violet so nobody saw the square it drew. On black
+       it is a square. */
+    return `<svg viewBox="0 0 100 100" role="img" aria-label="${opts.label || id}"
                  xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="49" fill="${C.paper}"/>
-      <circle cx="50" cy="50" r="48.4" fill="none" stroke="#261F18" stroke-opacity=".38" stroke-width="1.2"/>
-      <circle cx="50" cy="50" r="42" fill="${C.deep}"/>
-      <circle cx="50" cy="50" r="42" fill="none" stroke="${C.gold}" stroke-width="1.2" opacity=".55"/>
+      <circle cx="50" cy="50" r="49" fill="${C.night}"/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="${C.rim}" stroke-width="1"/>
+      <path d="${ticks}" stroke="${C.faint}" stroke-width="1" opacity=".7"/>
       ${sparks}
-      <path d="${d}" fill="none" stroke="${C.gold}" stroke-width="4"
+      <path d="${d}" fill="none" stroke="${C.star}" stroke-width="3.4"
             stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
   };
