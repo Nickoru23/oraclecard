@@ -12,6 +12,7 @@
    listed as public. No browser, no network. */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { LANGS, DEFAULT } from './pages.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const toml = readFileSync(join(ROOT, 'netlify.toml'), 'utf8');
@@ -25,6 +26,8 @@ const NOT_DEPLOYED = ['node_modules', '.git', '.gitignore', 'dist-deploy', '.net
 const denied = new Set(
   [...toml.matchAll(/from = "([^"]+)"\n\s*to = "[^"]*"\n\s*status = 404/g)].map(m => m[1]));
 
+const PREFIXES = [''].concat(LANGS.filter(l => l !== DEFAULT).map(l => '/' + l));
+
 let fails = 0;
 const need = [];
 for (const entry of readdirSync(ROOT)) {
@@ -36,7 +39,8 @@ for (const entry of readdirSync(ROOT)) {
 }
 
 for (const path of need) {
-  for (const prefix of ['', '/en', '/de']) {
+  /* the root, and a prefix for every language that is not the default one */
+  for (const prefix of PREFIXES) {
     const want = prefix + path;
     if (!denied.has(want)) {
       fails++;
@@ -47,7 +51,7 @@ for (const path of need) {
 }
 
 if (!fails) {
-  console.log(`ok   ${need.length} paths denied, under each of the three language prefixes`);
+  console.log(`ok   ${need.length} paths denied, at the root and under each of the ${PREFIXES.length - 1} language prefixes`);
   console.log(`     ${need.join(' ')}`);
 }
 console.log(fails ? `\n${fails} things the host would hand out` : '\nthe host serves the site and nothing else');

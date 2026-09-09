@@ -1,6 +1,10 @@
 /* What the checks walk. Kept in one place so adding a page adds it everywhere. */
 export const BASE = 'http://127.0.0.1:4321/';
 export const LANGS = ['es', 'en', 'de'];
+/* The language the root addresses are in. Every check derives from this rather
+   than naming a language, so the site's default lives in two places and not
+   thirteen: here, and DEFAULT in js/lang.js. */
+export const DEFAULT = 'en';
 export const PAGES = [
   'index.html', 'fortuna.html', 'horoscopo.html', 'consulta.html', 'lectura.html',
   'gracias.html', 'creditos.html', 'aviso-legal.html', 'privacidad.html',
@@ -8,10 +12,10 @@ export const PAGES = [
 ];
 
 /* Where a page lives in a given language. The language is part of the address,
-   so this is how a check reaches the English or German version of anything: the
-   root addresses are the Spanish ones and the other two carry a prefix. */
+   so this is how a check reaches any language of anything: the root addresses
+   are the default one and the other two carry a prefix. */
 export const addr = (page, lang) =>
-  (lang === 'es' ? '' : '/' + lang) + '/' + page;
+  (lang === DEFAULT ? '' : '/' + lang) + '/' + page;
 
 /* Every test browser starts with an empty store, so the daily fortune would
    open over whatever page is under test. What is under test is the page behind

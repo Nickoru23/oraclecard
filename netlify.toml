@@ -64,43 +64,43 @@
   force = true
 
 [[redirects]]
-  from = "/en/scripts/*"
+  from = "/es/scripts/*"
   to = "/404"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/en/netlify/*"
+  from = "/es/netlify/*"
   to = "/404"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/en/README.md"
+  from = "/es/README.md"
   to = "/404"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/en/HANDOVER.md"
+  from = "/es/HANDOVER.md"
   to = "/404"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/en/package.json"
+  from = "/es/package.json"
   to = "/404"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/en/package-lock.json"
+  from = "/es/package-lock.json"
   to = "/404"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/en/netlify.toml"
+  from = "/es/netlify.toml"
   to = "/404"
   status = 404
   force = true
@@ -186,11 +186,26 @@
 # reading rather than in whatever the person opening it happened to choose last.
 #
 # These are rewrites, status 200, not redirects: the address stays as it is in
-# the bar. They sit above the page rules below so that /en/fortuna resolves too.
+# the bar. They sit above the page rules below so that /es/fortuna resolves too.
 # Assets are referenced from the root, so nothing under /css, /js or /api is
 # reached through a prefix and none of this touches them.
+# Until today English lived under /en. Those addresses are the root now, so
+# every one of them is sent there permanently rather than answering 404. One
+# wildcard covers all eleven pages, and it costs nothing once nobody uses them.
+[[redirects]]
+  from = "/en/*"
+  to = "/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/en"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/es"
   to = "/index.html"
   status = 200
 
@@ -200,7 +215,7 @@
   status = 200
 
 [[redirects]]
-  from = "/en/*"
+  from = "/es/*"
   to = "/:splat"
   status = 200
 

@@ -1,8 +1,13 @@
 /* ===== The Witch Atelier — the language is in the address =====
 
-   /lectura.html is Spanish. /en/lectura.html is English. /de/lectura.html is
+   /lectura.html is English. /es/lectura.html is Spanish. /de/lectura.html is
    German. All three are the same file: netlify.toml rewrites the two prefixes
    and the language is read back off the path here.
+
+   English is the default, which is the language the root addresses are in and
+   the one a search engine is pointed at as x-default. Everything below derives
+   from DEFAULT rather than naming a language, so that is the only line that
+   decides it.
 
    Why it matters more than it looks: the language used to be a key in the
    visitor's own browser and nothing else. A page someone sent in English opened
@@ -28,8 +33,12 @@
   'use strict';
 
   var LANGS = ['es', 'en', 'de'];
-  var DEFAULT = 'es';                 /* the language the root addresses are in */
-  var PREFIX = /^\/(en|de)(?=\/|$)/;
+  var DEFAULT = 'en';                 /* the language the root addresses are in */
+  /* The prefixes are every language except the one the root addresses are in,
+     derived rather than written out: naming them meant that changing DEFAULT
+     left this matching the wrong set, so /es read as English and a switch from
+     there stacked a second prefix on top of the first. */
+  var PREFIX = new RegExp('^/(' + LANGS.filter(function (l) { return l !== DEFAULT; }).join('|') + ')(?=/|$)');
   /* addressed from the root and never through a prefix */
   var SHARED = /^\/(css|js|api|cards|favicon|robots|sitemap|\.netlify)/;
 

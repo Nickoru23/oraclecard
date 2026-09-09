@@ -6,9 +6,9 @@ User-agent: *
 Allow: /
 Disallow: /atelier.html
 Disallow: /gracias.html
-Disallow: /en/atelier.html
+Disallow: /es/atelier.html
 Disallow: /de/atelier.html
-Disallow: /en/gracias.html
+Disallow: /es/gracias.html
 Disallow: /de/gracias.html
 
 Sitemap: https://thewitchatelier.com/sitemap.xml

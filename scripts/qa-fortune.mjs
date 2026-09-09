@@ -7,7 +7,7 @@
    and the page it lives on writes the same words with the same animation. */
 import { chromium } from 'playwright';
 import { serve } from './serve.mjs';
-import { BASE as base, LANGS, addr } from './pages.mjs';
+import { BASE as base, LANGS, addr, DEFAULT } from './pages.mjs';
 
 const server = await serve();
 const b = await chromium.launch();
@@ -18,7 +18,7 @@ const check = (name, cond, got) => {
 };
 
 /* a browser that has never been here, in one language */
-const at = (page, lang) => base.replace(/\/$/, '') + addr(page, lang || 'es');
+const at = (page, lang) => base.replace(/\/$/, '') + addr(page, lang || DEFAULT);
 
 async function fresh(lang) {
   const ctx = await b.newContext();

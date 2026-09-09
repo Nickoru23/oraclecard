@@ -1,6 +1,6 @@
 /* The language lives in the address.
 
-   /lectura.html is Spanish, /en/lectura.html is English, /de/lectura.html is
+   /lectura.html is English, /es/lectura.html is Spanish, /de/lectura.html is
    German. All three are the same file, rewritten by netlify.toml, and the
    language is read back off the path.
 
@@ -10,7 +10,7 @@
    quietly move somebody somewhere else. */
 import { chromium } from 'playwright';
 import { serve } from './serve.mjs';
-import { PAGES, LANGS, BASE, PREP, addr } from './pages.mjs';
+import { PAGES, LANGS, BASE, PREP, addr, DEFAULT } from './pages.mjs';
 import { sitemap, robots, PUBLIC, SITE, address } from './build-sitemap.mjs';
 import { readFileSync } from 'node:fs';
 
@@ -23,9 +23,13 @@ const check = (name, cond, got) => {
   cond ? pass++ : (fail++, console.log('FAIL', name, got === undefined ? '' : JSON.stringify(got)));
 };
 
-/* Spanish, so that the front door, which is the one address that adapts to the
-   reader, stays where it is put for the sweep. It has its own check below. */
-const ctx = await b.newContext({ locale: 'es-ES' });
+/* The reader's locale is the default language's, so that the front door, which
+   is the one address that adapts to the reader, stays where it is put for the
+   sweep. It has its own check below. Derived rather than named: pinning this to
+   Spanish was right while Spanish was the default and silently wrong the moment
+   it was not. */
+const LOCALE = { es: 'es-ES', en: 'en-GB', de: 'de-DE' };
+const ctx = await b.newContext({ locale: LOCALE[DEFAULT] });
 await ctx.addInitScript(PREP);
 const p = await ctx.newPage();
 const errs = [];
@@ -50,7 +54,7 @@ for (const lang of LANGS) {
               .map(l => l.hreflang + ' ' + l.getAttribute('href')),
     }));
     const want = LANGS.map(l => l + ' ' + location0(path, l))
-                      .concat('x-default ' + location0(path, 'es'));
+                      .concat('x-default ' + location0(path, DEFAULT));
     const ok = resp.status() === 200 &&
                seen.lang === lang &&
                seen.here === path &&
@@ -64,8 +68,10 @@ for (const lang of LANGS) {
   }
 }
 function location0(path, lang) {
-  const bare = path.replace(/^\/(en|de)(?=\/|$)/, '').replace(/\/index\.html$/, '/') || '/';
-  return origin + (lang === 'es' ? bare : '/' + lang + (bare === '/' ? '' : bare));
+  const prefixed = LANGS.filter(l => l !== DEFAULT).join('|');
+  const bare = path.replace(new RegExp('^/(' + prefixed + ')(?=/|$)'), '')
+                   .replace(/\/index\.html$/, '/') || '/';
+  return origin + (lang === DEFAULT ? bare : '/' + lang + (bare === '/' ? '' : bare));
 }
 console.log(`ok   ${ADDRESSED.length} pages answered at ${LANGS.length} addresses each`);
 
@@ -76,15 +82,15 @@ for (const locale of ['de-DE', 'en-GB', 'es-ES']) {
   const q = await c.newPage();
   await q.goto(origin + '/lectura.html', { waitUntil: 'networkidle' });
   await q.waitForTimeout(300);
-  check(`a Spanish deep link stays Spanish for a ${locale} reader`,
+  check(`a root deep link stays ${DEFAULT} for a ${locale} reader`,
         new URL(q.url()).pathname === '/lectura.html' &&
-        await q.evaluate(() => document.documentElement.lang) === 'es',
+        await q.evaluate(() => document.documentElement.lang) === DEFAULT,
         new URL(q.url()).pathname + ' ' + await q.evaluate(() => document.documentElement.lang));
-  await q.goto(origin + '/en/lectura.html', { waitUntil: 'networkidle' });
+  await q.goto(origin + '/es/lectura.html', { waitUntil: 'networkidle' });
   await q.waitForTimeout(300);
-  check(`an English deep link stays English for a ${locale} reader`,
-        new URL(q.url()).pathname === '/en/lectura.html' &&
-        await q.evaluate(() => document.documentElement.lang) === 'en');
+  check(`a Spanish deep link stays Spanish for a ${locale} reader`,
+        new URL(q.url()).pathname === '/es/lectura.html' &&
+        await q.evaluate(() => document.documentElement.lang) === 'es');
   await c.close();
 }
 
