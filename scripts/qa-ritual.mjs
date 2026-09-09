@@ -67,7 +67,15 @@ check('four spreads recorded', s.spreads.length === 4, s.spreads);
 check('full_table struck', s.sigils.includes('full_table'), s.sigils);
 
 // a language switch is recorded, and three earns a sigil
-for (const l of ['es', 'en', 'de']) { await p.click(`.lang button[data-lang="${l}"]`); await p.waitForTimeout(200); }
+/* Each of these is a real navigation, not a repaint: Lang.go assigns the
+   location, because the language is in the address. So the click is waited on
+   rather than slept past. It used to be two hops and a 200ms sleep, which was
+   already a race, and English being the root makes it three. */
+for (const l of ['es', 'en', 'de']) {
+  await Promise.all([p.waitForLoadState('networkidle'),
+                     p.click(`.lang button[data-lang="${l}"]`)]);
+  await p.waitForFunction(() => window.Ritual && window.Ritual.get);
+}
 s = await S();
 check('three_tongues struck', s.sigils.includes('three_tongues'), s.sigils);
 check('ledger relettered', (await p.locator('.ledger-day h3').textContent()).trim() === 'Heute',

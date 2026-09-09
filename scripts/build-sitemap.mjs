@@ -9,7 +9,7 @@
    adding or removing a page; qa:langs fails if the committed file has fallen
    behind. */
 import { writeFileSync } from 'node:fs';
-import { LANGS } from './pages.mjs';
+import { LANGS, DEFAULT } from './pages.mjs';
 
 export const SITE = 'https://thewitchatelier.com';
 
@@ -22,13 +22,13 @@ export const PUBLIC = [
 ];
 
 export const address = (path, lang) =>
-  lang === 'es' ? path : '/' + lang + (path === '/' ? '' : path);
+  lang === DEFAULT ? path : '/' + lang + (path === '/' ? '' : path);
 
 export function sitemap() {
   const url = (path, lang) => {
     const alts = LANGS.map(l =>
       `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE}${address(path, l)}"/>`)
-      .concat(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${address(path, 'es')}"/>`);
+      .concat(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${address(path, DEFAULT)}"/>`);
     return `  <url>\n    <loc>${SITE}${address(path, lang)}</loc>\n${alts.join('\n')}\n  </url>`;
   };
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -48,9 +48,9 @@ User-agent: *
 Allow: /
 Disallow: /atelier.html
 Disallow: /gracias.html
-Disallow: /en/atelier.html
+Disallow: /es/atelier.html
 Disallow: /de/atelier.html
-Disallow: /en/gracias.html
+Disallow: /es/gracias.html
 Disallow: /de/gracias.html
 
 Sitemap: ${SITE}/sitemap.xml

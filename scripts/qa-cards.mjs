@@ -177,8 +177,8 @@ await p.evaluate(() => {
   const c = window.DECK.find(x => x.a !== 'major');
   const box = document.createElement('div');
   box.innerHTML =
-    `<div class="card" id="qa-up"><div class="face front">${window.cardSVG(c, 'es', 'sm')}</div></div>` +
-    `<div class="card" id="qa-rev"><div class="face front rev">${window.cardSVG(c, 'es', 'sm')}</div></div>` +
+    `<div class="card" id="qa-up"><div class="face front">${window.cardSVG(c, 'en', 'sm')}</div></div>` +
+    `<div class="card" id="qa-rev"><div class="face front rev">${window.cardSVG(c, 'en', 'sm')}</div></div>` +
     `<div class="card" id="qa-revimg"><div class="face front rev">` +
       `<img class="card-img" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="></div></div>`;
   document.body.appendChild(box);

@@ -269,23 +269,33 @@ so the lit part spills outside the disc on the gibbous phases.
 
 ## The language is in the address
 
-`/lectura.html` is Spanish, `/en/lectura.html` is English, `/de/lectura.html` is
+`/lectura.html` is English, `/es/lectura.html` is Spanish, `/de/lectura.html` is
 German. All three are the same file: `netlify.toml` rewrites the two prefixes at
 status 200 and `js/lang.js` reads the language back off the path. No build step,
 no third copy of anything.
 
+**Which language the root is** is one line, `DEFAULT` in `js/lang.js`, mirrored
+by one line in `scripts/pages.mjs` for the checks. Nothing else names a
+language. That is not tidiness: this started out with Spanish at the root and
+thirteen places that said so in their own words, and moving it to English broke
+four of them at once. The prefix matcher still stripped `en|de`, so `/es` read
+as English and switching from there stacked `/de/es`; the local server stripped
+the same wrong pair; the sitemap pointed `x-default` at Spanish; and `qa:langs`
+pinned its browser to Spanish so the front door would hold still, which was
+right until it silently was not. All four now derive from `DEFAULT`.
+
 It used to be a key in `localStorage` and nothing else, which had two costs. A
 page someone sent in English opened in whatever language the person receiving it
 had last chosen, so the two of them were looking at different sites through one
-link. And a search engine only ever saw one of the three, so two thirds of 296
+link. And a search engine only ever saw one of the three, so two thirds of the
 translated strings were invisible from outside the browser they were typed in.
 
 Who wins, in order:
 
 * **the address.** A prefix is that language, always.
-* **the root.** No prefix is Spanish, always. Not "Spanish unless the browser
-  says otherwise": a page has to be in the language of the address it is at, or
-  a shared link is a coin toss again.
+* **the root.** No prefix is the default language, always. Not "English unless
+  the browser says otherwise": a page has to be in the language of the address
+  it is at, or a shared link is a coin toss again.
 * **the front door.** The one exception, at `/` and nowhere else: somebody who
   has chosen before, or whose browser asks for a language the site has, is taken
   to it. Deep links never move, so a link opens where it was sent and a crawler

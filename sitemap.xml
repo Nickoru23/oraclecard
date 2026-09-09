@@ -2,191 +2,191 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://thewitchatelier.com/</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en"/>
+    <loc>https://thewitchatelier.com/es</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en"/>
+    <loc>https://thewitchatelier.com/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/fortuna.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/fortuna.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/fortuna.html"/>
+    <loc>https://thewitchatelier.com/es/fortuna.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/fortuna.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/fortuna.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/fortuna.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/fortuna.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/fortuna.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/fortuna.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/fortuna.html"/>
+    <loc>https://thewitchatelier.com/fortuna.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/fortuna.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/fortuna.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/fortuna.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/fortuna.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/fortuna.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/fortuna.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/fortuna.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/fortuna.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/fortuna.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/fortuna.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/fortuna.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/horoscopo.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/horoscopo.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/horoscopo.html"/>
+    <loc>https://thewitchatelier.com/es/horoscopo.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/horoscopo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/horoscopo.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/horoscopo.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/horoscopo.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/horoscopo.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/horoscopo.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/horoscopo.html"/>
+    <loc>https://thewitchatelier.com/horoscopo.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/horoscopo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/horoscopo.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/horoscopo.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/horoscopo.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/horoscopo.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/horoscopo.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/horoscopo.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/horoscopo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/horoscopo.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/horoscopo.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/horoscopo.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/consulta.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/consulta.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/consulta.html"/>
+    <loc>https://thewitchatelier.com/es/consulta.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/consulta.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/consulta.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/consulta.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/consulta.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/consulta.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/consulta.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/consulta.html"/>
+    <loc>https://thewitchatelier.com/consulta.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/consulta.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/consulta.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/consulta.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/consulta.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/consulta.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/consulta.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/consulta.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/consulta.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/consulta.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/consulta.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/consulta.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/lectura.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/lectura.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/lectura.html"/>
+    <loc>https://thewitchatelier.com/es/lectura.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/lectura.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/lectura.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/lectura.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/lectura.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/lectura.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/lectura.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/lectura.html"/>
+    <loc>https://thewitchatelier.com/lectura.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/lectura.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/lectura.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/lectura.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/lectura.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/lectura.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/lectura.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/lectura.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/lectura.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/lectura.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/lectura.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/lectura.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/creditos.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/creditos.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/creditos.html"/>
+    <loc>https://thewitchatelier.com/es/creditos.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/creditos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/creditos.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/creditos.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/creditos.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/creditos.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/creditos.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/creditos.html"/>
+    <loc>https://thewitchatelier.com/creditos.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/creditos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/creditos.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/creditos.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/creditos.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/creditos.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/creditos.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/creditos.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/creditos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/creditos.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/creditos.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/creditos.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/aviso-legal.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/aviso-legal.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/aviso-legal.html"/>
+    <loc>https://thewitchatelier.com/es/aviso-legal.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/aviso-legal.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/aviso-legal.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/aviso-legal.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/aviso-legal.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/aviso-legal.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/aviso-legal.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/aviso-legal.html"/>
+    <loc>https://thewitchatelier.com/aviso-legal.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/aviso-legal.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/aviso-legal.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/aviso-legal.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/aviso-legal.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/aviso-legal.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/aviso-legal.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/aviso-legal.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/aviso-legal.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/aviso-legal.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/aviso-legal.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/aviso-legal.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/privacidad.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/privacidad.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/privacidad.html"/>
+    <loc>https://thewitchatelier.com/es/privacidad.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/privacidad.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/privacidad.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/privacidad.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/privacidad.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/privacidad.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/privacidad.html"/>
+    <loc>https://thewitchatelier.com/privacidad.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/privacidad.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/privacidad.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/privacidad.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/privacidad.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/privacidad.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/privacidad.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/privacidad.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/privacidad.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/cookies.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/cookies.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/cookies.html"/>
+    <loc>https://thewitchatelier.com/es/cookies.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/cookies.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/cookies.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/cookies.html"/>
   </url>
   <url>
-    <loc>https://thewitchatelier.com/en/cookies.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/cookies.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/cookies.html"/>
+    <loc>https://thewitchatelier.com/cookies.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/cookies.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/cookies.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/cookies.html"/>
   </url>
   <url>
     <loc>https://thewitchatelier.com/de/cookies.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/cookies.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/en/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://thewitchatelier.com/es/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thewitchatelier.com/cookies.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://thewitchatelier.com/de/cookies.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://thewitchatelier.com/cookies.html"/>
   </url>
