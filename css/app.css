@@ -187,7 +187,10 @@ header.site{
 .brand .mark path[fill="#241F18"]{fill:var(--bone)}
 .brand .mark path[fill="#8C5E20"]{fill:var(--cyan)}
 .nav nav{margin-left:auto;display:flex;gap:26px;align-items:center}
-.nav nav a{color:var(--muted);font-size:.9rem;position:relative}
+/* A navigation label that wraps is a navigation label that is too long, so
+   it never wraps: if one no longer fits, that is the bar asking for a shorter
+   word rather than a second line. */
+.nav nav a{color:var(--muted);font-size:.9rem;position:relative;white-space:nowrap}
 .nav nav a:hover{color:var(--bone);text-decoration:none}
 .nav nav a::after{
   content:"";position:absolute;left:0;right:0;bottom:-7px;height:1px;
@@ -212,8 +215,17 @@ header.site{
 .menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
 .menu-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
 
+/* The bar has to hold six labels in whichever language is longest, and German
+   and Spanish are half again as long as English. So it tightens before it
+   drops anything, drops the one link that is also a section further down the
+   front page, and only then hands over to the button. The handover is at 820
+   rather than 640 because between those two the row was wider than the bar in
+   two of the three languages, which nobody saw while the labels were still
+   allowed to wrap onto a second line. */
+@media(max-width:1080px){.nav nav{gap:16px}.nav nav a{font-size:.85rem}}
+@media(max-width:940px){.nav nav{gap:12px}.nav nav a{font-size:.8rem}}
 @media(max-width:900px){.nav nav a.hide-sm{display:none}}
-@media(max-width:640px){
+@media(max-width:860px){
   .nav{height:64px;gap:12px;position:relative}
   .brand{font-size:1.06rem;gap:8px}
   .brand .mark{width:18px;height:18px}
