@@ -158,6 +158,49 @@ check('reduced motion leaves it still', await q.locator('.or-sun').getAttribute(
 check('but it is still drawn, and still true', await q.locator('.or-moon-lit').count() === 1);
 await still.close();
 
+/* ---- the ephemeris, checked against the definitions it is solving --------
+
+   Both of these shipped wrong and neither showed in a screenshot. nextPhase
+   moved only the low end of its bracket and returned the first midpoint past
+   the crossing, so it was one step of a bisection and not forty, and named the
+   wrong calendar day on about one load in seventy. dms rounded the arcminutes
+   on their own, so they could carry to sixty and print "17 degrees 60". Both
+   are arithmetic, so both are checked as arithmetic, over a whole year of
+   hourly loads rather than on the one date the panel happens to be showing. */
+const cal = await b.newContext({ viewport: { width: 1400, height: 900 } });
+await cal.addInitScript(PREP);
+const e = await cal.newPage();
+await e.goto(origin + '/index.html', { waitUntil: 'networkidle' });
+
+const eph = await e.evaluate(() => {
+  const A = window.ASTRO, norm = x => ((x % 360) + 360) % 360;
+  let worstMinutes = 0, sixty = 0, outOfSign = 0, missing = 0;
+  for (let h = 0; h < 8760; h += 7) {
+    const d = new Date(Date.UTC(2026, 0, 1) + h * 3600e3);
+    for (const want of [0, 180]) {
+      const t = A.nextPhase(d, want);
+      if (!t) { missing++; continue; }
+      let off = norm(A.moonLon(t) - A.sunLon(t) - want);
+      if (off > 180) off -= 360;
+      /* elongation opens at about half a degree an hour, so degrees of error
+         convert to minutes of error at that rate */
+      worstMinutes = Math.max(worstMinutes, Math.abs(off) / 0.5083 * 60);
+    }
+    const x = A.ephemeris(d);
+    for (const body of [x.sun, x.moon]) {
+      if (body.min >= 60 || body.min < 0) sixty++;
+      if (body.deg > 29 || body.deg < 0) outOfSign++;
+    }
+  }
+  return { worstMinutes, sixty, outOfSign, missing };
+});
+check('every new and full moon is found', eph.missing === 0);
+check('and found to the minute, not to the six hour step',
+      eph.worstMinutes < 1, `worst error ${eph.worstMinutes.toFixed(1)} minutes`);
+check('arcminutes never round up to sixty', eph.sixty === 0, `${eph.sixty} readings of 60`);
+check('and a degree never leaves its own sign', eph.outOfSign === 0, `${eph.outOfSign} outside 0 to 29`);
+await cal.close();
+
 await b.close(); server.close();
 if (errs.length) { fail += errs.length; console.log('THREW\n  ' + errs.join('\n  ')); }
 console.log(fail ? `\n${fail} failed, ${pass} passed` : `\nthe orrery tells the truth, ${pass} checks green`);

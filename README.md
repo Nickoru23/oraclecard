@@ -59,10 +59,10 @@ npm run qa             # all eleven checks
 
 | Check | What it holds to |
 |---|---|
-| `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description |
+| `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description. Then it opens the navigation on a phone and asks what is actually drawn at five points down the panel, because that broke in a way no stylesheet check could see: the menu filtered its backdrop inside a header that filtered its backdrop too, and Chrome composited them in an order matching neither z-index, so every pointer test said the menu was on top while the page painted straight through it |
 | `qa:shell` | the header and footer are copied by hand into every page, so this compares the navigation contract across them: the same links in the same order carrying the same strings, the same language switch, the same footer. Byte equality would be the wrong instrument and the file says why |
 | `qa:served` | `publish = "."` is the whole repository, so every file in it is a public URL unless something says otherwise. This walks the repository rather than the site and fails if anything a visitor should not receive has no 404 rule, under each of the three language prefixes. Adding a script or a note fails it until it is denied or listed as public |
-| `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still |
+| `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still. It also checks the ephemeris as arithmetic over a year of hourly loads rather than on the one date the panel happens to show: every new and full moon is found, found to the minute rather than to the six hour step it was bracketed with, and no arcminute rounds up to sixty |
 | `qa:langs` | the language is in the address: every page answers in the language its address names, agrees with its own canonical and names its two alternates, a deep link never moves whatever the reader prefers, the front door does, choosing a language changes the address and stays on the same page, links keep the language and assets do not, and the committed sitemap and robots.txt are what the generator would write |
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
 | `qa:dashes` | rule 4, no dashes reach the screen |
@@ -443,7 +443,7 @@ output, so parts of it are still absent.
 of any third party, 310 keys at parity across the three languages, nothing served
 that is not the site, no dashes on
 screen, 22 ledger assertions, 58 Stripe assertions, 25 card assertions, 54 daily
-fortune assertions, 47 language assertions and 20 orrery assertions green. The
+fortune assertions, 47 language assertions and 24 orrery assertions green. The
 front page went from 15,088 elements to 1,241, and holds 60 frames a second at
 rest and above 50 while the dial is being turned. The whole site is about 390 KB before
 compression, which is less than it was before this pass despite the new deck,

@@ -82,12 +82,15 @@
   <p class="lede center" style="margin:0 auto" data-t="ck_lede"></p>
 
   <div class="fx-stage" id="stage">
-    <button type="button" class="fx-btn" id="reveal">
-      <span class="vh" data-t="ck_tap"></span>
+    <!-- The visible line under the stage is this button's name. It used to
+         carry a hidden copy of the same string as well, so a screen reader
+         announced the instruction twice, once on the button and once on the
+         paragraph right after it. -->
+    <button type="button" class="fx-btn" id="reveal" aria-labelledby="tap">
       <svg viewBox="0 0 200 200" role="img" aria-hidden="true">
         <circle class="fx-halo" cx="100" cy="100" r="52" fill="rgba(214,201,168,.30)"/>
         <circle cx="100" cy="100" r="34" fill="rgba(232,230,224,.16)"
-                stroke="rgba(240,236,255,.5)" stroke-width="1.1"/>
+                stroke="rgba(242,240,234,.5)" stroke-width="1.1"/>
         <g class="fx-ring" fill="none" stroke="#D6C9A8" stroke-width="1.1" opacity=".85">
           <circle cx="100" cy="100" r="66" stroke-dasharray="2 9"/>
           <circle cx="100" cy="34" r="2.6" fill="#D6C9A8" stroke="none"/>
@@ -97,11 +100,14 @@
           <circle cx="182" cy="100" r="2.2" fill="#4FD8D3" stroke="none"/>
         </g>
         <path d="M100 74 L104.4 95.6 L126 100 L104.4 104.4 L100 126 L95.6 104.4 L74 100 L95.6 95.6 Z"
-              fill="#F0ECFF" opacity=".92"/>
+              fill="#F2F0EA" opacity=".92"/>
       </svg>
     </button>
   </div>
-  <p class="tap" id="tap" data-t="ck_tap"></p>
+  <!-- aria-hidden, not just referenced: naming the button after this line
+       does not take the line itself out of the reading order, so without
+       this the instruction is still announced twice. -->
+  <p class="tap" id="tap" aria-hidden="true" data-t="ck_tap"></p>
 
   <p class="df-words fx-words" id="fortune"></p>
 

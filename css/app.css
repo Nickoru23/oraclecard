@@ -218,7 +218,7 @@ header.site{
 /* The bar has to hold six labels in whichever language is longest, and German
    and Spanish are half again as long as English. So it tightens before it
    drops anything, drops the one link that is also a section further down the
-   front page, and only then hands over to the button. The handover is at 820
+   front page, and only then hands over to the button. The handover is at 860
    rather than 640 because between those two the row was wider than the bar in
    two of the three languages, which nobody saw while the labels were still
    allowed to wrap onto a second line. */
@@ -233,7 +233,13 @@ header.site{
   .nav nav{
     position:absolute;top:calc(100% + 14px);left:0;right:0;z-index:60;
     flex-direction:column;align-items:stretch;gap:0;margin:0;
-    background:rgba(13,13,16,.96);backdrop-filter:blur(18px);
+    /* Opaque, and no backdrop-filter. The header above it already has one,
+       and an element that filters its backdrop while hanging outside the box
+       of an ancestor that also filters its backdrop is composited by Chrome
+       in an order that does not match its own z-index: the menu won every
+       pointer test while the page underneath painted straight through it. A
+       menu has nothing to gain from showing the page anyway. */
+    background:var(--night);
     border:1px solid var(--line-2);border-radius:var(--r);
     padding:8px;box-shadow:var(--shadow-lift);
     opacity:0;visibility:hidden;transform:translateY(-8px);
@@ -832,7 +838,7 @@ html.df-open{overflow:hidden}
   background:
     radial-gradient(900px 700px at 50% 12%, rgba(58,54,46,.34), transparent 66%),
     radial-gradient(800px 640px at 50% 96%, rgba(28,30,36,.26), transparent 64%),
-    linear-gradient(178deg, #0D0D10 0%, var(--void) 58%, #030304 100%);
+    linear-gradient(178deg, var(--night) 0%, var(--void) 58%, #030304 100%);
   opacity:0;
   transition:opacity .5s ease
 }

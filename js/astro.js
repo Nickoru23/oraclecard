@@ -145,12 +145,13 @@
     let lo = from.getTime();
     const STEP = 6 * 3600000;
     for (let i = 0; i < 4 * 40; i++) {
-      const hi = lo + STEP;
+      let hi = lo + STEP;
       /* the wrap from 359 back to 0 is the crossing we are looking for */
       if (at(lo) > 270 && at(hi) < 90) {
+        /* both ends move, or this is one step of a bisection and not forty */
         for (let k = 0; k < 40; k++) {
           const mid = (lo + hi) / 2;
-          if (at(mid) > 270) lo = mid; else return new Date(mid);
+          if (at(mid) > 270) lo = mid; else hi = mid;
         }
         return new Date(hi);
       }
@@ -199,11 +200,15 @@
   const RULERS = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
   const dayRuler = d => RULERS[(d || new Date()).getDay()];
 
-  /* degrees as a reader expects to see them, whole degrees and arcminutes */
+  /* degrees as a reader expects to see them, whole degrees and arcminutes.
+     Rounded as one number, so the minutes can never come out as 60. */
   function dms(deg) {
-    const w = Math.floor(deg);
-    return { deg: w, min: Math.round((deg - w) * 60) };
+    const total = Math.round(deg * 60);
+    return { deg: Math.floor(total / 60), min: total % 60 };
   }
+
+  /* a longitude rounded to the arcminute that will be printed from it */
+  const toArcmin = lon => Math.round(norm(lon) * 60) / 60;
 
   function sky(date) {
     const d = date || new Date();
@@ -215,8 +220,8 @@
   /* The whole day's reading, in one call, for the panel that shows it. */
   function ephemeris(date) {
     const d = date || new Date();
-    const s = place(sunLon(d));
-    const m = place(moonLon(d));
+    const s = place(toArcmin(sunLon(d)));
+    const m = place(toArcmin(moonLon(d)));
     const ph = moonPhase(d);
     /* the Sun's next sign, and the day it enters it */
     const nextSign = (s.index + 1) % 12;
@@ -238,6 +243,6 @@
   window.ASTRO = {
     SIGN_IDS, MANSIONS, RULERS,
     sunLon, moonLon, moonPhase, place, ingress, signDates, signOfDate, sky, jd,
-    nextPhase, moonIngress, mansion, dayRuler, dms, ephemeris,
+    nextPhase, moonIngress, mansion, dayRuler, dms, toArcmin, ephemeris,
   };
 })();
