@@ -11,11 +11,15 @@
    language as the dial in the hero, the sigil cut in starlight, and the sparks
    drawn as the stars they were always meant to be.                           */
 (function () {
+  /* The disc has to sit a step above the ground rather than level with it.
+     On the old violet page any dark disc read as an object; on black a disc
+     the colour of the page is not there at all, so the ground of the medallion
+     is the one thing here that is lighter than what surrounds it. */
   const C = {
-    night: '#12102A',      /* the disc */
-    rim:   '#3A3468',      /* the hairline around it */
-    star:  '#8FB0FF',      /* the sigil, and the sparks */
-    faint: '#5C6EA8',      /* the ticks */
+    night: '#16151A',      /* the disc */
+    rim:   '#544C3E',      /* the hairline around it */
+    star:  '#D6C9A8',      /* the sigil, and the sparks */
+    faint: '#7A7264',      /* the ticks */
   };
 
   /* drawn inside a 100×100 field, sigil living roughly between 24 and 76 */
@@ -71,7 +75,12 @@
     if (!d) return '';
     const sparks = (SPARKS[id] || []).map(([x, y], i) =>
       `<path d="${star(x, y, i ? 3.2 : 4.2, 1.1, 4)}" fill="${C.star}" opacity="${i ? 0.55 : 0.8}"/>`).join('');
-    return `<svg viewBox="0 0 100 100" class="sigil" role="img" aria-label="${opts.label || id}"
+    /* No class here. It used to carry "sigil", which is the ledger's class for
+       an earned mark: a bordered, blurred pane with a two column grid in it.
+       Every medallion was wearing it, and on the old violet ground the pane
+       was tinted the same violet so nobody saw the square it drew. On black
+       it is a square. */
+    return `<svg viewBox="0 0 100 100" role="img" aria-label="${opts.label || id}"
                  xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="49" fill="${C.night}"/>
       <circle cx="50" cy="50" r="46" fill="none" stroke="${C.rim}" stroke-width="1"/>

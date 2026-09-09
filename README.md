@@ -194,14 +194,31 @@ glows, nothing does.
 * **No web font is loaded**, because nothing on this site is loaded from
   anywhere. What carries the type is contrast and tracking, not a typeface
   nobody has.
-* **The accent is starlight, not gilding.** `--star` is `#8FB0FF`, the blue
-  white of a hot star, which is the one star colour the Sun is not. It marks
-  what is lit, chosen or current: the eyebrows, the ticks, the ornamental
-  rings, the underline under the language you are reading. At 8.9 to 1 on the
-  ground it carries small text, and it sits further from the near white body
-  text than the gold it replaced did, so a lit thing reads as lit. The card
-  linework and the twelve sign medallions were redrawn in the same light, so a
-  card and the page around it are lit by one colour rather than two.
+* **The ground is black, not a colour that is nearly black.** It used to be a
+  violet indigo with two saturated nebula clouds over it, and against those
+  nothing on the page could be the darkest thing on screen: a card, which
+  ought to be the one object you are looking into, sat on a ground brighter
+  than itself. What is left is a barely warm graphite that lifts at the top
+  of the page and gives out below, enough to keep the gradients from banding
+  and to let a plate read as a surface set into it. The star field carries
+  the rest, which is what it was always supposed to do.
+* **The accent is candlelight: `--star` is `#D6C9A8`,** a pale desaturated
+  champagne. It marks what is lit, chosen or current: the eyebrows, the
+  ticks, the ornamental rings, the underline under the language you are
+  reading. There is no second accent. Violet and cyan used to be the two hues
+  the page was built out of, and on black they were the only saturated things
+  on it, so the tokens that carried them now carry a warm graphite and a bone
+  grey instead. The token names did not change, so every rule written against
+  them kept working.
+* **At 11.9 to 1 on the ground** the accent carries the small tracked type the
+  labels are set in, and nothing in the palette falls below 5.3 to 1.
+* **The primary action is a ring of light**, not a slab. It was a filled
+  violet pill with a glow, which on black would have been the loudest object
+  on the page. It is near black inside now, with a champagne hairline round it
+  and champagne lettering.
+* **The card linework and the twelve medallions** are drawn in the same
+  champagne, so a card and the page around it are lit by one colour rather
+  than two.
 
 ### The orrery
 

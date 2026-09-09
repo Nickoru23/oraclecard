@@ -27,16 +27,18 @@
   'use strict';
 
   const C = {
-    top:   '#191441',
-    bottom:'#0A0819',
-    /* the engraved line: starlight rather than gilding, so a card and the
-       page around it are lit by the same colour */
-    line:  '#B9C9F2',
-    lineHi:'#E8EFFF',
-    cyan:  '#4FD8D3',
-    violet:'#A98BFF',
-    star:  '#EDEAFF',
-    ink:   '#05040F',
+    /* A card is the darkest object on a dark page, so it is nearly black and
+       barely warmer at the top, the way a card lying under a candle is. */
+    top:   '#171519',
+    bottom:'#08080A',
+    /* the engraved line: champagne, the same light the page is lit by, so a
+       card and the page around it are lit by one colour rather than two */
+    line:  '#D6C9A8',
+    lineHi:'#EFE7D4',
+    cyan:  '#9E9A90',
+    violet:'#7C7364',
+    star:  '#F2F0EA',
+    ink:   '#040405',
   };
 
   const N = n => (Math.round(n * 10) / 10);
