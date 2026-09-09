@@ -1,5 +1,8 @@
 node_modules/
 dist-deploy/
+# scratch output from the checks and the one off measurements
+.analysis.json
+.*.mjs
 *.zip
 .netlify/
 .DS_Store
