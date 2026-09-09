@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarot Oracle · Mystic Reading</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #06061a;
+  --gold: #c9a84c;
+  --gold-b: #f0d060;
+  --purple: #5b21b6;
+  --purple-m: #7c3aed;
+  --purple-l: #a78bfa;
+  --text: #e2d9f3;
+  --dim: #7c6a9a;
+  --card-bg: #0f0c2e;
+  --card-bd: #3b2a7a;
+}
+
+html, body { width:100%; height:100%; font-family:'Georgia','Times New Roman',serif; background:var(--bg); color:var(--text); overflow:hidden; }
+
+#starCanvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+/* ── Screens ── */
+.screen { position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity 0.7s ease; overflow-y:auto; overflow-x:hidden; padding:1.5rem 1rem; }
+.screen.active { opacity:1; pointer-events:all; }
+
+/* ── Shared ── */
+.divider { display:flex; align-items:center; gap:.75rem; color:var(--gold); opacity:.45; margin:1.2rem 0; font-size:.8rem; letter-spacing:.3em; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+
+.btn-main { background:linear-gradient(135deg,var(--purple-m),var(--purple)); border:1px solid rgba(201,168,76,.3); border-radius:100px; color:#fff; cursor:pointer; font-family:inherit; font-size:.95rem; letter-spacing:.12em; text-transform:uppercase; padding:.85rem 2.5rem; transition:all .3s; box-shadow:0 0 28px rgba(124,58,237,.35); }
+.btn-main:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(124,58,237,.6); }
+.btn-ghost { background:transparent; border:1px solid rgba(201,168,76,.3); border-radius:100px; color:var(--dim); cursor:pointer; font-family:inherit; font-size:.85rem; letter-spacing:.1em; text-transform:uppercase; padding:.7rem 2rem; transition:all .3s; }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ══ SCREEN 1 — INTRO ══ */
+#screen-intro .inner { text-align:center; max-width:560px; width:100%; animation:fadeUp 1s ease both; }
+.sigil { font-size:3.5rem; color:var(--gold); animation:sigilPulse 4s ease-in-out infinite; display:block; margin-bottom:.7rem; }
+@keyframes sigilPulse {
+  0%,100% { text-shadow:0 0 20px rgba(201,168,76,.4),0 0 40px rgba(201,168,76,.1); }
+  50% { text-shadow:0 0 40px rgba(201,168,76,.9),0 0 80px rgba(201,168,76,.35),0 0 120px rgba(201,168,76,.1); }
+}
+.intro-title { font-size:clamp(2.2rem,5vw,3.8rem); font-weight:normal; letter-spacing:.2em; color:var(--gold); text-transform:uppercase; line-height:1; margin-bottom:.4rem; }
+.intro-sub { font-size:.75rem; color:var(--dim); letter-spacing:.3em; text-transform:uppercase; }
+.question-box { width:100%; background:rgba(255,255,255,.03); border:1px solid rgba(201,168,76,.22); border-radius:14px; color:var(--text); font-family:inherit; font-size:1rem; padding:1rem 1.25rem; resize:none; height:88px; outline:none; transition:border-color .3s,box-shadow .3s; margin-bottom:1.5rem; }
+.question-box:focus { border-color:rgba(201,168,76,.6); box-shadow:0 0 25px rgba(201,168,76,.12); }
+.question-box::placeholder { color:var(--dim); font-style:italic; }
+.spread-label { font-size:.68rem; letter-spacing:.25em; text-transform:uppercase; color:var(--dim); margin-bottom:.7rem; }
+.spread-options { display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.75rem; }
+.spread-btn { background:transparent; border:1px solid rgba(201,168,76,.22); border-radius:100px; color:var(--dim); cursor:pointer; font-family:inherit; font-size:.78rem; letter-spacing:.06em; padding:.42rem 1.1rem; transition:all .25s; }
+.spread-btn:hover { border-color:var(--gold); color:var(--gold); }
+.spread-btn.active { background:rgba(201,168,76,.12); border-color:var(--gold); color:var(--gold); }
+
+/* ══ SCREEN 2 — PICK ══ */
+#screen-pick .inner { text-align:center; max-width:980px; width:100%; animation:fadeUp .6s ease both; }
+.pick-title { font-size:clamp(1.4rem,3vw,2rem); font-weight:normal; color:var(--gold); letter-spacing:.1em; margin-bottom:.3rem; }
+.pick-hint { color:var(--dim); font-style:italic; font-size:.88rem; margin-bottom:1.4rem; }
+.pip-track { display:flex; gap:.5rem; justify-content:center; margin-bottom:1.6rem; }
+.pip { width:8px; height:8px; border-radius:50%; border:1px solid rgba(201,168,76,.35); transition:all .4s; }
+.pip.lit { background:var(--gold); box-shadow:0 0 10px rgba(201,168,76,.7); border-color:var(--gold); }
+#deck-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:1.5rem; }
+
+.deck-card { width:72px; height:118px; border-radius:9px; cursor:pointer; position:relative; flex-shrink:0;
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s; opacity:0; transform:translateY(18px); }
+.deck-card.entered { opacity:1; transform:translateY(0); }
+.deck-card:hover:not(.picked):not(.used) { transform:translateY(-10px) scale(1.07); box-shadow:0 18px 40px rgba(124,58,237,.45); z-index:5; }
+.deck-card.picked { transform:translateY(-14px) scale(1.11); box-shadow:0 22px 50px rgba(201,168,76,.5); pointer-events:none; z-index:6; }
+.deck-card.used { opacity:.2; pointer-events:none; }
+.card-back { width:100%; height:100%; border-radius:9px; background:linear-gradient(160deg,#1a1050,#0a0820); border:1px solid var(--card-bd); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.card-back::before { content:''; position:absolute; inset:5px; border:1px solid rgba(139,92,246,.22); border-radius:5px; }
+.card-back::after { content:'✦'; font-size:1.4rem; color:rgba(139,92,246,.3); }
+.deck-card:hover:not(.picked):not(.used) .card-back { border-color:rgba(139,92,246,.65); }
+.deck-card.picked .card-back { border-color:var(--gold); background:linear-gradient(160deg,#221460,#0e0a30); }
+.deck-card.picked .card-back::after { color:rgba(201,168,76,.5); }
+
+/* ══ SCREEN 3 — READING ══ */
+#screen-reading .inner { text-align:center; max-width:1100px; width:100%; animation:fadeUp .6s ease both; }
+.reading-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:normal; color:var(--gold); letter-spacing:.2em; text-transform:uppercase; margin-bottom:.4rem; }
+.reading-q { font-style:italic; color:var(--dim); font-size:.88rem; margin-bottom:2rem; max-width:500px; margin-left:auto; margin-right:auto; }
+
+#reading-row { display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-bottom:2rem; align-items:flex-start; }
+
+.r-wrap { display:flex; flex-direction:column; align-items:center; gap:.75rem; opacity:0; transform:translateY(28px); transition:opacity .55s ease,transform .55s ease; max-width:180px; }
+.r-wrap.show { opacity:1; transform:translateY(0); }
+.pos-label { font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); opacity:.65; }
+
+/* 3-D flip */
+.flip-card { width:140px; height:220px; perspective:900px; }
+.flip-inner { width:100%; height:100%; transform-style:preserve-3d; transition:transform .95s cubic-bezier(.4,0,.2,1); position:relative; }
+.flip-card.flipped .flip-inner { transform:rotateY(180deg); }
+.flip-f,.flip-b { position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; overflow:hidden; }
+.flip-f { background:linear-gradient(160deg,#1a1050,#0a0820); border:1px solid var(--card-bd); display:flex; align-items:center; justify-content:center; }
+.flip-f::after { content:'✦'; font-size:2.2rem; color:rgba(139,92,246,.25); }
+.flip-b { transform:rotateY(180deg); display:flex; flex-direction:column; align-items:center; border:1px solid; padding:.55rem .5rem .6rem; }
+
+/* card illustration area */
+.card-art { width:100%; flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.card-art svg { width:100%; height:100%; }
+
+/* card text footer */
+.card-footer { width:100%; text-align:center; flex-shrink:0; padding-top:.3rem; border-top:1px solid rgba(255,255,255,.07); margin-top:.3rem; }
+.cf-num { font-size:.52rem; color:var(--gold); letter-spacing:.2em; opacity:.65; }
+.cf-name { font-size:.7rem; color:var(--gold); font-weight:bold; letter-spacing:.04em; margin:.15rem 0 .1rem; line-height:1.2; }
+.cf-orient { font-size:.5rem; letter-spacing:.15em; text-transform:uppercase; opacity:.45; margin-bottom:.15rem; }
+.cf-kw { font-size:.52rem; color:var(--dim); font-style:italic; line-height:1.35; }
+
+/* reversed inner content */
+.card-content.rev { transform:rotate(180deg); display:flex; flex-direction:column; width:100%; height:100%; }
+
+/* meaning block */
+.meaning-box { max-width:180px; text-align:center; }
+.m-name { font-size:.82rem; color:var(--gold); margin-bottom:.25rem; }
+.m-orient-tag { display:inline-block; font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; padding:.15rem .5rem; border-radius:100px; margin-bottom:.5rem; }
+.m-orient-tag.up { background:rgba(21,128,61,.2); border:1px solid rgba(21,128,61,.4); color:#4ade80; }
+.m-orient-tag.rv { background:rgba(124,58,237,.2); border:1px solid rgba(124,58,237,.4); color:var(--purple-l); }
+.m-text { font-size:.73rem; color:var(--text); line-height:1.65; opacity:.88; text-align:left; }
+
+/* ── Animations ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(201,168,76,.25); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+
+<!-- ═══ S1 INTRO ═══ -->
+<div id="screen-intro" class="screen active">
+  <div class="inner">
+    <span class="sigil">✦</span>
+    <h1 class="intro-title">Tarot Oracle</h1>
+    <p class="intro-sub">Ancient Wisdom · Mystic Revelation</p>
+    <div class="divider">✦</div>
+    <textarea id="q-input" class="question-box" placeholder="Focus your mind… What is the question that weighs upon your heart?"></textarea>
+    <p class="spread-label">Choose your spread</p>
+    <div class="spread-options">
+      <button class="spread-btn" data-n="1">Single Card</button>
+      <button class="spread-btn active" data-n="3">Past · Present · Future</button>
+      <button class="spread-btn" data-n="5">Five Card Cross</button>
+    </div>
+    <button class="btn-main" id="begin-btn">Begin My Reading</button>
+  </div>
+</div>
+
+<!-- ═══ S2 PICK ═══ -->
+<div id="screen-pick" class="screen">
+  <div class="inner">
+    <h2 class="pick-title" id="pick-title">Choose 3 Cards</h2>
+    <p class="pick-hint">Breathe deeply. Let your intuition guide your hand.</p>
+    <div class="pip-track" id="pip-track"></div>
+    <div id="deck-grid"></div>
+  </div>
+</div>
+
+<!-- ═══ S3 READING ═══ -->
+<div id="screen-reading" class="screen">
+  <div class="inner">
+    <h2 class="reading-title">Your Reading</h2>
+    <p class="reading-q" id="r-q"></p>
+    <div id="reading-row"></div>
+    <button class="btn-ghost" id="new-btn">New Reading</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   SVG ILLUSTRATIONS — 22 Major Arcana
+══════════════════════════════════════════════ */
+const SVGS = {
+  0:`<circle cx="72" cy="26" r="17" fill="rgba(240,208,96,.12)" stroke="#f0d060" stroke-width="1.2"/>
+     <line x1="72" y1="9" x2="72" y2="43" stroke="#f0d060" stroke-width=".8" opacity=".5"/>
+     <line x1="55" y1="26" x2="89" y2="26" stroke="#f0d060" stroke-width=".8" opacity=".5"/>
+     <circle cx="34" cy="60" r="7" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="34" y1="67" x2="34" y2="90" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="34" y1="76" x2="22" y2="86" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="34" y1="76" x2="47" y2="82" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="34" y1="90" x2="26" y2="103" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="34" y1="90" x2="42" y2="103" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="47" y1="82" x2="62" y2="68" stroke="#c9a84c" stroke-width="1.5"/>
+     <circle cx="64" cy="66" r="5" fill="rgba(201,168,76,.15)" stroke="#c9a84c" stroke-width="1.5"/>
+     <path d="M5 115 L38 115 L38 108 L100 108" stroke="#c9a84c" stroke-width="1.5" fill="none" opacity=".55"/>`,
+
+  1:`<path d="M28 38 C28 26 40 20 50 29 C60 37 70 40 80 31 C90 22 90 46 80 48 C70 50 60 48 50 40 C40 32 28 50 28 38Z" fill="none" stroke="#f0d060" stroke-width="1.4" opacity=".8"/>
+     <line x1="50" y1="55" x2="50" y2="100" stroke="#c9a84c" stroke-width="2"/>
+     <circle cx="50" cy="51" r="5" fill="rgba(201,168,76,.3)" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="43" y1="60" x2="57" y2="60" stroke="#c9a84c" stroke-width="1.2"/>
+     <rect x="18" y="100" width="64" height="3" rx="1.5" fill="rgba(255,255,255,.15)"/>
+     <text x="27" y="98" font-size="11" fill="#e11d48" text-anchor="middle" font-family="Georgia">♥</text>
+     <text x="40" y="98" font-size="11" fill="#e11d48" text-anchor="middle" font-family="Georgia">♦</text>
+     <text x="60" y="98" font-size="11" fill="#c9a84c" text-anchor="middle" font-family="Georgia">♣</text>
+     <text x="73" y="98" font-size="11" fill="#c9a84c" text-anchor="middle" font-family="Georgia">♠</text>`,
+
+  2:`<rect x="18" y="18" width="10" height="90" rx="2" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>
+     <rect x="72" y="18" width="10" height="90" rx="2" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>
+     <text x="23" y="38" font-size="10" fill="#f0d060" text-anchor="middle" font-family="Georgia">B</text>
+     <text x="77" y="38" font-size="10" fill="#f0d060" text-anchor="middle" font-family="Georgia">J</text>
+     <path d="M35 50 Q50 58 65 50" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+     <ellipse cx="50" cy="65" rx="14" ry="18" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+     <path d="M34 112 Q50 106 66 112" fill="rgba(201,168,76,.12)" stroke="#c9a84c" stroke-width="1"/>
+     <path d="M40 44 Q50 30 60 44" fill="none" stroke="#f0d060" stroke-width="1.2"/>`,
+
+  3:`<text x="50" y="68" font-size="34" fill="none" stroke="#c9a84c" stroke-width="1.2" text-anchor="middle" font-family="Georgia">♀</text>
+     <circle cx="50" cy="30" r="14" fill="rgba(201,168,76,.1)" stroke="#f0d060" stroke-width="1.2"/>
+     <path d="M20 95 Q50 85 80 95 Q65 112 35 112 Z" fill="rgba(21,128,61,.15)" stroke="#16a34a" stroke-width="1"/>
+     <line x1="28" y1="90" x2="20" y2="108" stroke="#16a34a" stroke-width="1" opacity=".6"/>
+     <line x1="38" y1="90" x2="33" y2="110" stroke="#16a34a" stroke-width="1" opacity=".6"/>
+     <line x1="50" y1="88" x2="50" y2="110" stroke="#16a34a" stroke-width="1" opacity=".6"/>
+     <line x1="62" y1="90" x2="67" y2="110" stroke="#16a34a" stroke-width="1" opacity=".6"/>
+     <line x1="72" y1="90" x2="80" y2="108" stroke="#16a34a" stroke-width="1" opacity=".6"/>`,
+
+  4:`<rect x="28" y="30" width="44" height="80" rx="4" fill="rgba(255,255,255,.05)" stroke="#c9a84c" stroke-width="1.2"/>
+     <path d="M20 30 Q28 20 36 30" fill="none" stroke="#c9a84c" stroke-width="1.3"/>
+     <path d="M64 30 Q72 20 80 30" fill="none" stroke="#c9a84c" stroke-width="1.3"/>
+     <path d="M20 110 Q28 120 36 110" fill="none" stroke="#c9a84c" stroke-width="1.3"/>
+     <path d="M64 110 Q72 120 80 110" fill="none" stroke="#c9a84c" stroke-width="1.3"/>
+     <circle cx="50" cy="62" r="10" fill="rgba(201,168,76,.15)" stroke="#f0d060" stroke-width="1"/>
+     <line x1="50" y1="52" x2="50" y2="72" stroke="#f0d060" stroke-width=".8" opacity=".6"/>
+     <line x1="40" y1="62" x2="60" y2="62" stroke="#f0d060" stroke-width=".8" opacity=".6"/>
+     <path d="M18 108 L28 100 L72 100 L82 108" stroke="#b45309" stroke-width="1.2" fill="none"/>`,
+
+  5:`<line x1="50" y1="15" x2="50" y2="115" stroke="#c9a84c" stroke-width="2"/>
+     <line x1="32" y1="45" x2="68" y2="45" stroke="#c9a84c" stroke-width="2"/>
+     <line x1="36" y1="62" x2="64" y2="62" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="40" y1="77" x2="60" y2="77" stroke="#c9a84c" stroke-width="1.2"/>
+     <path d="M32 88 L28 98 L24 108" stroke="#f0d060" stroke-width="1.5" fill="none"/>
+     <path d="M68 88 L72 98 L76 108" stroke="#f0d060" stroke-width="1.5" fill="none"/>
+     <circle cx="32" cy="90" r="3" fill="#c9a84c"/>
+     <circle cx="68" cy="90" r="3" fill="#c9a84c"/>`,
+
+  6:`<circle cx="50" cy="18" r="12" fill="rgba(240,208,96,.15)" stroke="#f0d060" stroke-width="1.2"/>
+     <path d="M42 22 L30 35" stroke="#f0d060" stroke-width="1" opacity=".6"/>
+     <path d="M58 22 L70 35" stroke="#f0d060" stroke-width="1" opacity=".6"/>
+     <path d="M44 30 Q35 40 38 50 Q42 38 50 36 Q58 38 62 50 Q65 40 56 30 Q50 24 44 30Z" fill="rgba(201,168,76,.2)" stroke="#c9a84c" stroke-width="1"/>
+     <circle cx="33" cy="75" r="8" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="33" y1="83" x2="33" y2="108" stroke="#c9a84c" stroke-width="1.5"/>
+     <circle cx="67" cy="75" r="8" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+     <line x1="67" y1="83" x2="67" y2="108" stroke="#c9a84c" stroke-width="1.5"/>
+     <path d="M20 65 Q20 55 28 55 Q28 65 28 70" fill="none" stroke="#e11d48" stroke-width="1" opacity=".5"/>
+     <path d="M80 65 Q80 55 72 55 Q72 65 72 70" fill="none" stroke="#e11d48" stroke-width="1" opacity=".5"/>`,
+
+  7:`<rect x="24" y="60" width="52" height="50" rx="3" fill="rgba(255,255,255,.06)" stroke="#c9a84c" stroke-width="1.2"/>
+     <path d="M24 60 L50 40 L76 60" fill="rgba(201,168,76,.1)" stroke="#c9a84c" stroke-width="1.2"/>
+     <ellipse cx="35" cy="115" rx="10" ry="6" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>
+     <ellipse cx="65" cy="115" rx="10" ry="6" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>
+     <text x="35" y="119" font-size="8" fill="#c9a84c" text-anchor="middle">☽</text>
+     <text x="65" y="119" font-size="8" fill="#c9a84c" text-anchor="middle">☽</text>
+     <path d="M30 20 L50 14 L70 20 L76 60 L24 60Z" fill="rgba(21,37,129,.3)" stroke="#3b82f6" stroke-width="1"/>
+     <text x="35" y="38" font-size="8" fill="#f0d060">★</text>
+     <text x="50" y="34" font-size="10" fill="#f0d060" text-anchor="middle">★</text>
+     <text x="65" y="38" font-size="8" fill="#f0d060">★</text>`,
+
+  8:`<path d="M28 38 C28 26 40 20 50 29 C60 37 70 40 80 31 C90 22 90 46 80 48 C70 50 60 48 50 40 C40 32 28 50 28 38Z" fill="none" stroke="#f0d060" stroke-width="1.4" opacity=".8"/>
+     <ellipse cx="50" cy="80" rx="22" ry="18" fill="rgba(255,255,255,.05)" stroke="#ca8a04" stroke-width="1.2"/>
+     <path d="M32 78 Q36 70 44 72 Q50 74 50 80" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+     <path d="M68 78 Q64 70 56 72 Q50 74 50 80" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+     <circle cx="38" cy="90" r="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+     <circle cx="62" cy="90" r="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+     <path d="M38 94 Q50 102 62 94" fill="none" stroke="#ca8a04" stroke-width="1.2"/>`,
+
+  9:`<line x1="50" y1="20" x2="50" y2="108" stroke="#c9a84c" stroke-width="2"/>
+     <path d="M32 20 Q50 12 68 20" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+     <path d="M38 60 L50 40 L62 60Z" fill="rgba(240,208,96,.2)" stroke="#f0d060" stroke-width="1"/>
+     <rect x="42" y="60" width="16" height="22" rx="3" fill="rgba(240,208,96,.1)" stroke="#c9a84c" stroke-width="1"/>
+     <circle cx="50" cy="50" r="5" fill="rgba(240,208,96,.3)" stroke="#f0d060" stroke-width="1"/>
+     <line x1="42" y1="70" x2="58" y2="70" stroke="#f0d060" stroke-width=".8" opacity=".6"/>
+     <path d="M20 108 L50 108 Q55 105 60 108 L80 108" fill="none" stroke="#6b7280" stroke-width="1" opacity=".5"/>`,
+
+  10:`<circle cx="50" cy="65" r="42" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="50" cy="65" r="30" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>
+      <line x1="8" y1="65" x2="92" y2="65" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>
+      <line x1="50" y1="23" x2="50" y2="107" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>
+      <line x1="20" y1="35" x2="80" y2="95" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>
+      <line x1="80" y1="35" x2="20" y2="95" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>
+      <text x="35" y="45" font-size="9" fill="#f0d060" text-anchor="middle" font-family="Georgia">T</text>
+      <text x="65" y="45" font-size="9" fill="#f0d060" text-anchor="middle" font-family="Georgia">A</text>
+      <text x="65" y="88" font-size="9" fill="#f0d060" text-anchor="middle" font-family="Georgia">R</text>
+      <text x="35" y="88" font-size="9" fill="#f0d060" text-anchor="middle" font-family="Georgia">O</text>
+      <circle cx="50" cy="65" r="10" fill="rgba(124,58,237,.2)" stroke="#7c3aed" stroke-width="1.5"/>`,
+
+  11:`<line x1="50" y1="15" x2="50" y2="105" stroke="#c9a84c" stroke-width="2.2"/>
+      <line x1="42" y1="35" x2="58" y2="35" stroke="#c9a84c" stroke-width="1.8"/>
+      <line x1="50" y1="35" x2="50" y2="15" stroke="#f0d060" stroke-width="1.5"/>
+      <line x1="32" y1="70" x2="50" y2="60" stroke="#c9a84c" stroke-width="1.2"/>
+      <line x1="68" y1="70" x2="50" y2="60" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="32" cy="72" r="7" fill="rgba(255,255,255,.06)" stroke="#c9a84c" stroke-width="1"/>
+      <circle cx="68" cy="72" r="7" fill="rgba(255,255,255,.06)" stroke="#c9a84c" stroke-width="1"/>
+      <line x1="25" y1="72" x2="39" y2="72" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>
+      <line x1="61" y1="72" x2="75" y2="72" stroke="#c9a84c" stroke-width=".8" opacity=".5"/>`,
+
+  12:`<line x1="20" y1="20" x2="80" y2="20" stroke="#c9a84c" stroke-width="2"/>
+      <line x1="20" y1="14" x2="20" y2="26" stroke="#c9a84c" stroke-width="1.5"/>
+      <line x1="80" y1="14" x2="80" y2="26" stroke="#c9a84c" stroke-width="1.5"/>
+      <line x1="50" y1="20" x2="50" y2="55" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="50" cy="90" r="24" fill="rgba(8,145,178,.1)" stroke="#0891b2" stroke-width="1.2"/>
+      <circle cx="50" cy="90" r="8" fill="rgba(8,145,178,.2)" stroke="#0891b2" stroke-width="1"/>
+      <line x1="34" y1="75" x2="40" y2="88" stroke="#c9a84c" stroke-width="1.2"/>
+      <line x1="66" y1="75" x2="60" y2="88" stroke="#c9a84c" stroke-width="1.2"/>
+      <path d="M40 88 Q50 100 60 88" fill="none" stroke="#c9a84c" stroke-width="1.2"/>`,
+
+  13:`<circle cx="50" cy="45" r="20" fill="rgba(55,65,81,.3)" stroke="#c9a84c" stroke-width="1.2"/>
+       <circle cx="42" cy="40" r="4" fill="rgba(0,0,0,.5)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="58" cy="40" r="4" fill="rgba(0,0,0,.5)" stroke="#c9a84c" stroke-width="1"/>
+       <path d="M40 52 Q50 56 60 52" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+       <path d="M38 57 Q50 62 62 57" fill="none" stroke="#c9a84c" stroke-width="1"/>
+       <path d="M42 65 Q50 75 58 65" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="50" cy="85" r="9" fill="rgba(255,255,255,.08)" stroke="white" stroke-width="1"/>
+       <path d="M44 83 Q50 91 56 83" fill="rgba(255,255,255,.15)" stroke="white" stroke-width=".8"/>
+       <line x1="30" y1="115" x2="50" y2="95" stroke="#6b7280" stroke-width="1"/>
+       <line x1="70" y1="115" x2="50" y2="95" stroke="#6b7280" stroke-width="1"/>
+       <path d="M22 108 L35 95 L50 100 L65 95 L78 108" fill="none" stroke="#f0d060" stroke-width="1" opacity=".5"/>`,
+
+  14:`<path d="M20 40 Q20 15 50 15 Q80 15 80 40" fill="rgba(201,168,76,.08)" stroke="#c9a84c" stroke-width="1.5"/>
+       <path d="M22 40 Q12 60 20 80" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+       <path d="M78 40 Q88 60 80 80" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+       <circle cx="36" cy="90" r="10" fill="rgba(8,145,178,.15)" stroke="#0891b2" stroke-width="1"/>
+       <circle cx="64" cy="90" r="10" fill="rgba(8,145,178,.15)" stroke="#0891b2" stroke-width="1"/>
+       <path d="M46 88 Q50 80 54 88" fill="none" stroke="#0ea5e9" stroke-width="1.5"/>
+       <path d="M40 100 Q50 110 60 100" fill="none" stroke="#0ea5e9" stroke-width="1"/>
+       <polygon points="50,55 58,68 42,68" fill="rgba(201,168,76,.2)" stroke="#f0d060" stroke-width="1"/>`,
+
+  15:`<polygon points="50,15 56,30 72,30 60,40 65,55 50,45 35,55 40,40 28,30 44,30" fill="rgba(127,29,29,.2)" stroke="#c9a84c" stroke-width="1.2"/>
+       <path d="M32 62 L32 55" stroke="#c9a84c" stroke-width="1.5"/>
+       <path d="M68 62 L68 55" stroke="#c9a84c" stroke-width="1.5"/>
+       <circle cx="32" cy="70" r="8" fill="rgba(127,29,29,.2)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="68" cy="70" r="8" fill="rgba(127,29,29,.2)" stroke="#c9a84c" stroke-width="1"/>
+       <line x1="32" y1="78" x2="32" y2="100" stroke="#c9a84c" stroke-width="1.2"/>
+       <line x1="68" y1="78" x2="68" y2="100" stroke="#c9a84c" stroke-width="1.2"/>
+       <line x1="36" y1="95" x2="64" y2="95" stroke="#c9a84c" stroke-width="1" opacity=".6"/>
+       <path d="M40 100 Q50 108 60 100" fill="none" stroke="#c9a84c" stroke-width="1"/>`,
+
+  16:`<rect x="36" y="15" width="28" height="70" rx="3" fill="rgba(255,255,255,.06)" stroke="#c9a84c" stroke-width="1.5"/>
+       <path d="M36 15 L50 10 L64 15" fill="rgba(201,168,76,.2)" stroke="#f0d060" stroke-width="1.2"/>
+       <rect x="38" y="14" width="24" height="5" rx="2" fill="#f0d060" opacity=".7" transform="rotate(-12 50 16)"/>
+       <path d="M70 20 L85 45 L72 38 L80 60" stroke="#f0d060" stroke-width="2" fill="none" stroke-linejoin="round"/>
+       <circle cx="28" cy="85" r="6" fill="rgba(255,100,0,.2)" stroke="#ea580c" stroke-width="1.2"/>
+       <circle cx="72" cy="95" r="6" fill="rgba(255,100,0,.2)" stroke="#ea580c" stroke-width="1.2"/>
+       <line x1="28" y1="79" x2="22" y2="65" stroke="#ea580c" stroke-width="1.2"/>
+       <line x1="72" y1="89" x2="78" y2="75" stroke="#ea580c" stroke-width="1.2"/>`,
+
+  17:`<polygon points="50,14 54,26 66,26 56,33 60,46 50,39 40,46 44,33 34,26 46,26" fill="rgba(14,165,233,.15)" stroke="#f0d060" stroke-width="1.4"/>
+       <circle cx="50" cy="30" r="5" fill="#f0d060" opacity=".7"/>
+       <circle cx="22" cy="38" r="3.5" fill="rgba(240,208,96,.5)" stroke="#f0d060" stroke-width=".8"/>
+       <circle cx="78" cy="38" r="3.5" fill="rgba(240,208,96,.5)" stroke="#f0d060" stroke-width=".8"/>
+       <circle cx="14" cy="58" r="2.5" fill="rgba(240,208,96,.4)"/>
+       <circle cx="86" cy="58" r="2.5" fill="rgba(240,208,96,.4)"/>
+       <circle cx="22" cy="76" r="2.5" fill="rgba(240,208,96,.4)"/>
+       <circle cx="78" cy="76" r="2.5" fill="rgba(240,208,96,.4)"/>
+       <ellipse cx="50" cy="90" rx="16" ry="6" fill="rgba(14,165,233,.12)" stroke="#0ea5e9" stroke-width="1"/>
+       <path d="M36 85 Q36 70 45 65" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+       <path d="M64 85 Q64 70 55 65" fill="none" stroke="#c9a84c" stroke-width="1.2"/>`,
+
+  18:`<circle cx="50" cy="35" r="20" fill="rgba(76,29,149,.2)" stroke="#c9a84c" stroke-width="1.5"/>
+       <circle cx="50" cy="28" r="12" fill="rgba(76,29,149,.1)" stroke="#a78bfa" stroke-width=".8" opacity=".6"/>
+       <ellipse cx="44" cy="34" r="4" ry="5" fill="rgba(0,0,0,.4)" stroke="#c9a84c" stroke-width="1"/>
+       <ellipse cx="56" cy="34" r="4" ry="5" fill="rgba(0,0,0,.4)" stroke="#c9a84c" stroke-width="1"/>
+       <path d="M42 42 Q50 46 58 42" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+       <path d="M20 115 Q30 95 38 85 Q45 75 50 72 Q55 75 62 85 Q70 95 80 115" fill="rgba(8,8,50,.3)" stroke="#4c1d95" stroke-width="1"/>
+       <rect x="18" y="75" width="8" height="35" rx="2" fill="rgba(76,29,149,.2)" stroke="#4c1d95" stroke-width="1"/>
+       <rect x="74" y="75" width="8" height="35" rx="2" fill="rgba(76,29,149,.2)" stroke="#4c1d95" stroke-width="1"/>
+       <path d="M28 115 Q50 108 72 115" fill="rgba(8,8,50,.4)" stroke="#4c1d95" stroke-width="1"/>`,
+
+  19:`<circle cx="50" cy="42" r="24" fill="rgba(234,88,12,.12)" stroke="#f0d060" stroke-width="1.5"/>
+       <line x1="50" y1="14" x2="50" y2="18" stroke="#f0d060" stroke-width="2"/>
+       <line x1="50" y1="66" x2="50" y2="70" stroke="#f0d060" stroke-width="2"/>
+       <line x1="22" y1="42" x2="26" y2="42" stroke="#f0d060" stroke-width="2"/>
+       <line x1="74" y1="42" x2="78" y2="42" stroke="#f0d060" stroke-width="2"/>
+       <line x1="31" y1="21" x2="34" y2="24" stroke="#f0d060" stroke-width="1.5"/>
+       <line x1="66" y1="60" x2="69" y2="63" stroke="#f0d060" stroke-width="1.5"/>
+       <line x1="69" y1="21" x2="66" y2="24" stroke="#f0d060" stroke-width="1.5"/>
+       <line x1="31" y1="60" x2="34" y2="63" stroke="#f0d060" stroke-width="1.5"/>
+       <circle cx="50" cy="42" r="10" fill="rgba(234,88,12,.25)" stroke="#ea580c" stroke-width="1"/>
+       <circle cx="30" cy="95" r="8" fill="rgba(234,88,12,.1)" stroke="#ca8a04" stroke-width="1"/>
+       <circle cx="55" cy="95" r="8" fill="rgba(234,88,12,.1)" stroke="#ca8a04" stroke-width="1"/>
+       <circle cx="80" cy="90" r="6" fill="none" stroke="#ca8a04" stroke-width="1"/>`,
+
+  20:`<path d="M25 20 Q25 10 50 8 Q75 10 75 20 L72 25 L50 18 L28 25Z" fill="rgba(3,105,161,.2)" stroke="#0ea5e9" stroke-width="1"/>
+       <path d="M28 25 Q30 18 50 18 Q70 18 72 25" fill="rgba(3,105,161,.15)" stroke="#0ea5e9" stroke-width="1"/>
+       <line x1="50" y1="25" x2="50" y2="50" stroke="#c9a84c" stroke-width="1.5"/>
+       <path d="M40 40 Q50 36 60 40" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+       <rect x="22" y="85" width="16" height="22" rx="2" fill="rgba(3,105,161,.15)" stroke="#0369a1" stroke-width="1"/>
+       <rect x="42" y="80" width="16" height="22" rx="2" fill="rgba(3,105,161,.15)" stroke="#0369a1" stroke-width="1"/>
+       <rect x="62" y="85" width="16" height="22" rx="2" fill="rgba(3,105,161,.15)" stroke="#0369a1" stroke-width="1"/>
+       <circle cx="30" cy="82" r="6" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="50" cy="77" r="6" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="70" cy="82" r="6" fill="rgba(255,255,255,.08)" stroke="#c9a84c" stroke-width="1"/>`,
+
+  21:`<ellipse cx="50" cy="65" rx="35" ry="48" fill="none" stroke="#15803d" stroke-width="1.8"/>
+       <ellipse cx="50" cy="65" rx="29" ry="42" fill="none" stroke="#16a34a" stroke-width=".8" opacity=".5"/>
+       <circle cx="50" cy="55" r="10" fill="rgba(21,128,61,.15)" stroke="#c9a84c" stroke-width="1"/>
+       <line x1="50" y1="50" x2="50" y2="58" stroke="#c9a84c" stroke-width="1.5"/>
+       <line x1="44" y1="56" x2="56" y2="56" stroke="#c9a84c" stroke-width="1.2"/>
+       <line x1="44" y1="65" x2="56" y2="70" stroke="#c9a84c" stroke-width="1.2"/>
+       <line x1="56" y1="65" x2="44" y2="70" stroke="#c9a84c" stroke-width="1.2"/>
+       <circle cx="18" cy="28" r="5" fill="rgba(255,255,255,.12)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="82" cy="28" r="5" fill="rgba(255,255,255,.12)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="18" cy="102" r="5" fill="rgba(255,255,255,.12)" stroke="#c9a84c" stroke-width="1"/>
+       <circle cx="82" cy="102" r="5" fill="rgba(255,255,255,.12)" stroke="#c9a84c" stroke-width="1"/>`
+};
+
+/* ══════════════════════════════════════════════
+   CARD DATA — 22 Major Arcana
+══════════════════════════════════════════════ */
+const CARDS = [
+  { id:0, roman:'0', name:'The Fool', color:'#7c3aed',
+    kw:['Beginnings','Innocence','Leap of Faith'],
+    up:`The Fool stands at the very threshold of existence — a sacred, liminal space where one chapter quietly dissolves and another rushes in with open, trembling arms. You are being called to embrace a new beginning, to walk forward without knowing exactly where your feet will land, trusting that the ground will rise to meet them. Pure potential radiates from this card: unformed, untouched, electric with the energy of everything that has not yet been decided. The universe is not asking you to be fearless — it is asking you to move in spite of your fear, because that is where true magic lives.`,
+    rv:`The reversed Fool speaks of a leap taken too rashly, without wisdom or preparation guiding the way. You may be charging forward while ignoring genuine warning signs, or allowing the thrill of novelty to override your better judgement. There is also a subtler message here: sometimes the reversed Fool represents paralysis — you want to begin something new but fear the unknown so deeply that you remain frozen on the cliff's edge. The card asks you to find the balance between bold action and grounded discernment.` },
+
+  { id:1, roman:'I', name:'The Magician', color:'#dc2626',
+    kw:['Manifestation','Willpower','Skill'],
+    up:`The Magician reminds you, with absolute clarity, that you already possess everything you need. On the table before him lie the four sacred tools — cup, wand, sword, and pentacle — representing emotion, will, intellect, and material reality. He is the bridge between the divine and the earthly, the channel through which inspiration becomes form. This card urges you to act with focused intention: your thoughts are seeds, your actions are water, and the world around you is ready to bloom in response to your deliberate choices.`,
+    rv:`In reversal, the Magician warns of power misused or squandered. You may be relying on clever maneuvering rather than genuine skill, or allowing self-doubt to disconnect you from your own remarkable capabilities. There is also the risk of manipulation — either by someone around you, or by the shadow parts of yourself that prefer shortcuts over honest work. The reversed Magician asks: are you fully committed to your goal, or are you performing the appearance of effort while secretly holding back?` },
+
+  { id:2, roman:'II', name:'The High Priestess', color:'#2563eb',
+    kw:['Intuition','Mystery','Inner Knowing'],
+    up:`The High Priestess sits in serene stillness between two great pillars — one light, one dark — the guardians of conscious and unconscious, known and unknown. She does not speak; she listens, and in that listening she hears everything. This card arrives when the answer you seek is not found in logic or strategy but in the quiet depths of your own intuition. Something is being kept hidden from you — or perhaps hidden by you from yourself. Pause, go inward, and trust the wordless knowing that stirs beneath rational thought. The truth is already within you.`,
+    rv:`The reversed High Priestess suggests a disconnect from your inner voice — perhaps you have been so immersed in the noise of the external world that you can no longer hear the subtle signals your soul has been sending. There may be secrets concealed from you by others, or aspects of a situation deliberately obscured. Be cautious of false intuition, too: sometimes what we believe is our inner knowing is actually fear or wishful thinking wearing its costume. Reclaim your stillness, and wisdom will return.` },
+
+  { id:3, roman:'III', name:'The Empress', color:'#16a34a',
+    kw:['Abundance','Creation','Nurture'],
+    up:`The Empress is nature itself — generous, lush, and endlessly creative. She is the embodiment of fertility in all its forms: the birth of children, the blossoming of ideas, the flourishing of relationships, the ripening of ambition into achievement. When she appears, she carries a message of abundance already flowing toward you, and of creative energies that are ripe for expression. This is a time to connect with the earth, with beauty, and with the life-giving power of care — both for yourself and for the projects and people you cherish.`,
+    rv:`The reversed Empress may point to a creative block, a period of depletion, or a pattern of dependence that has grown unhealthy. You may be giving far more than you are receiving, or neglecting your own nourishment while tending to the needs of everyone around you. Alternatively, this card in reversal can speak to an overprotective or smothering energy — holding too tightly to people or ideas rather than allowing them the space to grow naturally. Return to self-care as a foundation before trying to cultivate anything else.` },
+
+  { id:4, roman:'IV', name:'The Emperor', color:'#b45309',
+    kw:['Authority','Structure','Stability'],
+    up:`The Emperor speaks of order built on solid, deliberate foundations — the kind of stability that comes not from chance but from consistent, disciplined effort. He is the force of leadership, responsibility, and the wisdom to establish boundaries that protect what matters most. His energy is not cold or authoritarian; at its highest, it is the firm and loving structure that allows others to feel safe and to thrive. This card calls on you to step into your authority — to lead with clarity, plan with intention, and build something that will endure.`,
+    rv:`The reversed Emperor reveals where structure has curdled into rigidity. The qualities that make him powerful — control, discipline, authority — become destructive when they are applied without flexibility or compassion. You may be encountering a domineering energy in your environment, or recognizing it within yourself: an unwillingness to yield, listen, or adapt. There can also be an abdication of responsibility at work here — a refusal to step into leadership when it is clearly needed. The invitation is to reclaim strength without surrendering warmth.` },
+
+  { id:5, roman:'V', name:'The Hierophant', color:'#d97706',
+    kw:['Tradition','Spiritual Guidance','Belief'],
+    up:`The Hierophant is the keeper of sacred tradition — the bridge between the divine and the congregation, the teacher who carries inherited wisdom forward so that it may continue to illuminate. His appearance suggests that guidance, mentorship, or a structured spiritual path holds real value for you at this moment. There is wisdom in the tried and tested, in learning from those who walked this road before you. This card can also speak to institutions, ritual, ceremony, or the comfort of shared belief — the sense of belonging that comes from being part of something larger than the self.`,
+    rv:`In reversal, the Hierophant challenges you to question what you have been taught and to discover your own truth beyond the boundaries of doctrine or expectation. The conventional path may feel suffocating now; your soul may be hungry for something more personal, more alive, less inherited and more earned. Be discerning: this card in reversal can also warn of dogma, hypocrisy, or the misuse of spiritual authority. True wisdom, this card reminds you, must ultimately be found from within.` },
+
+  { id:6, roman:'VI', name:'The Lovers', color:'#e11d48',
+    kw:['Love','Alignment','Sacred Choice'],
+    up:`The Lovers announces a moment of profound alignment — between heart and mind, between two people, or between different paths that diverge before you. This card is about far more than romantic love, though it certainly includes it; at its core it speaks to the sacred nature of genuine connection and the power of conscious choice. Something must be chosen: a direction, a relationship, a set of values. The angels look on not to judge your decision, but to witness it. What you choose now will define what becomes possible — choose with your whole being, not just the loudest part of it.`,
+    rv:`The reversed Lovers points to disharmony, misalignment, or a choice made for the wrong reasons — perhaps out of fear, pressure, or a desire to avoid discomfort rather than a genuine resonance with your values. In relationships, it may indicate imbalance, communication breakdown, or a growing incompatibility that has been difficult to face. It can also speak to an internal division: conflicting desires pulling you in opposite directions, leaving you unable to commit fully to any one path. Honesty — especially with yourself — is the first step toward resolution.` },
+
+  { id:7, roman:'VII', name:'The Chariot', color:'#0369a1',
+    kw:['Victory','Willpower','Direction'],
+    up:`The Chariot is the card of triumphant forward motion — not effortless or accidental, but hard-won through the sheer force of concentrated will. The charioteer does not hold reins; he commands his two opposing sphinx by the power of focused intention alone, channeling tension and contradiction into a single forward trajectory. This card tells you that victory is not only possible but likely — provided you master your own internal conflicts rather than being pulled apart by them. Clarity of purpose is your greatest weapon. Harness it, and nothing can stop you.`,
+    rv:`Reversed, the Chariot signals scattered energy, loss of direction, or a battle for control that has turned aggressive or futile. You may be pushing forward with sheer stubbornness when wisdom would call for a moment of reassessment. There can also be external obstacles — circumstances that feel beyond your control — and the reversed Chariot asks whether you are fighting the current wisely or exhausting yourself against the tide. Pause, recalibrate your heading, and find your center before moving forward again.` },
+
+  { id:8, roman:'VIII', name:'Strength', color:'#ca8a04',
+    kw:['Inner Power','Compassion','Patience'],
+    up:`Strength is not the roar of force — it is the quiet, unshakeable courage of someone who closes a lion's mouth with gentle hands. The woman in this card does not subdue the great beast through domination; she meets it with love, patience, and an unbroken trust in her own inner resources. This card arrives to remind you that the most powerful thing you can do right now is to stay soft when everything around you hardens, to meet difficulty with compassion rather than aggression, and to draw on the deep reserves of endurance within you that you may have forgotten you possessed.`,
+    rv:`In reversal, Strength speaks of self-doubt eroding your foundations — a creeping sense that you do not have what it takes, that the challenge before you is too great. Raw emotion may be overpowering your ability to respond thoughtfully, or fear may be masquerading as wisdom to keep you from acting at all. It can also indicate that strength is being expressed through force rather than grace — pushing when gentleness would be far more effective. Reconnect with your compassion: for others, yes, but also — urgently — for yourself.` },
+
+  { id:9, roman:'IX', name:'The Hermit', color:'#6b7280',
+    kw:['Solitude','Soul-Search','Inner Light'],
+    up:`The Hermit has climbed to the top of a cold mountain and stands alone in the dark — not because he is lost, but because he is seeking something that can only be found in silence. The lantern he carries is not meant to show him the entire road ahead; it illuminates only the next step, and that is enough. This card arrives as an invitation to withdraw from the noise and busyness of daily life and enter into a period of deep introspection. The guidance you need cannot be found in the opinions of others or the scrolling feed of distraction. Go within. The light is already there.`,
+    rv:`The reversed Hermit warns of isolation that has curdled from productive solitude into loneliness or withdrawal. You may have retreated so far inward that you have cut yourself off from the nourishment of genuine connection. Alternatively, this reversal can indicate a refusal to look inward — a compulsive need to stay busy, surrounded, and externally stimulated to avoid sitting with yourself. There is something waiting to be acknowledged in the quiet. When you are ready to face it, the path forward becomes clear.` },
+
+  { id:10, roman:'X', name:'Wheel of Fortune', color:'#7c3aed',
+    kw:['Change','Cycles','Fate'],
+    up:`The Wheel turns — and in its turning, everything changes. Fortune shifts, seasons cycle, the high are humbled and the fallen rise again. The Wheel of Fortune is a reminder that change is the one absolute constant in life, and that the universe moves in rhythms far larger than any individual story. Something in your situation is shifting right now, and this card carries the encouraging message that the turn is in your favor. There is also an invitation to reflect on karma here: what you have given returns to you. The seeds you have planted are beginning to bear fruit.`,
+    rv:`In reversal, the Wheel of Fortune speaks of resistance — an unwillingness to accept the changes that are already in motion. There may be a sense of bad luck or of circumstances conspiring against you; if so, examine whether you are fighting the flow of life rather than learning to navigate it. Cycles of misfortune can also be internal: patterns of behavior or belief that keep bringing you back to the same painful circumstances. The reversed Wheel asks you to identify what must change within you before the outer world can shift.` },
+
+  { id:11, roman:'XI', name:'Justice', color:'#1d4ed8',
+    kw:['Truth','Fairness','Cause & Effect'],
+    up:`Justice holds her scales with unwavering steadiness, and her sword is double-edged: it cuts through illusion and it holds the power of consequence. This card speaks directly to truth — to the understanding that every action reverberates outward, that fairness is a cosmic principle woven into the fabric of existence itself. A situation in your life is approaching resolution, and the outcome will be fair — not necessarily what you hoped for, but proportionate to what has been sown. Be impeccable in your honesty now. The scales do not lie, and neither should you.`,
+    rv:`Reversed Justice warns of injustice — a situation where the outcome has been distorted by bias, deception, or the misuse of power. You may feel that you are not being treated fairly, or that the truth is being deliberately obscured. This reversal can also point inward: a refusal to take honest responsibility for your own role in a difficult situation, a tendency to rationalize rather than reckon. The path to resolution begins with a clear-eyed willingness to see things — and yourself — as they truly are.` },
+
+  { id:12, roman:'XII', name:'The Hanged Man', color:'#0891b2',
+    kw:['Surrender','Pause','New Perspective'],
+    up:`The Hanged Man hangs willingly from the World Tree — serene, unhurried, his face lit with the strange peace of someone who has surrendered control and discovered, in that surrender, an unexpected clarity. He is not trapped; he chose this pause, this radical change of perspective. The world looks entirely different from upside down. This card arrives as an invitation to release your grip on outcomes, to let go of the urgent need to push and plan and resolve, and to allow yourself to simply be in the not-knowing for a while. What you cannot see from where you stand may be precisely what you need.`,
+    rv:`The reversed Hanged Man speaks of resistance to necessary pauses — the exhausting determination to keep pushing when the universe is clearly signaling that it is time to stop. There may also be a sense of feeling stuck or trapped, suspended in a situation without the ability to move forward or backward. If so, ask yourself whether the imprisonment is truly external or whether your own refusal to release something — a belief, a relationship, an identity — is what is holding you in place. The sacrifice that feels most frightening is often the one that sets everything free.` },
+
+  { id:13, roman:'XIII', name:'Death', color:'#374151',
+    kw:['Transformation','Endings','Release'],
+    up:`Death arrives not as an ending but as the most radical transformation — the necessary dissolution of what has been in order to make space for what must become. The white rose he carries is a symbol of purity and new beginnings; the rising sun between distant towers speaks of what waits on the other side of release. Something in your life has run its course: a phase, a relationship, a version of yourself, a belief you have been carrying long past its usefulness. The invitation — and yes, it is an invitation — is to let it go with as much grace as you can muster, trusting that something new and necessary awaits.`,
+    rv:`The reversed Death card most often speaks of resistance to endings that are already underway. You may be clinging to something — a relationship, a habit, an identity — that has clearly expired, unable to release it even as it drains your vitality. This resistance comes from a very human fear of the unknown: if this ends, what will I be? The answer is: freer. The reversed Death can also occasionally suggest that the transformation you need is being avoided, delayed by distractions. The door to your next chapter has been standing open. It is time to walk through.` },
+
+  { id:14, roman:'XIV', name:'Temperance', color:'#0d9488',
+    kw:['Balance','Patience','Higher Purpose'],
+    up:`Temperance is the patient alchemy of the soul — the gentle, continuous pouring of experience from one vessel to another until the perfect blend is found. The angel who performs this sacred act does so with calm precision, one foot on land, one touching water, balanced between the worlds of matter and spirit. This card speaks of a time for moderation, for the integration of opposites, for healing that comes not through dramatic intervention but through the quiet, sustained practice of finding the middle path. You are being guided toward your higher purpose, one measured, mindful step at a time.`,
+    rv:`Reversed, Temperance signals imbalance — excess in one area draining resources from another, or a search for the quick fix that bypasses the slower, more sustainable work of genuine healing. You may be operating from extremes: working too hard then collapsing, loving too much then withdrawing entirely. There is also the possibility of a misalignment between your daily choices and your deeper purpose — a sense that you are going through the motions without feeling truly connected to any of it. The invitation is to slow down, recalibrate, and return to the sacred work of integration.` },
+
+  { id:15, roman:'XV', name:'The Devil', color:'#7f1d1d',
+    kw:['Shadow Self','Bondage','Awakening'],
+    up:`The Devil illuminates the chains — and the first, most shocking revelation is that the chains are loose. The two figures bound to his throne could step free at any moment if only they would choose to look down at what binds them. This card speaks of the patterns, addictions, and shadow aspects of yourself that have accumulated power through unconsciousness and avoidance. The Devil does not come to condemn; he comes to show you exactly what you have been giving your energy to, because awareness is the first and most powerful act of liberation. Name the thing that has its hooks in you. That naming is already freedom beginning.`,
+    rv:`The reversed Devil is the liberator — the moment when the chains finally slip away, when awareness becomes action, when a pattern that once seemed inescapable is recognized for what it truly is: a choice. This card in reversal can signal the beginning of a genuine recovery or release, the reclaiming of personal power from something that consumed it. It also cautions against swinging too far in the opposite direction: liberation does not mean the shadow disappears, but that you learn to live with it consciously, with wisdom rather than suppression or indulgence.` },
+
+  { id:16, roman:'XVI', name:'The Tower', color:'#dc2626',
+    kw:['Sudden Change','Revelation','Awakening'],
+    up:`The Tower was always going to fall — not because the universe is cruel, but because it was built on a foundation of false beliefs, false certainties, and false security, and those things cannot hold forever. When the lightning strikes, it is not punishment; it is revelation. The sudden shock of this card clears away what was never truly solid so that something real can be built in its place. Yes, it is terrifying while it happens. Yes, the ground shakes and the crown falls. But when the smoke clears, what remains is true — and that truth, however stark, is the only foundation worth building on.`,
+    rv:`The reversed Tower suggests that a collapse is being delayed or avoided — and the effort required to keep the unstable structure upright is enormous. You may be working very hard to prevent an inevitable change, burning energy that could be channeled into transformation instead. It can also indicate that the disruption has already occurred internally — a private awakening, a quiet dismantling of old belief systems — but that the external circumstances have not yet caught up. The reversed Tower asks: what would it feel like to stop holding it all together, and to finally let the outdated structure fall?` },
+
+  { id:17, roman:'XVII', name:'The Star', color:'#0ea5e9',
+    kw:['Hope','Healing','Divine Connection'],
+    up:`The Star appears in the sky after the storm — serene, luminous, unerringly steady. She pours her waters ceaselessly onto land and into the pool below, an act of pure, unconditional giving that replenishes the earth. This card carries a message of profound hope: whatever you have been through, whatever was lost in the fires of upheaval, the universe has not abandoned you. Healing is available, and it is already moving through you like water through a tired land. The Star asks only that you open to it — to allow yourself to believe, even tentatively, that things can be well again, and that you are deserving of that wellness.`,
+    rv:`The reversed Star speaks of hope grown fragile, of faith struggling to survive in the aftermath of disappointment. You may be finding it genuinely difficult to imagine a positive future, or feeling spiritually disconnected from any sense of meaning or guidance. This is not a permanent state — but it is important not to dismiss it. Grief, disillusionment, and spiritual fatigue are real experiences that deserve acknowledgment. The reversed Star asks you to be gentle with yourself, and to look for even the smallest points of light — because they are there, even when the sky seems dark.` },
+
+  { id:18, roman:'XVIII', name:'The Moon', color:'#4c1d95',
+    kw:['Illusion','The Unconscious','Intuition'],
+    up:`The Moon casts her light across a strange and liminal landscape where nothing is quite what it seems. The crayfish crawls from the primordial waters; the dog and wolf howl at something beyond human comprehension; the path between two looming towers stretches into uncertain distance. This is the realm of the unconscious, of dreams and fears and everything that has been submerged beneath the surface of the waking mind. The Moon arrives to tell you that not all is as it appears. Proceed carefully, trust your deepest instincts over surface impressions, and be willing to navigate the territory of your own inner darkness with courage and compassion.`,
+    rv:`In reversal, the Moon begins to release her grip on illusion — confusion starts to clear, the fog begins to lift, and what was hidden starts to emerge into the light. Repressed fears or buried emotions may surface now, demanding acknowledgment; this is uncomfortable, but it is healing. There can also be a gradual return of clarity to a situation that has seemed murky or deceptive. The reversed Moon asks you to be willing to see the truth, even if it unsettles you, because clarity — however initially painful — is always preferable to the exhausting work of maintaining illusion.` },
+
+  { id:19, roman:'XIX', name:'The Sun', color:'#ea580c',
+    kw:['Joy','Vitality','Radiant Success'],
+    up:`The Sun blazes with magnificent clarity — there is no shadow here, no ambiguity, no hidden agenda. This is the card of radiant success, of joy so genuine and uncomplicated that it almost feels surprising in its simplicity. The child rides forward on the white horse, arms open, face lifted to the warmth: this is you, after the long winter, remembering what it feels like to be truly alive. Opportunities are illuminated, truth is visible, and the energy available to you is extraordinary. The Sun invites you to celebrate, to be present in your own happiness, and to let your light pour outward without apology or restraint.`,
+    rv:`Even reversed, the Sun retains its essential warmth — but something is dimming the light. You may be struggling to access joy, to believe in the goodness of circumstances, or to allow yourself to fully inhabit a moment of happiness without fear that it will be taken away. There can be a sense of delay or obstruction between where you are and the clarity you seek. The reversed Sun asks: what beliefs or wounds are casting a shadow over your experience of life right now? Once named, they lose much of their power, and the light returns.` },
+
+  { id:20, roman:'XX', name:'Judgement', color:'#0369a1',
+    kw:['Awakening','Calling','Absolution'],
+    up:`The angel sounds the trumpet and the figures below rise from their tombs, arms reaching upward — not in terror, but in a profound readiness to answer the call. Judgement is the card of spiritual awakening, of hearing the deep summons of your own higher purpose and finally being willing to respond. Something is calling you now — a vocation, a truth, a way of being in the world that you have been circling without fully committing to. This card tells you that you are ready, that the moment for reckoning and renewal has come. Rise to meet it with everything you have.`,
+    rv:`The reversed Judgement speaks of a call that is going unanswered — a persistent inner summons being silenced by self-doubt, fear of change, or an unwillingness to face what genuine accountability would require. You may be caught in cycles of self-criticism without moving toward actual change, or avoiding the deep inner reckoning that would free you. Sometimes reversed Judgement also signals that you are judging yourself — or others — too harshly, applying a standard of perfection that leaves no room for the grace of genuine transformation. Forgiveness, honestly practiced, opens every door that judgment keeps closed.` },
+
+  { id:21, roman:'XXI', name:'The World', color:'#15803d',
+    kw:['Completion','Integration','Achievement'],
+    up:`The World dancer moves at the center of the great laurel wreath — a figure of pure joy, of someone who has traveled the full sacred circuit and arrived at integration. In each corner of the card, the four elements of existence witness this completion: the human, the eagle, the lion, the bull. This card signals the magnificent arrival at the end of a significant cycle — the fulfillment of a long-held goal, the achievement of wholeness, the profound satisfaction of having done the work and arrived, at last, at the place you were always moving toward. Celebrate. You have earned this. And know that even as this cycle completes, the seeds of the next adventure are already stirring.`,
+    rv:`The reversed World whispers of incompletion — a cycle that is almost finished but not quite, loose ends that prevent you from experiencing the full sense of arrival and closure. You may be tantalizingly close to a goal but unable to cross the final threshold, or you may be rushing toward the next thing without fully integrating the lessons of where you have just been. Sometimes this reversal also points to taking shortcuts: accepting a lesser version of what you truly want rather than doing the final stretch of work required to claim it fully. Finish what you started. The wholeness you seek is right at the edge of your effort.` }
+];
+
+const POSITIONS = {
+  1:['Your Message'],
+  3:['Past','Present','Future'],
+  5:['Past','Present','Future','Challenge','Outcome']
+};
+
+/* ══════════════════════════════════════════════
+   STAR BACKGROUND
+══════════════════════════════════════════════ */
+const canvas = document.getElementById('starCanvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function initStars() {
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  stars = Array.from({length:220}, () => ({
+    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+    r: Math.random() * 1.4 + 0.2,
+    phase: Math.random() * Math.PI * 2,
+    speed: Math.random() * 0.006 + 0.002,
+    dx: (Math.random() - 0.5) * 0.02
+  }));
+}
+
+function drawStars(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const s of stars) {
+    const a = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${a.toFixed(2)})`; ctx.fill();
+    s.x += s.dx; if (s.x < 0) s.x = canvas.width; if (s.x > canvas.width) s.x = 0;
+  }
+  const g1 = ctx.createRadialGradient(canvas.width*.25,canvas.height*.35,0,canvas.width*.25,canvas.height*.35,canvas.width*.4);
+  g1.addColorStop(0,'rgba(91,33,182,.07)'); g1.addColorStop(1,'transparent');
+  ctx.fillStyle=g1; ctx.fillRect(0,0,canvas.width,canvas.height);
+  const g2 = ctx.createRadialGradient(canvas.width*.75,canvas.height*.65,0,canvas.width*.75,canvas.height*.65,canvas.width*.35);
+  g2.addColorStop(0,'rgba(13,148,136,.05)'); g2.addColorStop(1,'transparent');
+  ctx.fillStyle=g2; ctx.fillRect(0,0,canvas.width,canvas.height);
+  requestAnimationFrame(drawStars);
+}
+window.addEventListener('resize', initStars);
+initStars(); requestAnimationFrame(drawStars);
+
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+let spreadN = 3, pickedCards = [], deckPool = [];
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function shuffle(a) {
+  const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b;
+}
+
+/* ── INTRO ── */
+document.querySelectorAll('.spread-btn').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.spread-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); spreadN = +btn.dataset.n;
+}));
+
+document.getElementById('begin-btn').addEventListener('click', startPick);
+
+/* ── PICK ── */
+function startPick() {
+  pickedCards = [];
+  deckPool = shuffle(CARDS).map(c => ({...c, reversed: Math.random() < 0.3}));
+
+  document.getElementById('pick-title').textContent =
+    spreadN===1 ? 'Choose a Card' : `Choose ${spreadN} Cards`;
+
+  const pt = document.getElementById('pip-track'); pt.innerHTML='';
+  for(let i=0;i<spreadN;i++){const p=document.createElement('div');p.className='pip';p.id=`pip${i}`;pt.appendChild(p);}
+
+  const grid = document.getElementById('deck-grid'); grid.innerHTML='';
+  deckPool.forEach((card, i) => {
+    const el = document.createElement('div'); el.className='deck-card';
+    el.innerHTML=`<div class="card-back"></div>`; el.dataset.idx=i;
+    el.addEventListener('click', ()=>onPick(el,i));
+    grid.appendChild(el);
+    setTimeout(()=>el.classList.add('entered'), 30+i*35);
+  });
+  goTo('screen-pick');
+}
+
+function onPick(el, idx) {
+  if(el.classList.contains('picked')||el.classList.contains('used')) return;
+  if(pickedCards.length>=spreadN) return;
+  el.classList.add('picked'); pickedCards.push(deckPool[idx]);
+  const pip=document.getElementById(`pip${pickedCards.length-1}`); if(pip)pip.classList.add('lit');
+  if(pickedCards.length>=spreadN) setTimeout(showReading, 700);
+}
+
+/* ── READING ── */
+function showReading() {
+  const q = document.getElementById('q-input').value.trim();
+  document.getElementById('r-q').textContent = q ? `"${q}"` : 'The cards have spoken.';
+
+  const row = document.getElementById('reading-row'); row.innerHTML='';
+  const positions = POSITIONS[spreadN] || POSITIONS[3];
+
+  pickedCards.forEach((card, i) => {
+    const isRev = card.reversed;
+    const bCol = isRev ? 'rgba(139,92,246,.5)' : `${card.color}70`;
+    const bgGrad = isRev
+      ? 'linear-gradient(160deg,#1a0a2e,#0a0618)'
+      : `linear-gradient(160deg,${card.color}16,#090620)`;
+
+    const wrap = document.createElement('div'); wrap.className='r-wrap';
+
+    wrap.innerHTML=`
+      <div class="pos-label">${positions[i]||''}</div>
+      <div class="flip-card" id="fc${i}">
+        <div class="flip-inner">
+          <div class="flip-f"></div>
+          <div class="flip-b" style="border-color:${bCol};background:${bgGrad}">
+            <div class="card-content${isRev?' rev':''}">
+              <div class="card-art">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130">
+                  ${SVGS[card.id]||''}
+                </svg>
+              </div>
+              <div class="card-footer">
+                <div class="cf-num">${card.roman}</div>
+                <div class="cf-name">${card.name}</div>
+                <div class="cf-orient">${isRev?'Reversed':'Upright'}</div>
+                <div class="cf-kw">${card.kw.slice(0,2).join(' · ')}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="meaning-box">
+        <div class="m-name">${card.name}</div>
+        <span class="m-orient-tag ${isRev?'rv':'up'}">${isRev?'Reversed':'Upright'}</span>
+        <div class="m-text">${isRev?card.rv:card.up}</div>
+      </div>`;
+
+    row.appendChild(wrap);
+
+    setTimeout(()=>{
+      wrap.classList.add('show');
+      setTimeout(()=>document.getElementById(`fc${i}`).classList.add('flipped'), 350);
+    }, i*560);
+  });
+
+  goTo('screen-reading');
+}
+
+document.getElementById('new-btn').addEventListener('click', ()=>{
+  document.getElementById('q-input').value=''; spreadN=3;
+  document.querySelectorAll('.spread-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('[data-n="3"]').classList.add('active');
+  goTo('screen-intro');
+});
+</script>
+</body>
+</html>

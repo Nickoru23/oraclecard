@@ -1,0 +1,203 @@
+/* The cards as objects, and the optional illustrations over them.
+
+   The first half needs nothing but the site. The second half makes its own
+   pictures, checks that a card prefers one and falls back to its drawing when
+   one is missing, then puts everything back, so it passes whether or not any
+   illustrations have been added. */
+import { chromium } from 'playwright';
+import { serve } from './serve.mjs';
+import { PREP } from './pages.mjs';
+import { writeFile, mkdir, rm, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const ROOT = new URL('..', import.meta.url).pathname;
+const server = await serve();
+const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1280,height:900}});
+await ctx.addInitScript(PREP);
+const p=await ctx.newPage();
+const errs=[];
+/* A resource that fails to load is expected here: one picture is broken on
+   purpose to prove the fallback. Script faults are not, and neither is a
+   failed assertion, so those are what decide the exit code. */
+p.on('pageerror', e => errs.push('threw: ' + e.message));
+p.on('console', m => {
+  if (m.type() !== 'error') return;
+  if (/Failed to load resource/i.test(m.text())) return;
+  errs.push(m.text());
+});
+await p.goto('http://127.0.0.1:4321/index.html',{waitUntil:'networkidle'});
+await p.locator('.privacy-notice .btn').click().catch(()=>{}); await p.waitForTimeout(400);
+
+const T=(n,c,g)=>{ if(!c) errs.push('FAIL '+n); console.log((c?'ok  ':'FAIL')+'  '+n+(c?'':'  '+JSON.stringify(g))); };
+
+/* The deck browser lays its cells out empty and draws each one as it comes into
+   view, so most of the assertions below need the deck to have been looked at.
+   Scrolling through it is what a visitor does and what fills it. */
+async function walkTheDeck(page) {
+  const left = () => page.evaluate(() =>
+    [...document.querySelectorAll('.deck-cell')].filter(c => !c.firstChild).length);
+  for (let y = 0; y < 24 && await left(); y++) {
+    await page.evaluate(i => window.scrollTo(0, i * 700), y);
+    await page.waitForTimeout(120);
+  }
+  await page.waitForTimeout(250);
+  return left();
+}
+T('the deck lays out before it draws', await p.evaluate(() =>
+    document.querySelectorAll('.deck-cell').length === 78 &&
+    [...document.querySelectorAll('.deck-cell')].every(c => !c.firstChild)));
+const lightPage = await p.evaluate(() => document.querySelectorAll('*').length);
+T('and the page it lands in is a page, not a deck', lightPage < 2000, lightPage);
+T('every cell is drawn once it is looked at', await walkTheDeck(p) === 0);
+T('deck cells are 3d', await p.locator('.deck-cell.is-3d').count()===78, await p.locator('.deck-cell.is-3d').count());
+T('hero fan is 3d', await p.locator('.hero-fan .f.is-3d').count()===5);
+T('every card has two sides', await p.locator('.deck-cell .c3d-faces .face.back').count()===78,
+  await p.locator('.deck-cell .c3d-faces .face.back').count());
+/* overflow, filter, opacity or clip-path on a card forces transform-style back
+   to flat, backface-visibility stops working, and a card turned past ninety
+   degrees shows its own front mirrored instead of its back. Nothing about that
+   is visible in the custom properties, so it is asserted here. */
+const flat = await p.evaluate(() => [...document.querySelectorAll('.deck-cell, .hero-fan .f, .picker-card, .card')]
+  .filter(el => getComputedStyle(el).transformStyle !== 'preserve-3d').length);
+T('nothing flattens a card back to two dimensions', flat === 0, flat);
+
+// hover tilt on a deck cell
+const cell = p.locator('.deck-cell').nth(10);
+await cell.scrollIntoViewIfNeeded();
+const box = await cell.boundingBox();
+await p.mouse.move(box.x+box.width*0.15, box.y+box.height*0.15);
+await p.waitForTimeout(450);
+const tilt = await cell.evaluate(el => ({rx:el.style.getPropertyValue('--rx'),ry:el.style.getPropertyValue('--ry'),
+                                          mx:el.style.getPropertyValue('--mx')}));
+T('tilts toward the pointer', parseFloat(tilt.rx)>1 && parseFloat(tilt.ry)<-1, tilt);
+/* the variable moving is not the same as the card moving: a page level rule
+   that sets transform whole would throw the rotation away and leave the
+   variable looking perfectly healthy. So read what was actually rendered. */
+const m3d = await cell.evaluate(el => getComputedStyle(el).transform);
+T('and the rendered transform is really 3d',
+  m3d.startsWith('matrix3d') && m3d.split(',').slice(0,11).some(v => {
+    const n = parseFloat(v.replace('matrix3d(','')); return Math.abs(n) > 0.02 && Math.abs(n) < 0.999;
+  }), m3d);
+T('the sheen follows it', tilt.mx && parseFloat(tilt.mx)<45, tilt.mx);
+
+// leaving returns it to square
+await p.mouse.move(10,10); await p.waitForTimeout(700);
+const rest = await cell.evaluate(el => Math.abs(parseFloat(el.style.getPropertyValue('--rx')||0)));
+T('returns to rest', rest < 1, rest);
+
+// drag spins it
+await p.mouse.move(box.x+box.width/2, box.y+box.height/2);
+await p.mouse.down();
+await p.mouse.move(box.x+box.width/2+160, box.y+box.height/2+40,{steps:12});
+const spun = await cell.evaluate(el => parseFloat(el.style.getPropertyValue('--ry')||0));
+T('drag spins it', Math.abs(spun) > 40, spun);
+T('dragging selects no text', (await p.evaluate(() => String(getSelection()))).length === 0,
+  await p.evaluate(() => String(getSelection()).slice(0, 60)));
+await p.mouse.up(); await p.waitForTimeout(1900);
+const settled = await cell.evaluate(el => Math.abs(parseFloat(el.style.getPropertyValue('--ry')||0)));
+T('a thrown card settles', settled < 2, settled);
+
+// keyboard
+await cell.focus();
+await p.keyboard.press('ArrowRight'); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(500);
+const keyed = await cell.evaluate(el => parseFloat(el.style.getPropertyValue('--ry')||0));
+T('arrow keys turn it', keyed > 20, keyed);
+await p.keyboard.press('Escape'); await p.waitForTimeout(600);
+T('escape brings it back', Math.abs(await cell.evaluate(el=>parseFloat(el.style.getPropertyValue('--ry')||0)))<1);
+
+// the spread: a card must still flip front to back
+await p.locator('a[href="#tiradas"]').first().click(); await p.waitForTimeout(400);
+await p.locator('#sp-draw').click(); await p.waitForTimeout(600);
+T('picker cards are 3d', await p.locator('.picker-card.is-3d').count()===22);
+await p.locator('.picker-card').first().click(); await p.waitForTimeout(1800);
+const flipped = await p.locator('#sp-out .card.flipped').count();
+T('the drawn card turns over', flipped===1, flipped);
+const flipVar = await p.locator('#sp-out .card').first().evaluate(el=>getComputedStyle(el).getPropertyValue('--flip').trim());
+T('the flip composes with the tilt', flipVar==='180deg', flipVar);
+await p.waitForTimeout(300);
+
+/* ---------- the illustrations ---------- */
+let fails = 0;
+const restore = await readFile(join(ROOT, 'js/card-images.js'), 'utf8');
+const HAVE = ['m00', 'm01', 'm19'];
+try {
+  await mkdir(join(ROOT, 'cards/t'), { recursive: true });
+  await mkdir(join(ROOT, 'cards/f'), { recursive: true });
+  const webp = await p.evaluate(() => {
+    const cv = document.createElement('canvas');
+    cv.width = 60; cv.height = 102;
+    const cx = cv.getContext('2d');
+    cx.fillStyle = '#16314F'; cx.fillRect(0, 0, 60, 102);
+    return cv.toDataURL('image/webp', .8);
+  });
+  if (!webp.startsWith('data:image/webp')) throw new Error('this browser cannot encode webp');
+  const bytes = Buffer.from(webp.split(',')[1], 'base64');
+  for (const id of HAVE) for (const d of ['t', 'f'])
+    await writeFile(join(ROOT, 'cards', d, id + '.webp'), bytes);
+  await writeFile(join(ROOT, 'js/card-images.js'),
+    restore.replace(/HAVE: \[[^\]]*\]/, 'HAVE: ' + JSON.stringify(HAVE)));
+
+  await p.goto('http://127.0.0.1:4321/index.html', { waitUntil: 'networkidle' });
+  await p.locator('.privacy-notice .btn').click().catch(() => {});
+  await p.waitForTimeout(400);
+  await walkTheDeck(p);
+
+  T('three cards take a picture', await p.locator('.deck-cell img.card-img').count() === 3,
+    await p.locator('.deck-cell img.card-img').count());
+  /* scoped to the front: every cell also carries a back, which is always drawn */
+  T('the rest keep their drawing', await p.locator('.deck-cell .face.front svg').count() === 75,
+    await p.locator('.deck-cell .face.front svg').count());
+  T('pictures load lazily', await p.locator('img.card-img').first().getAttribute('loading') === 'lazy');
+  T('pictures are named for a screen reader',
+    (await p.locator('img.card-img').first().getAttribute('alt') || '').length > 2);
+
+  /* a lazy picture that never started loading cannot fail, so bring it on screen first */
+  await p.locator('.deck-cell img.card-img').first().scrollIntoViewIfNeeded();
+  await p.waitForTimeout(500);
+  await p.evaluate(() => { document.querySelector('.deck-cell img.card-img').src = '/cards/t/gone.webp'; });
+  await p.waitForTimeout(900);
+  T('a missing picture falls back to its drawing',
+    await p.locator('.deck-cell .face.front svg').count() === 76,
+    await p.locator('.deck-cell .face.front svg').count());
+} finally {
+  await writeFile(join(ROOT, 'js/card-images.js'), restore);
+  await rm(join(ROOT, 'cards'), { recursive: true, force: true });
+}
+
+/* ---- a reversed card is the whole card upside down ----
+
+   Built here rather than drawn from a spread, because a card comes up reversed
+   about a third of the time and a check that is right two rounds in three is
+   not a check. The markup is the markup app.js lays a spread with, and the
+   drawing is the real one, so what is under test is the rule and nothing else. */
+await p.evaluate(() => {
+  /* a minor card, which the illustration part of this check never covers, so
+     this is the drawing and not a picture standing in for it */
+  const c = window.DECK.find(x => x.a !== 'major');
+  const box = document.createElement('div');
+  box.innerHTML =
+    `<div class="card" id="qa-up"><div class="face front">${window.cardSVG(c, 'es', 'sm')}</div></div>` +
+    `<div class="card" id="qa-rev"><div class="face front rev">${window.cardSVG(c, 'es', 'sm')}</div></div>` +
+    `<div class="card" id="qa-revimg"><div class="face front rev">` +
+      `<img class="card-img" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="></div></div>`;
+  document.body.appendChild(box);
+});
+const HALF = 'matrix(-1, 0, 0, -1, 0, 0)';
+const upright = await p.$eval('#qa-up .front svg', n => getComputedStyle(n).transform);
+T('an upright card is not turned', upright === 'none', upright);
+T('a reversed card is turned a half turn',
+  await p.$eval('#qa-rev .front svg', n => getComputedStyle(n).transform) === HALF,
+  await p.$eval('#qa-rev .front svg', n => getComputedStyle(n).transform));
+/* the number and the name are lettered into the same drawing, so the whole card
+   goes round: turning the sigil alone leaves the name the right way up */
+T('and its lettering goes round with it',
+  await p.$eval('#qa-rev .front svg', n => n.querySelectorAll('text').length) > 0);
+/* the day illustrations land, a reversed card has to turn just the same */
+T('an illustrated card reverses too',
+  await p.$eval('#qa-revimg .front img', n => getComputedStyle(n).transform) === HALF,
+  await p.$eval('#qa-revimg .front img', n => getComputedStyle(n).transform));
+
+console.log('errors:', errs.length ? errs.slice(0, 4) : 'none');
+await b.close(); server.close();
+process.exit(errs.length ? 1 : 0);

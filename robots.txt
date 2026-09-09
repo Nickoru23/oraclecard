@@ -1,0 +1,14 @@
+# The Witch Atelier
+# Every page is at three addresses, one per language. They are all in the
+# sitemap, each one naming the other two.
+
+User-agent: *
+Allow: /
+Disallow: /atelier.html
+Disallow: /gracias.html
+Disallow: /en/atelier.html
+Disallow: /de/atelier.html
+Disallow: /en/gracias.html
+Disallow: /de/gracias.html
+
+Sitemap: https://thewitchatelier.com/sitemap.xml

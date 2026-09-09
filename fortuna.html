@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tu fortuna de hoy · The Witch Atelier</title>
+<meta name="description" content="Unas palabras para hoy y la carta que las trae. Gratis, sin registro, una cada día.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  /* The page is the same reveal the overlay does, held still so it can be read
+     again, kept and shared. The words themselves use .df-words and .df-w from
+     the stylesheet, so there is only one animation on the site and it is
+     described in one place. */
+  .fx-stage{display:grid;place-items:center;padding:26px 0 8px;min-height:210px}
+  .fx-btn{background:none;border:0;padding:0;cursor:pointer;width:min(190px,52vw);
+          display:block;border-radius:50%}
+  .fx-btn:disabled{cursor:default}
+  .fx-btn svg{width:100%;height:auto;display:block;overflow:visible}
+  .fx-halo{transform-origin:50% 50%;animation:fx-breathe 5.5s ease-in-out infinite}
+  .fx-ring{transform-origin:50% 50%;animation:fx-turn 46s linear infinite}
+  .fx-ring-2{transform-origin:50% 50%;animation:fx-turn 64s linear infinite reverse}
+  .fx-btn:not(:disabled):hover .fx-halo{animation-duration:2.6s}
+  @keyframes fx-breathe{0%,100%{opacity:.5;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+  @keyframes fx-turn{to{transform:rotate(360deg)}}
+  /* once the words are out, the orb has said what it had to say */
+  .fx-stage.is-open{min-height:0;padding:0}
+  .fx-stage.is-open .fx-btn{display:none}
+
+  .tap{text-align:center;color:var(--muted);font-size:.9rem;margin:2px 0 0}
+  .fx-words{max-width:26ch;margin:10px auto 0;text-align:center}
+  .fx-card{max-width:340px;margin:34px auto 0;text-align:center}
+  .fx-card .art{width:min(170px,46vw);margin:12px auto 0;border-radius:var(--r-sm);
+                box-shadow:var(--shadow-lift),0 0 56px -16px rgba(139,92,246,.85)}
+  .fx-card h2{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cyan);
+              font-weight:700;font-family:var(--sans);margin:0;line-height:1.4}
+  .fx-card .nm{font-family:var(--serif);font-size:1.12rem;color:var(--bone);margin:16px 0 0}
+  .fx-card p.mean{color:var(--muted);font-size:.92rem;line-height:1.6;margin:8px 0 0}
+  .streak{display:flex;justify-content:center;gap:26px;margin:34px 0 0;padding-top:22px;
+          border-top:1px solid var(--line);flex-wrap:wrap}
+  /* a display of its own beats the browser's [hidden], so it has to be said */
+  .streak[hidden]{display:none}
+  .streak div{text-align:center;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .streak b{display:block;font-family:var(--serif);font-size:1.7rem;letter-spacing:0;text-transform:none;
+            color:var(--gold);font-weight:400;margin-top:4px}
+  .after{text-align:center;margin:30px 0 0}
+  .after .btn{margin:6px 5px 0}
+  .tomorrow{text-align:center;color:var(--muted);font-size:.88rem;margin:24px 0 0}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="skip"></a>
+
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.1 1.8c-.6 0-1.2.5-1.6 1.4C10.4 6 9.2 9.4 8.4 12.5h8.4c-.5-3.2-1.3-6.8-2-9.3-.3-.9-.9-1.4-1.7-1.4Z" fill="#241F18"/><path d="M2.6 14.6c0-1.2 2.4-2.1 5.6-2.3h8.2c3.3.2 5.6 1.1 5.6 2.3 0 1.4-3.2 2.2-7.4 2.4h-4.6c-4.2-.2-7.4-1-7.4-2.4Z" fill="#241F18"/><path d="M8.2 13.4h8.8v1.5H8.1z" fill="#8C5E20"/><path d="M19.9 2.2l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" fill="#8C5E20"/></svg>
+    The Witch Atelier</a>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false"
+            aria-controls="site-menu" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  <nav id="site-menu">
+    <a href="/fortuna.html" data-t="nav_cookie"></a>
+    <a href="/horoscopo.html" data-t="nav_horoscopo"></a>
+    <a href="/consulta.html" data-t="nav_consulta"></a>
+    <a href="/lectura.html" data-t="nav_reading"></a>
+    <a href="/#baraja" class="hide-sm" data-t="nav_deck"></a>
+    <span class="lang">
+      <button data-lang="es" aria-pressed="true">ES</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="de" aria-pressed="false">DE</button>
+    </span>
+  </nav>
+</div></header>
+
+<main id="main" tabindex="-1">
+
+<section><div class="wrap">
+  <p class="eyebrow center" data-t="ck_eyebrow"></p>
+  <h1 data-banner style="font-size:clamp(1.7rem,4.6vw,2.5rem);margin-bottom:.2em" data-t="ck_h1"></h1>
+  <p class="lede center" style="margin:0 auto" data-t="ck_lede"></p>
+
+  <div class="fx-stage" id="stage">
+    <button type="button" class="fx-btn" id="reveal">
+      <span class="vh" data-t="ck_tap"></span>
+      <svg viewBox="0 0 200 200" role="img" aria-hidden="true">
+        <circle class="fx-halo" cx="100" cy="100" r="52" fill="rgba(139,92,246,.30)"/>
+        <circle cx="100" cy="100" r="34" fill="rgba(168,148,255,.16)"
+                stroke="rgba(240,236,255,.5)" stroke-width="1.1"/>
+        <g class="fx-ring" fill="none" stroke="#D9B872" stroke-width="1.1" opacity=".85">
+          <circle cx="100" cy="100" r="66" stroke-dasharray="2 9"/>
+          <circle cx="100" cy="34" r="2.6" fill="#D9B872" stroke="none"/>
+        </g>
+        <g class="fx-ring-2" fill="none" stroke="#4FD8D3" stroke-width="1" opacity=".7">
+          <circle cx="100" cy="100" r="82" stroke-dasharray="1 14"/>
+          <circle cx="182" cy="100" r="2.2" fill="#4FD8D3" stroke="none"/>
+        </g>
+        <path d="M100 74 L104.4 95.6 L126 100 L104.4 104.4 L100 126 L95.6 104.4 L74 100 L95.6 95.6 Z"
+              fill="#F0ECFF" opacity=".92"/>
+      </svg>
+    </button>
+  </div>
+  <p class="tap" id="tap" data-t="ck_tap"></p>
+
+  <p class="df-words fx-words" id="fortune"></p>
+
+  <div class="fx-card" id="ck-card" hidden>
+    <h2 id="ck-card-h"></h2>
+    <div class="art" id="ck-art" data-turn></div>
+    <p class="nm" id="ck-name"></p>
+    <p class="mean" id="ck-mean"></p>
+  </div>
+
+  <div class="after" id="after" hidden>
+    <p class="tomorrow" id="tomorrow"></p>
+    <a class="btn btn-ghost" href="/consulta.html" data-t="ck_ask"></a>
+    <a class="btn btn-gold" href="/lectura.html" data-t="ck_full"></a>
+    <p><button type="button" class="btn btn-ghost" id="share" data-t="ck_share"></button></p>
+  </div>
+
+  <div class="streak" id="streak" hidden>
+    <div><span data-t="ck_streak"></span><b id="s-streak">0</b></div>
+    <div><span data-t="ck_total"></span><b id="s-total">0</b></div>
+  </div>
+</div></section>
+</main>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; <span id="yr"></span> The Witch Atelier</span>
+  <nav>
+    <a href="/aviso-legal.html" data-t="footer_legal"></a>
+    <a href="/privacidad.html" data-t="footer_privacy"></a>
+    <a href="/cookies.html">Cookies</a>
+    <a href="/creditos.html" data-t="credits_nav"></a>
+  </nav>
+</div></footer>
+
+<script src="/js/deck.js"></script>
+<script src="/js/deck-art.js"></script>
+<script src="/js/card-images.js"></script>
+<script src="/js/lang.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/fortunes.js"></script>
+<script src="/js/dailyfortune.js"></script>
+<script>
+window.initCookie = function () {
+  const C = window.COOKIE, T = window.T;
+  const lang = () => window.getLang();
+  const btn = document.getElementById('reveal');
+  if (!btn) return;
+  const stage = document.getElementById('stage');
+  const fortuneEl = document.getElementById('fortune');
+  const cardBox = document.getElementById('ck-card');
+  const after = document.getElementById('after');
+  const streak = document.getElementById('streak');
+  const tap = document.getElementById('tap');
+
+  let opened = false;
+
+  function paintCard(c) {
+    const L = T[lang()];
+    document.getElementById('ck-card-h').textContent = c.label;
+    /* a redrawn card is face up again, so the turn it was left in goes with it */
+    const artEl = document.getElementById('ck-art');
+    artEl.classList.remove('is-turned');
+    artEl.innerHTML = window.cardObject(c.card, lang(), 'full');
+    document.getElementById('ck-name').textContent = c.card.name[lang()];
+    document.getElementById('ck-mean').textContent = c.card.up[lang()];
+    document.getElementById('tomorrow').textContent = L.ck_tomorrow;
+  }
+
+  function paintStreak() {
+    const s = C.state();
+    document.getElementById('s-streak').textContent = s.streak || 0;
+    document.getElementById('s-total').textContent = s.total || 0;
+    streak.hidden = !(s.total > 0);
+  }
+
+  /* the whole point is that there is one a day: coming back the same day shows
+     the same words, already written, with none of the ceremony */
+  function reveal(instant) {
+    const c = C.todaysCookie(lang());
+    opened = true;
+    btn.disabled = true;
+    stage.classList.add('is-open');
+    if (instant) fortuneEl.textContent = c.fortune;
+    else fortuneEl.innerHTML = window.DailyFortune.words(c.fortune);
+    paintCard(c);
+    cardBox.hidden = false;
+    after.hidden = false;
+    /* the invitation has been taken up, so it stops being translated back in */
+    tap.removeAttribute('data-t');
+    tap.textContent = '';
+    paintStreak();
+    /* whichever way it is read, the day is greeted and counted once */
+    window.DailyFortune.seen();
+    if (window.Ritual) window.Ritual.mark('cookie');
+  }
+
+  btn.addEventListener('click', () => {
+    if (opened) return;
+    C.markOpened();
+    reveal(false);
+  });
+
+  document.getElementById('share').addEventListener('click', async () => {
+    const c = C.todaysCookie(lang());
+    const text = `${c.fortune}\n\n${c.label}: ${c.card.name[lang()]}\nthewitchatelier.com`;
+    const L = T[lang()];
+    try {
+      if (navigator.share) await navigator.share({ text });
+      else { await navigator.clipboard.writeText(text); alert(L.ck_copied); }
+    } catch (e) { /* the visitor cancelled, which is not an error */ }
+  });
+
+  document.addEventListener('langchange', () => {
+    if (opened) {
+      const c = C.todaysCookie(lang());
+      fortuneEl.textContent = c.fortune;
+      paintCard(c);
+    }
+  });
+
+  if (C.openedToday()) reveal(true);
+  paintStreak();
+};
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+<script src="/js/app.js"></script>
+<script src="/js/card3d.js"></script>
+<script src="/js/ritual.js"></script>
+<script src="/js/ledger.js"></script>
+<script src="/js/ornament.js"></script>
+<script src="/js/notice.js"></script>
+</body>
+</html>

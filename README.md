@@ -1,0 +1,405 @@
+# The Witch Atelier
+
+Trilingual (ES / EN / DE) tarot site. Static pages plus five Netlify functions.
+No build step, no runtime npm dependencies, no third party requests from any page.
+
+The project's own account of itself, its deliberate rules and its cost model is
+[`HANDOVER.md`](HANDOVER.md). That document is kept as it was written. This file
+records what is actually in the repository and every place the two now differ.
+
+## What is in here
+
+The **deploy layout**: the site at the root and `netlify/functions/` beside it.
+`netlify.toml` sets `publish = "."`, so the repository root is what Netlify serves.
+
+```
+*.html                    the pages
+css/app.css               the design system: the desk, and the paper on it
+js/
+  art-marseille.js        the 78 card faces and the card back, drawn in code
+  ritual.js               the ledger's state: the day's tasks, the days kept
+  ledger.js               the ledger as it is drawn, and the tally in the header
+  deck.js i18n.js app.js  the deck texts, the three languages, the page engine
+  dailyfortune.js         the greeting: the day's words, written onto the dark
+  lang.js                 the language, which lives in the address
+  orrery.js               the dial in the hero: the real Sun and Moon, turnable
+  astro.js horoscope.js zodiac.js fortunes.js legal.js notice.js ornament.js
+netlify/functions/        checkout, reading, free-reading, orders, diag
+scripts/                  a static server, two generators and ten checks, see below
+legacy/                   an earlier unrelated prototype, kept for reference
+```
+
+## Deploying
+
+Nothing to build. If you connect this repository to Netlify, **set the build
+command to empty**; otherwise every push burns build minutes for no reason.
+Otherwise zip the repository contents (not the folder) and drop the zip on the
+Netlify deploys page. `node_modules/` and `scripts/` are development only and do
+not need to ship.
+
+Environment variables are listed in the handover. Netlify injects them at deploy
+time only, so adding one to a live site does nothing until the next deploy.
+
+Two the functions read that the handover's table omits:
+
+| Name | Used by | Notes |
+|---|---|---|
+| `FREE_SECRET` | `free-reading.mjs` | signs the per visitor free reading cookie |
+| `STRIPE_API_BASE` | `checkout.mjs`, `reading.mjs`, `orders.mjs` | overrides the Stripe host, for tests. `reading.mjs` and `orders.mjs` hard coded the host until this was fixed, so only checkout was ever testable |
+
+## Working on it
+
+```bash
+npm install            # playwright, for the checks only. Nothing ships.
+npm run serve          # http://localhost:4321
+npm run qa             # all ten checks
+```
+
+| Check | What it holds to |
+|---|---|
+| `qa:pages` | every page in every language answers, has content, letters every string, throws nothing, and asks nothing of any third party. That last one is rule 3. It also asks each page for its shape: one main, one h1, no skipped heading levels, a skip link that is the first tab stop, a real title and a description |
+| `qa:shell` | the header and footer are copied by hand into every page, so this compares the navigation contract across them: the same links in the same order carrying the same strings, the same language switch, the same footer. Byte equality would be the wrong instrument and the file says why |
+| `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still |
+| `qa:langs` | the language is in the address: every page answers in the language its address names, agrees with its own canonical and names its two alternates, a deep link never moves whatever the reader prefers, the front door does, choosing a language changes the address and stays on the same page, links keep the language and assets do not, and the committed sitemap and robots.txt are what the generator would write |
+| `qa:i18n` | rule 6, the three languages at parity with no empty values |
+| `qa:dashes` | rule 4, no dashes reach the screen |
+| `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
+| `qa:cards` | the cards as objects, and a reversed one being the whole card upside down: they tilt toward the pointer and the rendered matrix really is 3D, a drag spins them and selects no text, a throw settles, arrow keys turn them, a drawn card still turns over. Then it makes its own pictures to check a card prefers one and falls back to its drawing when one is missing, and puts everything back |
+| `qa:stripe` | the paid path end to end against a Stripe stand in: the request shape, the three tiers, what checkout refuses, the payment check, the held tiers and the owner token, the order book, and that a generated reading survives the metadata cache whole. No network, no account, no charges |
+| `qa:fortune` | the daily fortune: it opens by itself on a first visit in all three languages, the words carry climbing delays and a late one starts invisible, nothing is clickable before it has arrived, the card tilts and spins and throws and turns over like any other, a throw that ends on the sky does not close the greeting, Escape does, it keeps the day and the streak, it never opens over the reading form or the page after payment, and its own page and the card of the day carry the same card |
+
+The `/api/*` paths need `netlify dev` or a deployed site. The pages render without them.
+
+## The cards
+
+Every card is an object, not a picture of one. `js/card3d.js` gives it:
+
+* **a tilt** toward the pointer, with a sheen that tracks across the face
+* **a turn**, front to back, on click or Enter
+* **a spin**, by dragging it on both axes, with momentum when you let go
+* **arrow keys**, so none of it needs a pointer, and Escape to bring it back
+
+The transform is composed out of custom properties rather than written whole,
+so a tilt and a flip and a thrown spin can all be true at once:
+
+```
+perspective(1100px) rotateX(--rx) rotateY(--ry + --flip) scale(--sc)
+```
+
+The perspective rides on the card itself rather than on whatever contains it,
+so it works the same in the grid, in a spread, in the picker fan and in the
+modal. **Any page level rule that sets `transform` on a card throws the
+rotation away**, which is a real trap: the custom property keeps changing and
+looks perfectly healthy while nothing moves. `qa:cards` reads the rendered
+matrix for exactly that reason. Under `prefers-reduced-motion` a card still
+turns over, because that is the point of it, but it stops tilting and drifting.
+
+## Illustrations
+
+The deck draws itself in SVG and always will: that is the fallback everything
+rests on, and it costs no requests. Pictures are an optional layer on top.
+
+```bash
+mkdir cards-src              # one file per card, named by card id
+#   m00.jpg  m01.png  w01.jpg  c14.webp  ...
+npm run cards                # -> cards/t (200px) and cards/f (600px), both WebP
+```
+
+`scripts/build-cards.mjs` converts them in the Chromium that Playwright already
+installs, so it adds no dependency, and writes the list of ids that have a
+picture into `js/card-images.js`. Everything on the site draws a card through
+`window.cardFace()`, so that one list is the only thing that has to know.
+
+Two sizes, and lazy loading, because of the sum in the handover's section 7: a
+4 MB deck viewed in full by ten thousand people is 40 GB against a 100 GB
+allowance. A card whose picture is missing or fails to load falls back to its
+drawing on its own, without taking the page down with it.
+
+The files are served from this site, never from someone else's, because rule 3
+is why there is no consent banner.
+
+**No illustrations are committed.** I could not fetch any: every image source
+worth using, Wikimedia Commons and Openverse and archive.org among them, is
+refused by this environment's egress proxy, the same way Gallica and Stripe
+are. The pipeline above is tested end to end against pictures the check makes
+for itself, so real ones should drop straight in. Rider Waite Smith 1909 is
+public domain in the EU and the handover's section 8 has the reasoning.
+
+## The deck
+
+All 78 faces are drawn in `js/art-marseille.js`, in code, at 300 by 510. Nothing
+is scanned and nothing is traced. What is borrowed is the grammar of the
+woodblock from the **Tarot de Marseille type I, the Jean Dodal**, printed in Lyon
+between 1701 and 1715, of which the Bibliotheque nationale de France holds one of
+the two surviving copies ([the scan](https://gallica.bnf.fr/ark:/12148/btv1b10537343h)):
+cream stock, a heavy black keyline, six flat inks, the number set in Roman above
+and the name lettered below, batons woven into a lattice, swords closed into an
+oval cage, cups and coins ranged in rows. That grammar has been out of copyright
+for centuries.
+
+Drawing rather than scanning is what keeps the deck at 42 KB with no requests.
+The handover's section 8 warns that scanned art is where the bandwidth budget
+goes wrong: 3 to 5 MB for the deck, and 40 GB if ten thousand people view it in
+full. None of that applies here.
+
+## Paying
+
+Stripe is called over its REST API with plain `fetch` and form encoding, so
+there is still no npm dependency anywhere. Three tiers, priced by how long the
+buyer waits: 48 hours for 9 €, 6 hours for 19 €, now for 29 €. There is no
+database: the Checkout Session carries the order in its metadata, the generated
+reading is written back into that same metadata, and `orders.mjs` reads the
+session list back as the order book.
+
+`npm run qa:stripe` exercises all of it against a stand in. To try it for real,
+set `STRIPE_SECRET_KEY` to an `sk_test_…` key, deploy, and open `/api/diag?token=…`,
+which creates a real Checkout Session, writes metadata to it, expires it, and
+reports what happened.
+
+**Before taking real money, make one test mode purchase all the way through.**
+Two things only that proves:
+
+1. **The account is activated.** A valid key still fails checkout if Stripe has
+   not activated the account, and only a real attempt finds that out.
+2. **Metadata is writable on a completed session.** The reading cache depends on
+   it. `/api/diag` can only prove the key may write metadata to an *open*
+   session; the completed case is reached only by paying. If it turns out not to
+   be allowed, the cache silently fails and every reload of the success page
+   generates and bills a fresh reading. `reading.mjs` now logs that loudly
+   (`READING CACHE FAILED`) instead of swallowing it, so it will be visible in
+   the Netlify function log.
+
+## The look
+
+An instrument, not a poster of one.
+
+The pass before this built the night sky out of the things that make a page look
+generated: one radius stamped on every block, one violet glow stamped on every
+element, glass panels for everything, and the whole page centred. When everything
+glows, nothing does.
+
+* **Light is spent, not sprinkled.** The glow token is used once in the whole
+  stylesheet, on the primary action. What else is lit is lit because it is an
+  object that would catch light, a card, or because it has just been earned, a
+  sigil. Everything else is engraved: hairlines, ticks, rules and small caps.
+* **A plate is not a card.** Panels are barely rounded, ruled, and lit along the
+  top edge the way a piece of engraved metal is. The four free things on the
+  front page were four identical slabs and are now an index, ruled apart, whose
+  rule lights along its length as you reach it.
+* **The tabs, the language switch and the tally** were pills with gradients and
+  glow. They are settings on a scale now, marked underneath.
+* **No web font is loaded**, because nothing on this site is loaded from
+  anywhere. What carries the type is contrast and tracking, not a typeface
+  nobody has.
+
+### The orrery
+
+The ring behind the opening line is where the Sun and the Moon actually are.
+`js/astro.js` already computed that for the card of the day; `js/orrery.js` is a
+second use for it. The zodiac band is divided the way the ecliptic is divided,
+the houses take their names from whatever language the page is in, and the Moon
+carries the shape it has tonight.
+
+**Turning it turns time.** Take hold of the band and one revolution is a year, so
+the Sun walks once round and the Moon runs thirteen laps beside it, both at their
+true positions for whatever date you wind to. Let go and it comes back to now,
+because now is the only date it is telling the truth about. Arrow keys step a
+day, Escape returns.
+
+Three things were wrong while it was being built, and each is worth knowing:
+
+* A dial made of hairlines has nothing to take hold of. There is an invisible
+  ring the width of the band for that, and it is the only part of the drawing
+  that takes the pointer, so the headline underneath is still selectable.
+* A dial painted behind the block that covers the opening cannot be reached at
+  all. It paints above, and passes the pointer through everywhere but the band.
+* The readout was pinned to the viewport and appeared below the fold, because a
+  fixed child of a transformed element is fixed to that element. It lives on the
+  body now.
+
+The Moon is built from a half disc and the terminator ellipse rather than one
+path of two arcs. The one path is the obvious way and it is wrong: the
+terminator's endpoints are exactly a diameter apart, the degenerate case for an
+elliptical arc, and the browser answers by scaling the radii up until they fit,
+so the lit part spills outside the disc on the gibbous phases.
+
+## The language is in the address
+
+`/lectura.html` is Spanish, `/en/lectura.html` is English, `/de/lectura.html` is
+German. All three are the same file: `netlify.toml` rewrites the two prefixes at
+status 200 and `js/lang.js` reads the language back off the path. No build step,
+no third copy of anything.
+
+It used to be a key in `localStorage` and nothing else, which had two costs. A
+page someone sent in English opened in whatever language the person receiving it
+had last chosen, so the two of them were looking at different sites through one
+link. And a search engine only ever saw one of the three, so two thirds of 296
+translated strings were invisible from outside the browser they were typed in.
+
+Who wins, in order:
+
+* **the address.** A prefix is that language, always.
+* **the root.** No prefix is Spanish, always. Not "Spanish unless the browser
+  says otherwise": a page has to be in the language of the address it is at, or
+  a shared link is a coin toss again.
+* **the front door.** The one exception, at `/` and nowhere else: somebody who
+  has chosen before, or whose browser asks for a language the site has, is taken
+  to it. Deep links never move, so a link opens where it was sent and a crawler
+  following one is never bounced.
+
+`js/lang.js` also writes the canonical and the three `hreflang` alternates for
+whatever address it finds itself at, and keeps the language on every link out,
+including the ones the ledger and the spreads draw later. `npm run sitemap`
+writes `sitemap.xml` and `robots.txt`; `qa:langs` fails if the committed files
+have fallen behind.
+
+**What this does not do.** The markup served at all three addresses is the same,
+so the strings themselves arrive when `js/i18n.js` runs. Search engines that
+render JavaScript see three languages; anything that does not, sees the
+scaffolding. Pre-rendering each page in each language would fix that and would
+mean generating and committing 33 files, which is a real trade against how
+simple this is to edit. It is worth doing only if the crawl matters more than
+that, and it can be done later without changing any of the addresses above.
+
+## The daily fortune
+
+The first thing anyone sees. Once a day, before the site itself, the sky closes
+over the page and the day's few words write themselves onto it a word at a time,
+out of a blur, with the card that brought them rising underneath.
+
+* **The animation lives in the stylesheet**, under "the words arriving".
+  `js/dailyfortune.js` only gives each word its own `animation-delay`, so a long
+  fortune spaces itself out and a short one arrives quickly, and the card waits
+  for the last word.
+* **It is skippable and it does not repeat.** Escape, the button or a click
+  outside closes it; the day it was last shown is the only thing kept.
+* **It never stands between a buyer and a purchase.** `/lectura` and `/gracias`
+  are excluded outright, and so is `/fortuna`, which is the same reveal held
+  still so it can be read again, kept and shared.
+* **Nothing is loaded for it.** The fortune, the card and the drawing are all
+  already in the page.
+* **The card is a card.** It tilts, spins, throws, takes arrow keys and turns
+  over, exactly as one in the deck does. It is not named in `card3d.js`: what
+  makes something a card there is holding a `.c3d-faces`, which is what
+  `window.cardObject` draws every two sided card into. The card of the day was
+  drawn flat and one sided until this pass, and is now a card too.
+* **The sky holds still**, which is a measurement rather than a preference. A
+  drifting star field, a backdrop filter over the page beneath, and a slow
+  opacity breathe each cost most of the frame budget on a surface that size,
+  and the symptom was a thrown card that crawled instead of settling.
+* **Reduced motion gets the same fortune with none of the theatre.**
+
+`fortuna.html` was `galleta.html`, and the fortune cookie it was named after is
+gone. Both old paths redirect.
+
+## The ledger
+
+The gamification, all of it in `localStorage` under one key, sent nowhere, costing
+nothing to serve and nothing in function runtime.
+
+* **The day's ritual.** Three free things: the daily fortune, the card of the
+  day, one spread. Doing all three keeps the day.
+* **The days kept.** A run of kept days, with the last four weeks shown. A
+  streak survives a missed page load, and breaks only on a missed day.
+* **The standing.** Six stations, from the door to the whole atelier, reached by
+  days kept. Eight sigils for milestones, struck with a toast as they are earned.
+
+`window.Ritual` is the whole interface: `get`, `mark`, `spreadLaid`, `langSeen`,
+`calendar`, `forget`. Pages call `mark` and nothing else. Clearing site data
+clears the ledger, which is the honest trade for asking nobody to sign up.
+
+## How this repository differs from the handover
+
+The handover describes a source repository. What was handed over was the deploy
+output, so parts of it are still absent.
+
+**Still missing**
+
+* `data/*.json`, the card texts `js/deck.js` is generated from. `deck.js` itself
+  is here, so nothing is lost at runtime, but the source of truth for the card
+  copy is not in version control.
+* `scripts/build-deck.mjs`, `build-legal.mjs`, `build-deploy-zip.mjs`, and the
+  eleven original `qa-*.mjs`. The ten checks here cover the rules the handover
+  calls deliberate; they are not the originals.
+**Resolved since the handover**
+
+* The card artwork is no longer procedural abstraction. `js/art.js` and
+  `js/art2.js`, which the handover calls earlier drafts, are deleted.
+* The Unsplash photo path is gone: `js/photos.js`, the `preview/` placeholders,
+  and the dead probe in `app.js`. It had been disabled by an unreachable early
+  return while `creditos.html` still credited 33 photographers whose work was
+  never shown, and turning it back on would have broken rule 3, because
+  `images.unsplash.com` is a third party host and rule 3 is why this site carries
+  no consent banner. `creditos.html` is now a colophon for the drawn deck.
+* An unclosed `</a>` in `index.html` that nested the fourth menu card inside the
+  third.
+
+**Settled**
+
+* The operator's real postal address is in `js/legal.js` and renders on all
+  three legal pages in all three languages. The VAT line is replaced by the
+  small business exemption, and the price sections no longer claim to include a
+  tax that is not charged.
+* The cookies page now discloses the ledger. It said only the language was kept
+  in local storage, which stopped being true the moment the ledger was added.
+
+**Fixed in the paid path**
+
+* **The reading cache truncated.** It held eight metadata keys of 490
+  characters, 3,920 in all, while the paid prompt asks for 700 to 900 words,
+  which runs past 4,200 in English and further in German. The visitor's first
+  view was whole because it is returned directly; every later view served the
+  cached copy, cut off mid sentence. The cache now holds twenty keys, 9,800
+  characters, still well inside Stripe's limit of 50 keys. See
+  `netlify/functions/lib/cache.mjs`.
+* **The order book lost old orders.** It read one page of 50 sessions, and
+  Stripe counts abandoned ones, so a run of people who opened checkout and left
+  pushed paid orders off the review desk. It now walks the pages.
+* **Only `checkout.mjs` honoured `STRIPE_API_BASE`.** `reading.mjs` and
+  `orders.mjs` hard coded `api.stripe.com`, so neither could be tested. Both
+  now read the same variable, which is what `qa:stripe` runs against.
+
+**Still open, and a decision rather than a fix**
+
+* **Two ECG §5 fields are still unanswered, and both turn on one question:
+  is a Gewerbe registered?** If it is, the Impressum also has to name the trade
+  authority (Bezirkshauptmannschaft Deutschlandsberg), the chamber
+  (Wirtschaftskammer Steiermark) and the trade rules it operates under, and the
+  Gewerbe number belongs there too. If it is not, selling readings commercially
+  from Austria most likely needs one first. Nothing in this repository can
+  answer that, and it is the remaining thing between here and taking money.
+* **The tax position needs an accountant to confirm, not a developer.** The
+  legal pages now state the Austrian small business exemption, § 6 Abs. 1 Z 27
+  UStG, because there is no UID. Two Austrian numbers get confused here and
+  only one belongs in an Impressum: a **UID** (`ATU` plus eight characters) is
+  the VAT identification number a registered business gets, and ECG §5 asks for
+  it only if one exists. A **Steuernummer** is the personal tax number every
+  taxpayer already has, it is not a VAT number, it is not required on a website,
+  and it should not be published there. There is no UID, so the Impressum
+  correctly names none. That holds for sales treated as
+  Austrian. It does **not** automatically cover business to consumer digital
+  sales into other EU countries: past 10,000 euro of those in a year, VAT is
+  owed where the buyer is and has to go through OSS, and the instant tier in
+  particular is an electronically supplied service. Stripe is deliberately not
+  configured to add tax, which matches what the pages say today and will need
+  changing the day that stops being true.
+* **`hola@thewitchatelier.com` has to actually receive mail.** ECG §5 wants a
+  contact address that works, and the privacy pages point every data request at
+  it.
+* **No webhook**, as the handover says. If the buyer closes the tab before the
+  success page loads, the instant tier reading is not generated then. Nothing is
+  lost, it generates whenever that URL is opened and the order shows on the
+  review desk, but nobody is told.
+* `fortuna.html` keeps its own fortune streak, separate from the ledger's days
+  kept. The labels now say which is which, but two streaks is still two streaks.
+
+## Verified
+
+`npm run qa` passes: 33 page and language combinations clean with nothing asked
+of any third party, 297 keys at parity across the three languages, no dashes on
+screen, 22 ledger assertions, 48 Stripe assertions, 25 card assertions, 54 daily
+fortune assertions, 47 language assertions and 20 orrery assertions green. The
+front page went from 15,088 elements to 1,241, and holds 60 frames a second at
+rest and above 50 while the dial is being turned. The whole site is about 390 KB before
+compression, which is less than it was before this pass despite the new deck,
+because 272 KB of unused image placeholders went with it.
