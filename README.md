@@ -440,7 +440,7 @@ output, so parts of it are still absent.
 ## Verified
 
 `npm run qa` passes: 33 page and language combinations clean with nothing asked
-of any third party, 318 keys at parity across the three languages, nothing served
+of any third party, 314 keys at parity across the three languages, nothing served
 that is not the site, no dashes on
 screen, 22 ledger assertions, 58 Stripe assertions, 25 card assertions, 54 daily
 fortune assertions, 47 language assertions and 20 orrery assertions green. The

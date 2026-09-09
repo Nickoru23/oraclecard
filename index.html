@@ -93,8 +93,6 @@
   .item:hover .go{color:var(--star-hi)}
   .item:hover .go::after{transform:translateX(5px)}
   .tag{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--star);font-weight:600}
-  .tag-price{color:var(--cyan)}
-  .item-paid{display:block}
   @media(max-width:640px){
     .item{grid-template-columns:1fr}
     .item .go{grid-column:1;grid-row:4;margin-top:12px}
@@ -185,19 +183,6 @@
   <div id="ritual-ledger"></div>
 </div></section>
 
-<section id="pago"><div class="wrap">
-  <div class="split-h">
-    <h2 data-banner data-t="paid_h2"></h2>
-    <p class="lede" data-t="paid_sub"></p>
-  </div>
-  <a class="item item-paid plate" href="/lectura.html">
-    <span class="tag tag-price">9 € / 19 € / 29 €</span>
-    <h3 data-t="it_full_t"></h3>
-    <p data-t="it_full_d"></p>
-    <span class="go" data-t="cta_paid"></span>
-  </a>
-</div></section>
-
 <hr class="rule">
 
 <section id="tiradas"><div class="wrap">
@@ -220,7 +205,11 @@
 
 <hr class="rule">
 
-<section class="tight"><div class="wrap">
+<!-- id="pago" now lives here. It used to be on a heading and a lede over a
+     single card further up, which said the same thing as this panel and said
+     it worse. The link in the hero is unchanged and still lands on the paid
+     reading, just on the one place that pitches it. -->
+<section id="pago" class="tight"><div class="wrap">
   <div class="panel cta-panel">
     <div>
       <p class="eyebrow" data-t="paid_eyebrow"></p>
