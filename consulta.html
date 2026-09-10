@@ -40,10 +40,11 @@
   .more summary::after{content:'+';float:right;color:var(--star);font-size:1.2rem;line-height:1}
   .more[open] summary::after{content:'\2212'}
   .more .inner{padding-bottom:6px}
-  .why{border-left:2px solid var(--star);padding:2px 0 2px 16px;margin:26px 0 0}
-  .why h3{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--star);margin:0 0 10px}
-  .why p{font-size:.88rem;line-height:1.6;color:var(--muted);margin:0 0 9px}
-  .why b{color:var(--bone);font-weight:400}
+  /* A reason belongs under the field it is about. It used to sit in a panel
+     below the whole form that restated every label and explained them from
+     there, which said the fields twice and put the answer furthest from the
+     question. */
+  .privacy-line{text-align:center;margin:14px 0 0}
   .opt{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:8px}
   .err{color:var(--rose);font-size:.9rem;margin:-8px 0 14px}
   .upsell{margin-top:46px}
@@ -102,6 +103,7 @@
 
     <label for="f-name" data-t="f_name"></label>
     <input id="f-name" name="name" type="text" autocomplete="given-name" maxlength="60" required>
+    <p class="field-hint" data-t="why_name"></p>
 
     <details class="more">
       <summary><span data-t="more_precise"></span></summary>
@@ -110,13 +112,15 @@
 
         <label for="f-sex"><span data-t="f_sex"></span><span class="opt" data-t="optional"></span></label>
         <select id="f-sex" name="sex"></select>
+        <p class="field-hint" data-t="why_sex"></p>
 
-        <p class="note"><b data-t="f_birth"></b>, <span data-t="f_birth_note"></span></p>
+        <p class="note"><b data-t="f_birth"></b></p>
         <div class="row3">
           <div><label for="b-d" data-t="f_day"></label><select id="b-d"></select></div>
           <div><label for="b-m" data-t="f_month"></label><select id="b-m"></select></div>
           <div><label for="b-y" data-t="f_year"></label><select id="b-y"></select></div>
         </div>
+        <p class="field-hint" data-t="why_birth"></p>
       </div>
     </details>
 
@@ -128,16 +132,9 @@
       <span><span class="counter" id="cc">0</span>/900 <span data-t="chars"></span></span>
     </p>
 
-    <div class="why">
-      <h3 data-t="why_h"></h3>
-      <p data-t="why_name" data-thtml="1"></p>
-      <p data-t="why_birth" data-thtml="1"></p>
-      <p data-t="why_sex" data-thtml="1"></p>
-      <p><a href="/privacidad.html" data-t="why_more"></a></p>
-    </div>
-
     <p class="err" id="form-err" hidden></p>
     <button class="btn btn-lit btn-lg btn-block" id="go-btn" type="submit" data-t="free_draw"></button>
+    <p class="field-hint privacy-line"><a href="/privacidad.html" data-t="why_more"></a></p>
   </form>
 
   <div id="free-out"></div>
