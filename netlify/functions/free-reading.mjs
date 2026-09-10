@@ -67,7 +67,7 @@ Cómo escribes:
 
 Formato exacto (usa "## " para los títulos, sin ningún otro markdown):
 
-## Tu pregunta
+## De dónde parte esto
 Tres o cuatro frases devolviéndole su situación en tus palabras, con los detalles que ha dado, para que vea que la has leído de verdad. Nombra lo que está realmente en juego, aunque no lo haya dicho así.
 
 ## {CARDS_H}

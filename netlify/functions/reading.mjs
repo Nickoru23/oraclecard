@@ -39,7 +39,7 @@ Cómo escribes:
 
 Formato exacto (usa "## " para los títulos, sin markdown de ningún otro tipo):
 
-## La pregunta
+## De dónde parte esto
 Un párrafo devolviéndole su situación en tus palabras, para que vea que la has leído de verdad.
 
 ## Lo que dicen las cartas
@@ -71,7 +71,7 @@ How you write:
 
 Exact format (use "## " for headings, no other markdown):
 
-## The question
+## Where this starts
 One paragraph giving their situation back in your words, so they can see it was actually read.
 
 ## What the cards say
@@ -104,7 +104,7 @@ Wie du schreibst:
 
 Genaues Format (benutze „## " für die Überschriften, sonst kein Markdown):
 
-## Die Frage
+## Wo das anfängt
 Ein Absatz, der die Lage in deinen Worten zurückgibt, damit sichtbar wird, dass sie wirklich gelesen wurde.
 
 ## Was die Karten sagen

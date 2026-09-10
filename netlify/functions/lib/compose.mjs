@@ -108,9 +108,9 @@ const SIGN_LINE = {
 
 const T = {
   es: {
-    q: 'Tu pregunta', one: 'Lo que dice la carta', two: 'Lo que dicen las cartas',
+    q: 'De dónde parte esto', one: 'Lo que dice la carta', two: 'Lo que dicen las cartas',
     you: 'Lo que te toca a ti',
-    asked: n => `${n}, esto es lo que has traído a la mesa:`,
+    asked: n => `${n}, esto es lo que se ve desde aquí.`,
     drew1: c => `Sobre eso ha salido <strong>${c}</strong>.`,
     drew2: (a, b) => `Sobre eso han salido dos cartas: <strong>${a}</strong>, donde estás ahora, y <strong>${b}</strong>, hacia dónde se mueve.`,
     posA: 'Dónde estás ahora', posB: 'Hacia dónde se mueve',
@@ -168,9 +168,9 @@ const T = {
   },
 
   en: {
-    q: 'Your question', one: 'What the card says', two: 'What the cards say',
+    q: 'Where this starts', one: 'What the card says', two: 'What the cards say',
     you: 'What is yours to do',
-    asked: n => `${n}, this is what you brought to the table:`,
+    asked: n => `${n}, here is how it looks from here.`,
     drew1: c => `For that, <strong>${c}</strong> came up.`,
     drew2: (a, b) => `For that, two cards came up: <strong>${a}</strong>, where you are now, and <strong>${b}</strong>, where it is moving.`,
     posA: 'Where you are now', posB: 'Where it is moving',
@@ -228,9 +228,9 @@ const T = {
   },
 
   de: {
-    q: 'Deine Frage', one: 'Was die Karte sagt', two: 'Was die Karten sagen',
+    q: 'Wo das anfängt', one: 'Was die Karte sagt', two: 'Was die Karten sagen',
     you: 'Was bei dir liegt',
-    asked: n => `${n}, das hast du auf den Tisch gelegt:`,
+    asked: n => `${n}, so sieht es von hier aus.`,
     drew1: c => `Darauf kam <strong>${c}</strong>.`,
     drew2: (a, b) => `Darauf kamen zwei Karten: <strong>${a}</strong>, wo du gerade stehst, und <strong>${b}</strong>, wohin es sich bewegt.`,
     posA: 'Wo du gerade stehst', posB: 'Wohin es sich bewegt',
@@ -291,15 +291,13 @@ const T = {
 export function compose({ name, question, draws, lang, sign, degree }) {
   const S = T[lang] || T.es;
   const a = analyse(question, lang);
-  const q = question.length > CUT ? question.slice(0, CUT).replace(/\s+\S*$/, '') + '…' : question;
   const nm = draws.map(d => d.card.name[lang] + (d.rev ? ` (${S.reversed})` : ''));
   const body = d => (d.rev ? d.card.rev : d.card.up)[lang];
   const out = [];
 
-  /* --- the question, read back --- */
+  /* --- where the question starts from --- */
   out.push(`## ${S.q}`);
   out.push(S.asked(esc(name)));
-  out.push(`“${esc(q)}”`);
   out.push(S.topic[a.topic]);
   if (a.howLong) out.push(S.howLong(esc(a.howLong)));
   if (a.deciding) out.push(S.deciding);
