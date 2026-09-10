@@ -410,6 +410,57 @@ header.site{
 }
 .tab:hover{color:var(--bone)}
 .tab[aria-selected="true"]{color:var(--star-hi);border-bottom-color:var(--star)}
+/* Seven filters do not fit a phone in one line, and wrapping a row of
+   settings makes it stop reading as one scale. It slides instead, with the
+   ends faded so it is visible there is more of it either way. */
+.tabs-scroll{
+  flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;justify-content:flex-start;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;
+  mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);
+}
+.tabs-scroll::-webkit-scrollbar{display:none}
+.tabs-scroll .tab{flex:none;scroll-snap-align:center}
+@media(min-width:900px){.tabs-scroll{justify-content:center;mask-image:none}}
+
+/* ---------- picking a spread ----------
+   Four settings on a scale gave you four names. Each is the shape of its own
+   layout now, drawn at the size of the thing it lays, so which one puts three
+   cards in a row and which one builds a cross is answered before you press
+   anything. The picked one is the only lit thing in the row, same as the rest
+   of the site: light means chosen. */
+.spread-picks{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 30px
+}
+.spread-pick{
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  padding:18px 10px 15px;cursor:pointer;
+  background:var(--ink);border:1px solid var(--line);border-radius:var(--r);
+  color:var(--muted);font:inherit;text-align:center;
+  transition:border-color .2s ease,color .2s ease,background .2s ease,transform .12s ease
+}
+.spread-pick svg{width:66px;height:44px;display:block;color:var(--muted);transition:color .2s ease}
+.spread-pick b{font-family:var(--serif);font-weight:400;font-size:1rem;color:var(--bone-dim);
+               line-height:1.25;transition:color .2s ease}
+.spread-pick em{font-style:normal;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+                font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.spread-pick:hover{border-color:var(--line-2);background:var(--ink-2)}
+.spread-pick:hover b{color:var(--bone)}
+.spread-pick:active{transform:translateY(1px)}
+.spread-pick:focus-visible{outline:2px solid var(--star);outline-offset:3px}
+.spread-pick[aria-selected="true"]{
+  border-color:rgba(214,201,168,.55);background:rgba(214,201,168,.06);
+  box-shadow:0 0 26px -10px rgba(214,201,168,.5)
+}
+.spread-pick[aria-selected="true"] svg{color:var(--star)}
+.spread-pick[aria-selected="true"] b{color:var(--star-hi)}
+.spread-pick[aria-selected="true"] em{color:var(--star)}
+@media(max-width:640px){
+  .spread-picks{grid-template-columns:repeat(2,1fr);gap:10px}
+  .spread-pick{padding:15px 8px 13px}
+  .spread-pick svg{width:58px;height:38px}
+  .spread-pick b{font-size:.92rem}
+}
 
 /* Two sides on every card that can be turned.
 

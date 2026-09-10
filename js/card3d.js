@@ -51,7 +51,7 @@
     let rx = 0, ry = 0, sc = 1;         /* where it is */
     let tx = 0, ty = 0, tsc = 1;        /* where it wants to be */
     let vx = 0, vy = 0;                 /* how fast it is spinning */
-    let dragging = false, moved = false, raf = 0;
+    let dragging = false, moved = false, raf = 0, settling = false;
     let px = 0, py = 0, pid = null;
 
     if (o.sheen) el.classList.add('has-sheen');
@@ -99,6 +99,20 @@
     if (!REDUCED) {
       el.addEventListener('pointermove', e => {
         const { nx, ny } = aim(e);
+        /* Still here after a finger moved, so the browser did not take this
+           for a scroll: it is a drag on the card, and the card takes it now. */
+        if (settling) {
+          const ax = Math.abs(e.clientX - px), ay = Math.abs(e.clientY - py);
+          if (ax + ay < 4) return;
+          /* Down the page is the page's gesture, across is the card's. Taking
+             every first move meant one move of a scroll spun the card, and
+             the browser then cancelled the pointer and left it spinning. */
+          if (ay > ax) { settling = false; return; }
+          settling = false; dragging = true;
+          if (typeof el.focus === 'function') el.focus({ preventScroll: true });
+          el.classList.add('is-held');
+          try { el.setPointerCapture(pid); } catch (x) {}
+        }
         if (dragging) {
           const dx = e.clientX - px, dy = e.clientY - py;
           if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
@@ -108,10 +122,19 @@
           paint();
           return;
         }
+        /* The tilt follows a pointer that hovers, and a finger never hovers:
+           it is either dragging the card or on its way past. Running this for
+           touch meant every card under a scrolling thumb leaned over as the
+           page went by, which is the two gestures fighting for the same
+           finger. Touch gets the drag and the turn, and no tilt. */
+        if (e.pointerType === 'touch') return;
         tx = -ny * o.tilt; ty = nx * o.tilt; run();
       });
 
-      el.addEventListener('pointerenter', () => { tsc = 1.035; run(); });
+      el.addEventListener('pointerenter', e => {
+        if (e.pointerType === 'touch') return;
+        tsc = 1.035; run();
+      });
       el.addEventListener('pointerleave', () => {
         if (dragging) return;
         tx = 0; ty = 0; tsc = 1; run();
@@ -119,20 +142,33 @@
 
       el.addEventListener('pointerdown', e => {
         if (e.button !== undefined && e.button !== 0) return;
+        pid = e.pointerId;
+        px = e.clientX; py = e.clientY; vx = vy = 0;
+        moved = false; releasing = release;
+
+        /* A finger has not said yet whether it means to turn the card or to
+           scroll the page past it, and preventing the default here answered
+           for it: the page stopped scrolling wherever a card happened to be
+           under the thumb, which on a grid of seventy eight is most of it.
+           So touch waits. touch-action is pan-y, so the browser keeps the
+           vertical gesture and hands us the horizontal one, and the card
+           takes the pointer at the first move it is still receiving. Mouse
+           and pen have no such ambiguity and are grabbed at once. */
+        if (e.pointerType === 'touch') { settling = true; return; }
+
         /* Without this the browser starts a text selection and the drag smears
            a highlight across the whole page. Focus has to be taken by hand
            afterwards, because preventDefault is what would have given it. */
         e.preventDefault();
         if (typeof el.focus === 'function') el.focus({ preventScroll: true });
-        dragging = true; moved = false; pid = e.pointerId;
-        releasing = release;
-        px = e.clientX; py = e.clientY; vx = vy = 0;
+        dragging = true;
         el.classList.add('is-held');
         try { el.setPointerCapture(pid); } catch (x) {}
       });
 
       const release = () => {
         if (releasing === release) releasing = null;
+        settling = false;
         if (!dragging) return;
         dragging = false;
         el.classList.remove('is-held');
@@ -141,7 +177,13 @@
       };
       /* these three die with the card; the window is covered by letGo above */
       el.addEventListener('pointerup', release);
-      el.addEventListener('pointercancel', release);
+      /* The browser cancels the pointer when it claims the gesture for a
+         scroll. Whatever the card did with the moves it saw before that was
+         not asked for, so it is undone rather than coasted on. */
+      el.addEventListener('pointercancel', () => {
+        vx = vy = 0; rx = 0; ry = 0; moved = false;
+        release();
+      });
       el.addEventListener('lostpointercapture', release);
       /* a drag must not also count as a click on the card underneath */
       el.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); } }, true);

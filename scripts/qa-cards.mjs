@@ -198,6 +198,62 @@ T('an illustrated card reverses too',
   await p.$eval('#qa-revimg .front img', n => getComputedStyle(n).transform) === HALF,
   await p.$eval('#qa-revimg .front img', n => getComputedStyle(n).transform));
 
+/* ---- a thumb on a card, and the page it is trying to scroll --------------
+
+   A finger that has just landed has not said which of the two it means, and
+   the card used to answer for it: the first move of any swipe turned the card,
+   the browser then claimed the gesture and cancelled the pointer, and the card
+   was left spinning behind a page that was scrolling away. Every card the
+   thumb crossed did it again, and there are seventy eight of them on the deck
+   page.
+
+   So the direction decides. Down the page belongs to the page, across belongs
+   to the card, and a pointer the browser cancels is put back where it was.
+   Real touch events, through the protocol, because a synthesised one does not
+   scroll anything and would pass either way. */
+{
+  const tc = await b.newContext({ viewport: { width: 393, height: 852 },
+                                  isMobile: true, hasTouch: true });
+  await tc.addInitScript(PREP);
+  const tp = await tc.newPage();
+  const cdp = await tc.newCDPSession(tp);
+  await tp.goto('http://127.0.0.1:4321/index.html', { waitUntil: 'networkidle' });
+  await tp.waitForTimeout(900);
+  await tp.evaluate(() => { const n = document.querySelector('.privacy-notice'); if (n) n.remove(); });
+
+  const spun = () => tp.evaluate(() => {
+    const e = document.querySelector('#deck-grid .deck-cell'); const c = getComputedStyle(e);
+    return Math.abs(parseFloat(c.getPropertyValue('--rx')) || 0) +
+           Math.abs(parseFloat(c.getPropertyValue('--ry')) || 0);
+  });
+  const swipe = async (dx, dy) => {
+    await tp.evaluate(() => document.getElementById('baraja').scrollIntoView());
+    await tp.waitForTimeout(400);
+    const bx = await tp.locator('#deck-grid .deck-cell').first().boundingBox();
+    const x = Math.round(bx.x + bx.width / 2), y = Math.round(bx.y + bx.height / 2);
+    const y0 = await tp.evaluate(() => window.scrollY);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+    let peak = 0;
+    for (let i = 1; i <= 8; i++) {
+      await cdp.send('Input.dispatchTouchEvent',
+        { type: 'touchMove', touchPoints: [{ x: x + dx * i / 8, y: y + dy * i / 8 }] });
+      await tp.waitForTimeout(16);
+      peak = Math.max(peak, await spun());
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await tp.waitForTimeout(350);
+    return { moved: (await tp.evaluate(() => window.scrollY)) - y0, peak };
+  };
+
+  const up = await swipe(0, -240);
+  T('a thumb scrolling past a card scrolls the page', up.moved > 100, Math.round(up.moved));
+  T('and leaves the card exactly where it was', up.peak < 1, Math.round(up.peak) + ' deg');
+  const across = await swipe(150, 0);
+  T('a thumb drawn across a card turns it', across.peak > 20, Math.round(across.peak) + ' deg');
+  T('and does not scroll the page underneath', Math.abs(across.moved) < 5, Math.round(across.moved));
+  await tc.close();
+}
+
 console.log('errors:', errs.length ? errs.slice(0, 4) : 'none');
 await b.close(); server.close();
 process.exit(errs.length ? 1 : 0);

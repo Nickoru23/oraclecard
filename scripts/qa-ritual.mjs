@@ -58,7 +58,7 @@ check('all three rows done', await p.locator('.ritual-row.is-done').count() === 
 
 // all four spreads earns the full table
 for (const sp of ['three', 'yesno', 'love']) {
-  await p.click(`.tab[data-sp="${sp}"]`);
+  await p.click(`[data-sp="${sp}"]`);
   await p.click('#sp-draw');
   await p.waitForTimeout(250);
 }

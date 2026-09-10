@@ -44,7 +44,11 @@
     seven_nights: '<path d="M20 7 22.4 16.6 32 19 22.4 21.4 20 31 17.6 21.4 8 19 17.6 16.6Z"/>',
     moon_turn: '<path d="M25 8a12 12 0 1 0 0 24 14 14 0 0 1 0-24Z"/>',
     full_table: '<path d="M20 6.5 24 12h-8ZM20 33.5 16 28h8ZM6.5 20 12 16v8ZM33.5 20 28 24v-8Z"/><circle cx="20" cy="20" r="4.2"/>',
-    open_question: '<path d="M14.5 15.5a5.5 5.5 0 0 1 10.8 1.4c0 3.6-4.8 4-4.8 7.4" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="20.4" cy="29.4" r="2.3"/>',
+    /* Every other sigil here is a device. This one was a question mark, which
+       on a dark rim reads as an icon that failed to load rather than as a
+       thing that was struck. It is a card lifted off the table, face down and
+       held open, with the spark of the asking above it. */
+    open_question: '<path d="M12.8 15.2 24.4 11.6a2 2 0 0 1 2.5 1.3l4 12.9a2 2 0 0 1-1.3 2.5l-11.6 3.6a2 2 0 0 1-2.5-1.3l-4-12.9a2 2 0 0 1 1.3-2.5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M18.4 19.6 24 17.9M19.7 23.7l4.2-1.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 9.6l.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9Z"/>',
     thirteen: '<path d="M13.5 12h2.2v16h-3V15.4l-2.4 1.2-.8-2.6ZM21 12h7.6v2.6l-3.6 4.2c2.6.3 4.2 2 4.2 4.4 0 3-2.2 5-5.4 5-1.8 0-3.4-.5-4.6-1.4l1.1-2.4c1 .7 2.1 1.1 3.3 1.1 1.6 0 2.7-.9 2.7-2.3 0-1.5-1.2-2.4-3.3-2.4h-1.2v-2.2l3.4-4h-4.2Z"/>',
     three_tongues: '<rect x="9" y="12" width="22" height="3.2" rx="1.6"/><rect x="9" y="18.4" width="22" height="3.2" rx="1.6"/><rect x="9" y="24.8" width="22" height="3.2" rx="1.6"/>',
   };

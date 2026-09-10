@@ -219,13 +219,12 @@
     const tabs = document.getElementById('sp-tabs');
     const host = document.getElementById('sp-out');
     const btn  = document.getElementById('sp-draw');
-    const desc = document.getElementById('sp-desc');
     if (!tabs) return;
     let cur = 'daily';
 
     function paintTabs() {
-      tabs.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.sp === cur)));
-      desc.textContent = t('sp_' + cur + '_d');
+      tabs.querySelectorAll('[data-sp]').forEach(b =>
+        b.setAttribute('aria-selected', String(b.dataset.sp === cur)));
     }
     function run() {
       const s = SPREADS[cur];
@@ -235,7 +234,7 @@
       if (window.Ritual) window.Ritual.spreadLaid(cur);
     }
     tabs.addEventListener('click', e => {
-      const b = e.target.closest('.tab'); if (!b) return;
+      const b = e.target.closest('[data-sp]'); if (!b) return;
       cur = b.dataset.sp; paintTabs();
       host.innerHTML = ''; btn.textContent = t('draw');
     });
@@ -260,8 +259,16 @@
     let watcher = null;
 
     function paint() {
+      /* The deck divides two ways and the browser only offered one of them.
+         Every card already carries its suit and its number, so the four
+         families and the sixteen court cards cost nothing but the asking. */
+      const keep = c =>
+        filter === 'all' ? true :
+        filter === 'major' ? c.a === 'major' :
+        filter === 'court' ? c.a === 'minor' && c.n >= 11 :
+        c.suit === filter;
       grid.innerHTML = window.DECK
-        .filter(c => filter === 'all' || c.a === 'major')
+        .filter(keep)
         .map(c => `<button class="deck-cell" data-id="${c.id}" aria-label="${c.name[LANG]}"></button>`)
         .join('');
       draw();
