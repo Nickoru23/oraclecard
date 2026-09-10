@@ -25,7 +25,7 @@ js/
   orrery.js               the dial in the hero: the real Sun and Moon, turnable
   astro.js horoscope.js zodiac.js fortunes.js legal.js notice.js ornament.js
 netlify/functions/        checkout, reading, free-reading, orders, diag
-scripts/                  a static server, two generators and eleven checks, see below
+scripts/                  a static server, two generators and twelve checks, see below
 legacy/                   an earlier unrelated prototype, kept for reference
 ```
 
@@ -54,7 +54,7 @@ Two the functions read that the handover's table omits:
 ```bash
 npm install            # playwright, for the checks only. Nothing ships.
 npm run serve          # http://localhost:4321
-npm run qa             # all eleven checks
+npm run qa             # all twelve checks
 ```
 
 | Check | What it holds to |
@@ -65,6 +65,7 @@ npm run qa             # all eleven checks
 | `qa:orrery` | the dial in the hero, checked against the astronomy rather than checked for existing: the Sun and Moon are drawn where they actually are, the Moon's terminator matches its phase and its lit limb is a half disc so nothing can spill outside it, the band can be taken hold of and the words in the middle cannot, turning it winds to a real sky for a real date and says which, letting go returns it to now, and reduced motion leaves it still. It also checks the ephemeris as arithmetic over a year of hourly loads rather than on the one date the panel happens to show: every new and full moon is found, found to the minute rather than to the six hour step it was bracketed with, and no arcminute rounds up to sixty |
 | `qa:langs` | the language is in the address: every page answers in the language its address names, agrees with its own canonical and names its two alternates, a deep link never moves whatever the reader prefers, the front door does, choosing a language changes the address and stays on the same page, links keep the language and assets do not, and the committed sitemap and robots.txt are what the generator would write |
 | `qa:i18n` | rule 6, the three languages at parity with no empty values |
+| `qa:echo` | the same thing said twice. Three separate passes at the wording missed the same defect, because it cannot be seen one string at a time: the card on the front page and the lede of the page it opened said the same sentence, so you clicked a promise and landed on it repeated. This reads all 1,017 strings against each other and fails on any run of four words shared by two of them, unless the pair is listed as deliberate. Deliberate means one of two things and the list says which: a feature has one name and every surface uses it, or the two are a matched pair whose point is to read alike, a yes beside its no, a field beside the error that asks for it |
 | `qa:dashes` | rule 4, no dashes reach the screen |
 | `qa:ritual` | the ledger end to end: the marks fire, a day is kept only when all three tasks are done, the streak survives a reload and a new day, the sigils strike |
 | `qa:cards` | the cards as objects, and a reversed one being the whole card upside down: they tilt toward the pointer and the rendered matrix really is 3D, a drag spins them and selects no text, a throw settles, arrow keys turn them, a drawn card still turns over. Then it makes its own pictures to check a card prefers one and falls back to its drawing when one is missing, and puts everything back |
