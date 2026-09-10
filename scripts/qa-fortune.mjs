@@ -36,9 +36,11 @@ for (const lang of LANGS) {
   check(`${lang}: opens on a first visit`, await p.locator('.df').count() === 1);
   check(`${lang}: the words are there`, (await p.locator('.df-w').count()) > 3,
         await p.locator('.df-w').count());
-  const texts = await p.locator('.df-eyebrow, .df-cardlabel, .df-go, .df-note')
+  /* Three, not four: the greeting used to end on a line about where the
+     fortune is stored, which is not what somebody wants on the way in. */
+  const texts = await p.locator('.df-eyebrow, .df-cardlabel, .df-go')
                        .allTextContents();
-  check(`${lang}: every label is translated`, texts.length === 4 && texts.every(t => t.trim()), texts);
+  check(`${lang}: every label is translated`, texts.length === 3 && texts.every(t => t.trim()), texts);
   await ctx.close();
 }
 

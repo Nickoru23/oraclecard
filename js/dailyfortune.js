@@ -83,7 +83,6 @@
            <p class="df-cardname">${esc(c.card.name[lang])}</p>
          </div>
          <button type="button" class="btn btn-lit df-go">${esc(t('df_enter'))}</button>
-         <p class="df-note small">${esc(t('df_note'))}</p>
        </div>`;
 
     document.body.appendChild(el);
@@ -122,7 +121,17 @@
 
     /* the focus waits for the words, so a screen reader is not talked over and
        a keyboard is not handed a button before it exists to the eye */
-    setTimeout(() => go.focus({ preventScroll: true }), REDUCED ? 60 : (Number(after) + 0.6) * 1000);
+    setTimeout(() => {
+      /* Chrome hands :focus-visible to an element script focused, so moving
+         focus here painted a ring round the button of a greeting nobody had
+         reached with a keyboard, and the primary action appeared to have two
+         borders. The class comes off the moment a key is touched, so anyone
+         actually tabbing gets the ring back. */
+      go.classList.add('by-script');
+      go.addEventListener('keydown', () => go.classList.remove('by-script'), { once: true });
+      go.addEventListener('blur', () => go.classList.remove('by-script'), { once: true });
+      go.focus({ preventScroll: true });
+    }, REDUCED ? 60 : (Number(after) + 0.6) * 1000);
   }
 
   /* the fortune needs the deck, the texts and the language, so it waits for the

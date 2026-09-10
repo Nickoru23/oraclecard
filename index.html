@@ -89,9 +89,13 @@
   .item:hover h3{color:var(--star-hi)}
   .item p{grid-column:1;grid-row:3;margin:5px 0 0;color:var(--muted);font-size:.92rem;
           line-height:1.6;max-width:56ch}
+  /* The third of three, and the quietest: the whole row is the link, so this
+     only has to point. It was set in --muted, which is the colour of text that
+     is not a control at all, and at .62rem it disappeared. */
   .item .go{
-    grid-column:2;grid-row:2;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;
-    color:var(--muted);white-space:nowrap
+    grid-column:2;grid-row:2;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--star);font-weight:600;white-space:nowrap;
+    transition:color .18s ease
   }
   .item .go::after{content:' \2192';display:inline-block;transition:transform .22s ease}
   .item:hover .go{color:var(--star-hi)}
@@ -137,7 +141,6 @@
   <div class="orrery" id="orrery" role="img" data-t-label="orrery_label"></div>
   <p class="eyebrow" data-t="hero_eyebrow"></p>
   <h1 data-t="hero_h1" data-thtml="1"></h1>
-  <p class="lede" data-t="hero_lede"></p>
   <div class="hero-cta">
     <a class="btn btn-lit btn-lg" href="#gratis" data-t="cta_free"></a>
     <a class="btn btn-ghost btn-lg" href="#pago" data-t="cta_paid"></a>
@@ -149,7 +152,6 @@
 <section id="gratis"><div class="wrap">
   <div class="split-h">
     <h2 data-banner data-t="free_h2"></h2>
-    <p class="lede" data-t="free_sub"></p>
   </div>
   <div class="menu-grid">
     <a class="item plate" href="/fortuna.html">

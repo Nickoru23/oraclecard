@@ -130,6 +130,9 @@
       kept: kept,
       keptDays: state.kept.slice(),
       rank: rankOf(kept),
+      /* the whole ladder, so the ledger can show what a rank name means:
+         on its own "At the door" says nothing about where that is */
+      ranks: RANKS.map(r => ({ id: r.id, at: r.at })),
       nextRankAt: nx ? nx.at : null,
       nextRankIn: nx ? nx.at - kept : null,
       sigils: state.sigils.slice(),

@@ -14,6 +14,7 @@
 
   const t = k => (window.t ? window.t(k) : k);
   const fill = (s, n) => String(s).replace('{n}', n);
+  const fill2 = (s, n, m) => String(s).replace('{n}', n).replace('{m}', m);
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   /* where each task is done, so a row can send you there */
@@ -106,6 +107,18 @@
       </li>`;
     }).join('');
 
+    /* A rank name on its own says nothing about where it sits. This is the
+       whole ladder, folded away: which one you are on, what each is called,
+       and the day it starts. Native disclosure, so it opens with the keyboard
+       and needs no script of its own. */
+    const ladder = `<details class="rank-ladder">
+      <summary>${esc(t('ritual_ladder'))}</summary>
+      <ol>${s.ranks.map(r => `<li${r.id === s.rank ? ' class="is-here"' : ''}>
+        <span>${esc(t('rank' + r.id))}</span>
+        <em>${r.at === 0 ? esc(t('ritual_start')) : esc(fill(t('ritual_from_day'), r.at))}</em>
+      </li>`).join('')}</ol>
+    </details>`;
+
     const standing = s.nextRankAt === null
       ? esc(t('ritual_top'))
       : esc(fill(t(s.nextRankIn === 1 ? 'ritual_next_1' : 'ritual_next'), s.nextRankIn)) +
@@ -121,8 +134,12 @@
         </div>
         <div class="ledger-standing">
           <h3>${esc(t('ritual_standing'))}</h3>
-          <p class="rank-name">${esc(t('rank' + s.rank))}</p>
+          <p class="rank-line">
+            <span class="rank-name">${esc(t('rank' + s.rank))}</span>
+            <span class="rank-of">${esc(fill2(t('ritual_rank_of'), s.rank + 1, s.ranks.length))}</span>
+          </p>
           <p class="small muted rank-next">${standing}</p>
+          ${ladder}
           <dl class="tallies">
             <div><dt>${esc(t('ritual_streak_h'))}</dt><dd>${s.streak}</dd></div>
             <div><dt>${esc(t('ritual_best_h'))}</dt><dd>${s.best}</dd></div>

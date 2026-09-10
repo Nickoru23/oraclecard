@@ -283,15 +283,20 @@ header.site{
 .btn-lit:hover{background:var(--violet-btn-hi);border-color:var(--star);
                 box-shadow:0 0 34px -4px rgba(214,201,168,.52),
                 inset 0 1px 0 rgba(255,255,255,.09);color:#fff}
-/* the quiet one: no pill, no fill, no glow, just a ruled word */
+/* The second of three. It used to be a word with a rule under it, which on a
+   page of tracked small caps is indistinguishable from a heading: nothing said
+   it could be pressed. It is the same pill as the primary now, so the two read
+   as one family, but hollow: a hairline that is not lit, no fill and no glow.
+   Pressing is offered by the shape; the primary keeps the light. */
 .btn-ghost{
-  border:0;border-bottom:1px solid var(--hair-lit);border-radius:0;
-  padding:12px 2px;color:var(--star-hi);letter-spacing:.22em
+  border:1px solid var(--line-2);border-radius:var(--r-pill);
+  background:transparent;color:var(--bone);letter-spacing:.2em
 }
-.btn-ghost:hover{background:transparent;color:var(--bone);border-bottom-color:var(--bone)}
+.btn-ghost:hover{background:rgba(214,201,168,.07);border-color:var(--star);
+                 color:var(--star-hi)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 .btn-lg{padding:17px 36px;font-size:.8rem}
-.btn-ghost.btn-lg{padding:13px 2px}
+.btn-ghost.btn-lg{padding:17px 34px}
 
 /* ---------- the divider: a lit rule with a diamond at its middle ---------- */
 /* a graduated rule, the way a scale is graduated: a long hairline with a
@@ -439,6 +444,8 @@ header.site{
 }
 .is-3d.is-held,[data-turn].is-3d.is-held{cursor:grabbing}
 .is-3d.by-pointer:focus-visible{outline:none}
+/* the same quirk, on the one button a greeting focuses for a reader */
+.btn.by-script:focus-visible{outline:none}
 
 /* A card that answers to a click by turning over.
 
@@ -700,10 +707,11 @@ main:focus{outline:none}
 .ritual-row .what{flex:1;color:var(--bone-dim);font-size:.98rem}
 .ritual-row .go{
   flex:none;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
-  color:var(--cyan-hi);border:1px solid var(--line-2);border-radius:999px;padding:7px 16px
+  color:var(--star);border:1px solid var(--line-2);border-radius:999px;padding:7px 16px;
+  transition:border-color .18s ease,color .18s ease,background .18s ease
 }
-.ritual-row .go:hover{background:transparent;border-color:var(--hair-lit);
-                      text-decoration:none;color:var(--star-hi)}
+.ritual-row .go:hover,.ritual-row:hover .go{background:rgba(214,201,168,.07);
+                      border-color:var(--star);text-decoration:none;color:var(--star-hi)}
 .ritual-row .state{
   flex:none;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
   font-weight:700;color:var(--jade)
@@ -726,7 +734,40 @@ main:focus{outline:none}
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   color:var(--cyan-hi)
 }
-.rank-next{margin:0 0 1.7em}
+.rank-next{margin:0 0 1.1em}
+
+/* Where the rank sits, and the ladder it sits on. "At the door" is only a
+   name until you can see it is the first of six and what the next one is. */
+.rank-line{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 .14em}
+.rank-of{
+  font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap
+}
+.rank-ladder{margin:0 0 1.7em}
+.rank-ladder summary{
+  display:inline-block;list-style:none;cursor:pointer;
+  font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--star);border:1px solid var(--line-2);border-radius:var(--r-pill);
+  padding:7px 16px;transition:border-color .18s ease,color .18s ease,background .18s ease
+}
+.rank-ladder summary::marker,.rank-ladder summary::-webkit-details-marker{display:none}
+.rank-ladder summary::after{content:' \002B';margin-left:7px;font-weight:400}
+.rank-ladder[open] summary::after{content:' \2212'}
+.rank-ladder summary:hover{background:rgba(214,201,168,.07);border-color:var(--star);color:var(--star-hi)}
+.rank-ladder summary:focus-visible{outline:2px solid var(--star);outline-offset:3px}
+.rank-ladder ol{list-style:none;margin:14px 0 0;padding:0;counter-reset:rank}
+.rank-ladder li{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  padding:9px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem
+}
+.rank-ladder li:first-child{border-top:0}
+.rank-ladder li em{font-style:normal;font-size:.76rem;color:var(--muted);
+                   font-variant-numeric:tabular-nums;white-space:nowrap}
+/* the one you are on is the only lit line in the list */
+.rank-ladder li.is-here{color:var(--star-hi)}
+.rank-ladder li.is-here span{font-weight:600}
+.rank-ladder li.is-here em{color:var(--star)}
+.rank-ladder li.is-here span::before{content:'\2022  ';color:var(--star)}
 .rank-next b{display:block;margin-top:3px;color:var(--bone-dim);
              font-family:var(--serif);font-size:1.05rem;font-weight:400;letter-spacing:.01em}
 
